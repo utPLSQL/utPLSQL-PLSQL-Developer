@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -8,26 +9,37 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 {
     class TestRunner
     {
+        bool running;
+
         internal void Run(string type, string owner, string name, string subType)
         {
-            string testsToRun = null;
+            if (running)
+            {
+                throw new TestsAlreadyRunningException();
+            }
+            else
+            {
+                running = true;
 
-            if (type.Equals("USER"))
-            {
-                testsToRun = name;
-            }
-            else if (type.Equals("PACKAGE"))
-            {
-                testsToRun = $"{owner}.{name}";
-            }
-            else if (type.Equals("_ALL"))
-            {
-                testsToRun = owner;
-            }
+                string testsToRun = null;
 
-            if (testsToRun != null)
-            {
-                ExecuteSql($"select * from table(ut.run('{name}', ut_junit_reporter()))");
+                if (type.Equals("USER"))
+                {
+                    testsToRun = name;
+                }
+                else if (type.Equals("PACKAGE"))
+                {
+                    testsToRun = $"{owner}.{name}";
+                }
+                else if (type.Equals("_ALL"))
+                {
+                    testsToRun = owner;
+                }
+
+                if (testsToRun != null)
+                {
+                    ExecuteSql($"select * from table(ut.run('{name}', ut_junit_reporter()))");
+                }
             }
         }
 
@@ -47,6 +59,9 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
             var serializer = new XmlSerializer(typeof(JUnitTestSuites));
             var testSuites = (JUnitTestSuites)serializer.Deserialize(new StringReader(result));
+
+            running = false;
+
             return testSuites;
         }
 
@@ -60,5 +75,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             }
         }
 
+    }
+
+    [System.Serializable]
+    internal class TestsAlreadyRunningException : System.Exception
+    {
     }
 }
