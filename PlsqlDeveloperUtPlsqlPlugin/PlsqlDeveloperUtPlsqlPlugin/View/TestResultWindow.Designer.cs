@@ -36,6 +36,13 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtTests = new System.Windows.Forms.TextBox();
             this.lblTime = new System.Windows.Forms.Label();
             this.txtTime = new System.Windows.Forms.TextBox();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.lblErrors = new System.Windows.Forms.Label();
+            this.txtErrors = new System.Windows.Forms.TextBox();
+            this.lblFailures = new System.Windows.Forms.Label();
+            this.txtFailures = new System.Windows.Forms.TextBox();
+            this.lblDisabled = new System.Windows.Forms.Label();
+            this.txtDisabled = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnClose
@@ -79,7 +86,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // lblTime
             // 
             this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(197, 9);
+            this.lblTime.Location = new System.Drawing.Point(862, 9);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(30, 13);
             this.lblTime.TabIndex = 8;
@@ -87,17 +94,85 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             // txtTime
             // 
-            this.txtTime.Location = new System.Drawing.Point(233, 6);
+            this.txtTime.Location = new System.Drawing.Point(898, 6);
             this.txtTime.Name = "txtTime";
             this.txtTime.ReadOnly = true;
             this.txtTime.Size = new System.Drawing.Size(100, 20);
             this.txtTime.TabIndex = 9;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(93, 700);
+            this.lblStatus.MinimumSize = new System.Drawing.Size(500, 0);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(500, 13);
+            this.lblStatus.TabIndex = 11;
+            this.lblStatus.Text = "Running...";
+            // 
+            // lblErrors
+            // 
+            this.lblErrors.AutoSize = true;
+            this.lblErrors.Location = new System.Drawing.Point(312, 9);
+            this.lblErrors.Name = "lblErrors";
+            this.lblErrors.Size = new System.Drawing.Size(34, 13);
+            this.lblErrors.TabIndex = 12;
+            this.lblErrors.Text = "Errors";
+            // 
+            // txtErrors
+            // 
+            this.txtErrors.Location = new System.Drawing.Point(352, 6);
+            this.txtErrors.Name = "txtErrors";
+            this.txtErrors.ReadOnly = true;
+            this.txtErrors.Size = new System.Drawing.Size(100, 20);
+            this.txtErrors.TabIndex = 13;
+            // 
+            // lblFailures
+            // 
+            this.lblFailures.AutoSize = true;
+            this.lblFailures.Location = new System.Drawing.Point(157, 9);
+            this.lblFailures.Name = "lblFailures";
+            this.lblFailures.Size = new System.Drawing.Size(43, 13);
+            this.lblFailures.TabIndex = 14;
+            this.lblFailures.Text = "Failures";
+            // 
+            // txtFailures
+            // 
+            this.txtFailures.Location = new System.Drawing.Point(206, 6);
+            this.txtFailures.Name = "txtFailures";
+            this.txtFailures.ReadOnly = true;
+            this.txtFailures.Size = new System.Drawing.Size(100, 20);
+            this.txtFailures.TabIndex = 15;
+            // 
+            // lblDisabled
+            // 
+            this.lblDisabled.AutoSize = true;
+            this.lblDisabled.Location = new System.Drawing.Point(458, 9);
+            this.lblDisabled.Name = "lblDisabled";
+            this.lblDisabled.Size = new System.Drawing.Size(48, 13);
+            this.lblDisabled.TabIndex = 16;
+            this.lblDisabled.Text = "Disabled";
+            // 
+            // txtDisabled
+            // 
+            this.txtDisabled.Location = new System.Drawing.Point(512, 6);
+            this.txtDisabled.Name = "txtDisabled";
+            this.txtDisabled.ReadOnly = true;
+            this.txtDisabled.Size = new System.Drawing.Size(100, 20);
+            this.txtDisabled.TabIndex = 17;
             // 
             // TestResultWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.txtDisabled);
+            this.Controls.Add(this.lblDisabled);
+            this.Controls.Add(this.txtFailures);
+            this.Controls.Add(this.lblFailures);
+            this.Controls.Add(this.txtErrors);
+            this.Controls.Add(this.lblErrors);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.txtTime);
             this.Controls.Add(this.lblTime);
             this.Controls.Add(this.txtTests);
@@ -120,5 +195,12 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private System.Windows.Forms.TextBox txtTests;
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.TextBox txtTime;
+        private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Label lblErrors;
+        private System.Windows.Forms.TextBox txtErrors;
+        private System.Windows.Forms.Label lblFailures;
+        private System.Windows.Forms.TextBox txtFailures;
+        private System.Windows.Forms.Label lblDisabled;
+        private System.Windows.Forms.TextBox txtDisabled;
     }
 }

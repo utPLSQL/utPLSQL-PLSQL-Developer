@@ -75,7 +75,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestRunner\JUnitTestSuites.cs" />
+    <Compile Include="TestRunner\JUnit4.cs" />
+    <Compile Include="TestRunner\TestRunner.cs" />
     <Compile Include="View\TestResultWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,7 +85,7 @@
     </Compile>
     <Compile Include="PlsqlDeveloperUtPlsqlPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestRunner\TestRunner.cs" />
+    <Compile Include="TestRunner\JUnitTestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="View\TestResultWindow.resx">

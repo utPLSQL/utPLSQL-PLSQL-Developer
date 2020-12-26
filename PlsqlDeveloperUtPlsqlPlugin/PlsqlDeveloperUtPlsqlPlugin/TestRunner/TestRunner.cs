@@ -1,15 +1,11 @@
-﻿using System.IO;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
-    class TestRunner
+    internal abstract class TestRunner
     {
-        bool running;
+        internal bool running;
 
         internal void Run(string type, string owner, string name, string subType)
         {
@@ -38,31 +34,9 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
                 if (testsToRun != null)
                 {
-                    ExecuteSql($"select * from table(ut.run('{name}', ut_junit_reporter()))");
+                    ExecuteSql($"select * from table(ut.run('{testsToRun}', ut_junit_reporter()))");
                 }
             }
-        }
-
-        internal JUnitTestSuites GetJUnitResult()
-        {
-            var sb = new StringBuilder();
-            while (!PlsqlDeveloperUtPlsqlPlugin.sqlEof())
-            {
-                var value = PlsqlDeveloperUtPlsqlPlugin.sqlField(0);
-
-                var converteredValue = Marshal.PtrToStringAnsi(value);
-                sb.Append(converteredValue).Append("\r\n");
-
-                PlsqlDeveloperUtPlsqlPlugin.sqlNext();
-            }
-            var result = sb.ToString();
-
-            var serializer = new XmlSerializer(typeof(JUnitTestSuites));
-            var testSuites = (JUnitTestSuites)serializer.Deserialize(new StringReader(result));
-
-            running = false;
-
-            return testSuites;
         }
 
         private void ExecuteSql(string sql)
@@ -74,11 +48,5 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                 MessageBox.Show(Marshal.PtrToStringAnsi(message));
             }
         }
-
-    }
-
-    [System.Serializable]
-    internal class TestsAlreadyRunningException : System.Exception
-    {
     }
 }

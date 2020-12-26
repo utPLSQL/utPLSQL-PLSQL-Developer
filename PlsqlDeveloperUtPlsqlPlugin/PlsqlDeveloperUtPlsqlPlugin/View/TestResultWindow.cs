@@ -1,11 +1,12 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
     public partial class TestResultWindow : Form
     {
-        private TestRunner testRunner = new TestRunner();
+        private readonly JUnitTestRunner testRunner = new JUnitTestRunner();
 
         public TestResultWindow()
         {
@@ -14,18 +15,23 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
         internal void RunTests(string type, string owner, string name, string subType)
         {
+            lblStatus.Text = "Running...";
+
             testRunner.Run(type, owner, name, subType);
             ShowResult();
         }
         private void ShowResult()
         {
             txtTests.Text = "";
+            txtFailures.Text = "";
+            txtErrors.Text = "";
+            txtDisabled.Text = "";
             txtTime.Text = "";
             treeResult.Nodes.Clear();
 
-            var testSuites = testRunner.GetJUnitResult();
+            var testsuites = testRunner.GetJUnitResult();
 
-            if (testSuites != null)
+            if (testsuites != null)
             {
                 if (WindowState == FormWindowState.Minimized)
                 {
@@ -33,35 +39,71 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                 }
                 Show();
 
-                txtTests.Text = "" + testSuites.Tests;
-                txtTime.Text = testSuites.Time;
+                txtTests.Text = testsuites.tests;
+                txtFailures.Text = testsuites.failures;
+                txtErrors.Text = testsuites.errors;
+                txtDisabled.Text = testsuites.disabled;
+                txtTime.Text = testsuites.time;
 
-                var root = new TreeNode($"{testSuites.TestSuite.Name} ({testSuites.TestSuite.Tests})");
-                foreach (TestSuite testSuite in testSuites.TestSuite.TestSuites)
+                try
                 {
-                    TreeNode tnTestSuite = new TreeNode($"{testSuite.Name} ({testSuite.Tests})");
-                    root.Nodes.Add(tnTestSuite);
+                    testsuite alltests = testsuites.testsuite[0];
 
-                    foreach (var testCase in testSuite.TestCases)
+                    var tnAlltests = new TreeNode($"{alltests.name} ({alltests.tests})");
+                    foreach (testsuite testsuite in alltests.testsuite1)
                     {
-                        var tnTestCase = new TreeNode($"{testCase.Name}");
-                        tnTestSuite.Nodes.Add(tnTestCase);
+                        TreeNode tnTestsuite = new TreeNode($"{testsuite.name} ({testsuite.tests})");
+                        tnAlltests.Nodes.Add(tnTestsuite);
 
-                        if (testCase.Error != null)
+                        if (testsuite.testcase != null)
                         {
-                            tnTestCase.ForeColor = Color.DarkRed;
-                            var tnError = new TreeNode(testCase.Error);
-                            tnTestCase.Nodes.Add(tnError);
-                        }
-                        else
-                        {
-                            tnTestCase.ForeColor = testCase.Status == null ? Color.DarkGreen : Color.DarkRed;
+                            foreach (var testcase in testsuite.testcase)
+                            {
+                                var tnTestcase = new TreeNode(testcase.name);
+                                tnTestsuite.Nodes.Add(tnTestcase);
+
+                                if (testcase.error != null)
+                                {
+                                    tnTestcase.ForeColor = Color.DarkRed;
+                                    foreach (var error in testcase.error)
+                                    {
+                                        if (error.Text.Length > 0)
+                                        {
+                                            var tnError = new TreeNode(error.Text[0]);
+                                            tnTestcase.Nodes.Add(tnError);
+                                        }
+                                    }
+                                }
+                                else if (testcase.failure != null)
+                                {
+                                    tnTestcase.ForeColor = Color.DarkRed;
+                                    foreach (var failure in testcase.failure)
+                                    {
+                                        if (failure.Text.Length > 0)
+                                        {
+                                            var tnFailure = new TreeNode(failure.Text[0]);
+                                            tnTestcase.Nodes.Add(tnFailure);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    tnTestcase.ForeColor = testcase.status == null ? Color.DarkGreen : Color.DarkRed;
+                                }
+                            }
                         }
                     }
-                }
 
-                treeResult.Nodes.Add(root);
-                treeResult.ExpandAll();
+                    treeResult.Nodes.Add(tnAlltests);
+                    treeResult.ExpandAll();
+
+                    lblStatus.Text = "Finished";
+                }
+                catch (Exception e)
+                {
+                    lblStatus.Text = "Error";
+                    MessageBox.Show("End " + e.Message);
+                }
             }
         }
 
