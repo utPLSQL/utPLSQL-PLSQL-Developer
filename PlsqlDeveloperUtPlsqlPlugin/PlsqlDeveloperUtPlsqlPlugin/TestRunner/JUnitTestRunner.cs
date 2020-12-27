@@ -1,37 +1,83 @@
-﻿using System.IO;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
     class JUnitTestRunner : TestRunner
     {
+        private OracleDataReader dataReader;
+
+        protected override void RunTests(string type, string owner, string name, string subType)
+        {
+            string testsToRun = null;
+
+            if (type.Equals("USER"))
+            {
+                testsToRun = name;
+            }
+            else if (type.Equals("PACKAGE"))
+            {
+                testsToRun = $"{owner}.{name}";
+            }
+            else if (type.Equals("_ALL"))
+            {
+                testsToRun = owner;
+            }
+
+            if (testsToRun != null)
+            {
+                try
+                {
+                    OracleCommand cmd = new OracleCommand($"select * from table(ut.run('{testsToRun}', ut_junit_reporter()))", PlsqlDeveloperUtPlsqlPlugin.produceConnection);
+                    dataReader = cmd.ExecuteReader();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Execute: " + e.Message);
+                }
+            }
+        }
+
         internal testsuites GetJUnitResult()
         {
             var sb = new StringBuilder();
-            while (!PlsqlDeveloperUtPlsqlPlugin.sqlEof())
+            try
             {
-                var value = PlsqlDeveloperUtPlsqlPlugin.sqlField(0);
+                while (dataReader.Read())
+                {
+                    var value = dataReader.GetString(0);
 
-                var converteredValue = Marshal.PtrToStringAnsi(value);
-                sb.Append(converteredValue).Append("\r\n");
+                    sb.Append(value).Append("\r\n");
+                }
 
-                PlsqlDeveloperUtPlsqlPlugin.sqlNext();
+                dataReader.Close();
             }
-            var result = sb.ToString();
+            catch (Exception e)
+            {
+                MessageBox.Show("READ: " + e.Message);
+            }
 
-            var serializer = new XmlSerializer(typeof(testsuites));
-            var testsuites = (testsuites)serializer.Deserialize(new StringReader(result));
+            try
+            {
+                var result = sb.ToString();
 
-            running = false;
+                var serializer = new XmlSerializer(typeof(testsuites));
+                var testsuites = (testsuites)serializer.Deserialize(new StringReader(result));
 
-            return testsuites;
+                return testsuites;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("SERIALIZE: " + e.Message);
+            }
+
+            return null;
         }
     }
 
-    [System.Serializable]
-    internal class TestsAlreadyRunningException : System.Exception
-    {
-    }
 }

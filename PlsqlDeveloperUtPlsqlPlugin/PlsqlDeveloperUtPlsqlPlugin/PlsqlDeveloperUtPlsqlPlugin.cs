@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
+using Oracle.ManagedDataAccess.Client;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
@@ -12,17 +13,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
     internal delegate bool IdeConnected();
     //*FUNC: 12*/ void (*IDE_GetConnectionInfo)(char **Username, char **Password, char **Database);
     internal delegate void IdeGetConnectionInfo(out IntPtr username, out IntPtr password, out IntPtr database);
-
-    //*FUNC: 40*/ int (*SQL_Execute)(char *SQL);
-    internal delegate int SqlExecute(string sql);
-    //*FUNC: 42*/ BOOL (*SQL_Eof)();
-    internal delegate bool SqlEof();
-    //*FUNC: 43*/ int (*SQL_Next)();
-    internal delegate int SqlNext();
-    //*FUNC: 44*/ char *(*SQL_Field)(int Field);
-    internal delegate IntPtr SqlField(int field);
-    //*FUNC: 48*/ char *(*SQL_ErrorMessage)();
-    internal delegate IntPtr SqlErrorMessage();
 
     //*FUNC: 69*/ void *(*IDE_CreatePopupItem)(int ID, int Index, char *Name, char *ObjectType);
     internal delegate void IdeCreatePopupItem(int id, int index, string name, string objectType);
@@ -45,23 +35,23 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         internal static IdeConnected connected;
         internal static IdeGetConnectionInfo getConnectionInfo;
 
-        internal static SqlExecute sqlExecute;
-        internal static SqlEof sqlEof;
-        internal static SqlNext sqlNext;
-        internal static SqlField sqlField;
-        internal static SqlErrorMessage sqlErrorMessage;
-
         internal static IdeCreatePopupItem createPopupItem;
         internal static IdeGetPopupObject getPopupObject;
         internal static IdeCreateToolButton createToolButton;
 
         internal static int pluginId;
+        internal static string username;
+        internal static string password;
+        internal static string database;
 
-        private static TestResultWindow testResultWindow ;
+        private static RealTimeTestResultWindow testResultWindow;
+
+        internal static OracleConnection produceConnection;
+        internal static OracleConnection consumeConnection;
 
         private PlsqlDeveloperUtPlsqlPlugin()
         {
-            testResultWindow = new TestResultWindow();
+            testResultWindow = new RealTimeTestResultWindow();
         }
 
         #region DLL exported API
@@ -76,42 +66,60 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             return PLUGIN_NAME;
         }
 
+        [DllExport("OnActivate", CallingConvention = CallingConvention.Cdecl)]
+        public static void OnActivate()
+        {
+            try
+            {
+                PlsqlDeveloperUtPlsqlPlugin.ConnectToDatabase();
+
+                // Two seperate streams are needed!
+                var assembly = Assembly.GetExecutingAssembly();
+                using (Stream stream = assembly.GetManifestResourceStream("PlsqlDeveloperUtPlsqlPlugin.utPLSQL.bmp"))
+                {
+                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_MENU_INDEX_ALLTESTS, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                }
+                using (Stream stream = assembly.GetManifestResourceStream("PlsqlDeveloperUtPlsqlPlugin.utPLSQL.bmp"))
+                {
+                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_POPUP_INDEX, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "USER");
+            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "PACKAGE");
+
+        }
+
         [DllExport("RegisterCallback", CallingConvention = CallingConvention.Cdecl)]
         public static void RegisterCallback(int index, IntPtr function)
         {
             switch (index)
             {
                 case 11:
-                    connected = (IdeConnected)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeConnected));
+                    PlsqlDeveloperUtPlsqlPlugin.connected = (IdeConnected)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeConnected));
                     break;
                 case 12:
-                    getConnectionInfo = (IdeGetConnectionInfo)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetConnectionInfo));
-                    break;
-                case 40:
-                    sqlExecute = (SqlExecute)Marshal.GetDelegateForFunctionPointer(function, typeof(SqlExecute));
-                    break;
-                case 42:
-                    sqlEof = (SqlEof)Marshal.GetDelegateForFunctionPointer(function, typeof(SqlEof));
-                    break;
-                case 43:
-                    sqlNext = (SqlNext)Marshal.GetDelegateForFunctionPointer(function, typeof(SqlNext));
-                    break;
-                case 44:
-                    sqlField = (SqlField)Marshal.GetDelegateForFunctionPointer(function, typeof(SqlField));
-                    break;
-                case 48:
-                    sqlErrorMessage = (SqlErrorMessage)Marshal.GetDelegateForFunctionPointer(function, typeof(SqlErrorMessage));
+                    PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo = (IdeGetConnectionInfo)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetConnectionInfo));
                     break;
                 case 69:
-                    createPopupItem = (IdeCreatePopupItem)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreatePopupItem));
+                    PlsqlDeveloperUtPlsqlPlugin.createPopupItem = (IdeCreatePopupItem)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreatePopupItem));
                     break;
                 case 74:
-                    getPopupObject = (IdeGetPopupObject)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetPopupObject));
+                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject = (IdeGetPopupObject)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetPopupObject));
                     break;
                 case 150:
-                    createToolButton = (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateToolButton));
+                    PlsqlDeveloperUtPlsqlPlugin.createToolButton = (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateToolButton));
                     break;
             }
+        }
+
+        [DllExport("OnConnectionChange", CallingConvention = CallingConvention.Cdecl)]
+        public static void OnConnectionChange()
+        {
+            PlsqlDeveloperUtPlsqlPlugin.ConnectToDatabase();
         }
 
         [DllExport("CreateMenuItem", CallingConvention = CallingConvention.Cdecl)]
@@ -130,30 +138,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             }
         }
 
-        [DllExport("OnActivate", CallingConvention = CallingConvention.Cdecl)]
-        public static void OnActivate()
-        {
-            try
-            {
-                // Two seperate streams are needed!
-                var assembly = Assembly.GetExecutingAssembly();
-                using (Stream stream = assembly.GetManifestResourceStream("PlsqlDeveloperUtPlsqlPlugin.utPLSQL.bmp"))
-                {
-                    createToolButton(pluginId, PLUGIN_MENU_INDEX_ALLTESTS, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
-                }
-                using (Stream stream = assembly.GetManifestResourceStream("PlsqlDeveloperUtPlsqlPlugin.utPLSQL.bmp"))
-                {
-                    createToolButton(pluginId, PLUGIN_POPUP_INDEX, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "USER");
-            createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "PACKAGE");
-        }
-
         [DllExport("OnMenuClick", CallingConvention = CallingConvention.Cdecl)]
         public static void OnMenuClick(int index)
         {
@@ -161,12 +145,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             {
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
-                    IntPtr username;
-                    IntPtr password;
-                    IntPtr database;
-                    getConnectionInfo(out username, out password, out database);
-
-                    testResultWindow.RunTests("_ALL", Marshal.PtrToStringAnsi(username), null, null);
+                    testResultWindow.RunTests("_ALL", username, null, null);
                 }
             }
             else if (index == PLUGIN_POPUP_INDEX)
@@ -177,7 +156,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                     IntPtr owner;
                     IntPtr name;
                     IntPtr subType;
-                    getPopupObject(out type, out owner, out name, out subType);
+                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
 
                     testResultWindow.RunTests(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType));
                 }
@@ -191,5 +170,61 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             return "";
         }
         #endregion
+
+        private static void ConnectToDatabase()
+        {
+            try
+            {
+                PlsqlDeveloperUtPlsqlPlugin.DisconnectFromDatabase();
+
+                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                {
+                    IntPtr ptrUsername;
+                    IntPtr ptrPassword;
+                    IntPtr ptrDatabase;
+                    PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo(out ptrUsername, out ptrPassword, out ptrDatabase);
+
+                    username = Marshal.PtrToStringAnsi(ptrUsername);
+                    password = Marshal.PtrToStringAnsi(ptrPassword);
+                    database = Marshal.PtrToStringAnsi(ptrDatabase);
+
+                    string connectionString = $"User Id={username};Password={password};Data Source={database}";
+                    produceConnection = new OracleConnection(connectionString);
+                    produceConnection.Open();
+                    consumeConnection = new OracleConnection(connectionString);
+                    consumeConnection.Open();
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private static void DisconnectFromDatabase()
+        {
+            if (produceConnection != null)
+            {
+                try
+                {
+                    produceConnection.Close();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Produce Connection " + e.Message);
+                }
+            }
+            else if (consumeConnection != null)
+            {
+                try
+                {
+                    consumeConnection.Close();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Consume Connectin " + e.Message);
+                }
+            }
+        }
     }
 }

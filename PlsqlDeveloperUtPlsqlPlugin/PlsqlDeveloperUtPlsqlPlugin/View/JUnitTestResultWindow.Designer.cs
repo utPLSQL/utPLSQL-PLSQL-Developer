@@ -1,7 +1,7 @@
 ﻿
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
-    partial class TestResultWindow
+    partial class JUnitTestResultWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestResultWindow));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JUnitTestResultWindow));
             this.btnClose = new System.Windows.Forms.Button();
             this.treeResult = new System.Windows.Forms.TreeView();
             this.lblTests = new System.Windows.Forms.Label();

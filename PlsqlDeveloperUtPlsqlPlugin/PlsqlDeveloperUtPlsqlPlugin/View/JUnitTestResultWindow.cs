@@ -5,11 +5,11 @@ using System.Windows.Forms;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
-    public partial class TestResultWindow : Form
+    public partial class JUnitTestResultWindow : Form
     {
         private readonly JUnitTestRunner testRunner = new JUnitTestRunner();
 
-        public TestResultWindow()
+        public JUnitTestResultWindow()
         {
             InitializeComponent();
         }
