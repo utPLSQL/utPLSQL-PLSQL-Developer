@@ -133,7 +133,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                         else if (counter.failure > 0)
                         {
                             testResult.Result = "Failure";
-                            testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.DarkOrange, IconSize);
+                            testResult.Icon = IconChar.TimesCircle.ToBitmap(IconFont.Solid, IconSize, Color.Orange);
                         }
                         else if (counter.error > 0)
                         {
@@ -143,7 +143,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                         else if (counter.warning > 0)
                         {
                             testResult.Result = "Warning";
-                            testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.Orange, IconSize);
+                            testResult.Icon = IconChar.ExclamationTriangle.ToBitmap(Color.Orange, IconSize);
                         }
 
                         if (@event.test.errorStack != null)

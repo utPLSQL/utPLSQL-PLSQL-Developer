@@ -214,10 +214,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // iconPictureBox1
             // 
             this.iconPictureBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.iconPictureBox1.ForeColor = System.Drawing.Color.OrangeRed;
-            this.iconPictureBox1.IconChar = FontAwesome.Sharp.IconChar.ExclamationCircle;
-            this.iconPictureBox1.IconColor = System.Drawing.Color.OrangeRed;
-            this.iconPictureBox1.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.iconPictureBox1.ForeColor = System.Drawing.Color.Orange;
+            this.iconPictureBox1.IconChar = FontAwesome.Sharp.IconChar.TimesCircle;
+            this.iconPictureBox1.IconColor = System.Drawing.Color.Orange;
+            this.iconPictureBox1.IconFont = FontAwesome.Sharp.IconFont.Solid;
             this.iconPictureBox1.IconSize = 20;
             this.iconPictureBox1.Location = new System.Drawing.Point(284, 8);
             this.iconPictureBox1.Name = "iconPictureBox1";
@@ -243,7 +243,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             this.iconPictureBox3.BackColor = System.Drawing.SystemColors.Control;
             this.iconPictureBox3.ForeColor = System.Drawing.Color.Orange;
-            this.iconPictureBox3.IconChar = FontAwesome.Sharp.IconChar.ExclamationCircle;
+            this.iconPictureBox3.IconChar = FontAwesome.Sharp.IconChar.ExclamationTriangle;
             this.iconPictureBox3.IconColor = System.Drawing.Color.Orange;
             this.iconPictureBox3.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.iconPictureBox3.IconSize = 20;
@@ -293,6 +293,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.Controls.Add(this.lblTests);
             this.Controls.Add(this.btnClose);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.Name = "RealTimeTestResultWindow";
             this.Text = "utPLSQL TestRunner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestResultWindow_FormClosing);
