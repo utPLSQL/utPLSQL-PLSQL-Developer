@@ -84,12 +84,6 @@
     <Compile Include="RealTimeTestResultWindow.Designer.cs">
       <DependentUpon>RealTimeTestResultWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="JUnitTestResultWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="JUnitTestResultWindow.Designer.cs">
-      <DependentUpon>JUnitTestResultWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="PlsqlDeveloperUtPlsqlPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestResult.cs" />
@@ -97,9 +91,6 @@
   <ItemGroup>
     <EmbeddedResource Include="RealTimeTestResultWindow.resx">
       <DependentUpon>RealTimeTestResultWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="JUnitTestResultWindow.resx">
-      <DependentUpon>JUnitTestResultWindow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

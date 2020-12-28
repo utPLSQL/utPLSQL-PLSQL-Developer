@@ -43,8 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JUnit4.cs" />
-    <Compile Include="JUnitTestRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="realtime-report.cs" />
     <Compile Include="RealTimeTestRunner.cs" />
