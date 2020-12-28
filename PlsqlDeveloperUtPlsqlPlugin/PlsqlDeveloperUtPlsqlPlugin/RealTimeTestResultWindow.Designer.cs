@@ -35,7 +35,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtTests = new System.Windows.Forms.TextBox();
             this.lblTime = new System.Windows.Forms.Label();
             this.txtTime = new System.Windows.Forms.TextBox();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.lblErrors = new System.Windows.Forms.Label();
             this.txtErrors = new System.Windows.Forms.TextBox();
             this.lblFailures = new System.Windows.Forms.Label();
@@ -43,6 +42,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.lblDisabled = new System.Windows.Forms.Label();
             this.txtDisabled = new System.Windows.Forms.TextBox();
             this.gridResults = new System.Windows.Forms.DataGridView();
+            this.txtBar = new System.Windows.Forms.TextBox();
+            this.txtStatus = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,20 +91,12 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtTime.ReadOnly = true;
             this.txtTime.Size = new System.Drawing.Size(100, 20);
             this.txtTime.TabIndex = 9;
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(93, 700);
-            this.lblStatus.MinimumSize = new System.Drawing.Size(500, 0);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(500, 13);
-            this.lblStatus.TabIndex = 11;
+            this.txtTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblErrors
             // 
             this.lblErrors.AutoSize = true;
-            this.lblErrors.Location = new System.Drawing.Point(312, 9);
+            this.lblErrors.Location = new System.Drawing.Point(262, 9);
             this.lblErrors.Name = "lblErrors";
             this.lblErrors.Size = new System.Drawing.Size(34, 13);
             this.lblErrors.TabIndex = 12;
@@ -111,10 +104,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             // txtErrors
             // 
-            this.txtErrors.Location = new System.Drawing.Point(352, 6);
+            this.txtErrors.Location = new System.Drawing.Point(302, 6);
             this.txtErrors.Name = "txtErrors";
             this.txtErrors.ReadOnly = true;
-            this.txtErrors.Size = new System.Drawing.Size(100, 20);
+            this.txtErrors.Size = new System.Drawing.Size(50, 20);
             this.txtErrors.TabIndex = 13;
             // 
             // lblFailures
@@ -131,13 +124,13 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtFailures.Location = new System.Drawing.Point(206, 6);
             this.txtFailures.Name = "txtFailures";
             this.txtFailures.ReadOnly = true;
-            this.txtFailures.Size = new System.Drawing.Size(100, 20);
+            this.txtFailures.Size = new System.Drawing.Size(50, 20);
             this.txtFailures.TabIndex = 15;
             // 
             // lblDisabled
             // 
             this.lblDisabled.AutoSize = true;
-            this.lblDisabled.Location = new System.Drawing.Point(458, 9);
+            this.lblDisabled.Location = new System.Drawing.Point(358, 9);
             this.lblDisabled.Name = "lblDisabled";
             this.lblDisabled.Size = new System.Drawing.Size(48, 13);
             this.lblDisabled.TabIndex = 16;
@@ -145,10 +138,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             // txtDisabled
             // 
-            this.txtDisabled.Location = new System.Drawing.Point(512, 6);
+            this.txtDisabled.Location = new System.Drawing.Point(412, 6);
             this.txtDisabled.Name = "txtDisabled";
             this.txtDisabled.ReadOnly = true;
-            this.txtDisabled.Size = new System.Drawing.Size(100, 20);
+            this.txtDisabled.Size = new System.Drawing.Size(50, 20);
             this.txtDisabled.TabIndex = 17;
             // 
             // gridResults
@@ -161,7 +154,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gridResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.gridResults.ImeMode = System.Windows.Forms.ImeMode.On;
-            this.gridResults.Location = new System.Drawing.Point(15, 32);
+            this.gridResults.Location = new System.Drawing.Point(12, 85);
             this.gridResults.MultiSelect = false;
             this.gridResults.Name = "gridResults";
             this.gridResults.ReadOnly = true;
@@ -169,14 +162,35 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.gridResults.RowHeadersVisible = false;
             this.gridResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridResults.ShowEditingIcon = false;
-            this.gridResults.Size = new System.Drawing.Size(983, 658);
+            this.gridResults.Size = new System.Drawing.Size(986, 605);
             this.gridResults.TabIndex = 18;
+            // 
+            // txtBar
+            // 
+            this.txtBar.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtBar.Location = new System.Drawing.Point(12, 43);
+            this.txtBar.Multiline = true;
+            this.txtBar.Name = "txtBar";
+            this.txtBar.ReadOnly = true;
+            this.txtBar.Size = new System.Drawing.Size(986, 20);
+            this.txtBar.TabIndex = 19;
+            // 
+            // txtStatus
+            // 
+            this.txtStatus.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtStatus.Location = new System.Drawing.Point(706, 9);
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.ReadOnly = true;
+            this.txtStatus.Size = new System.Drawing.Size(150, 13);
+            this.txtStatus.TabIndex = 20;
             // 
             // RealTimeTestResultWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.txtStatus);
+            this.Controls.Add(this.txtBar);
             this.Controls.Add(this.gridResults);
             this.Controls.Add(this.txtDisabled);
             this.Controls.Add(this.lblDisabled);
@@ -184,7 +198,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.Controls.Add(this.lblFailures);
             this.Controls.Add(this.txtErrors);
             this.Controls.Add(this.lblErrors);
-            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.txtTime);
             this.Controls.Add(this.lblTime);
             this.Controls.Add(this.txtTests);
@@ -206,7 +219,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private System.Windows.Forms.TextBox txtTests;
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.TextBox txtTime;
-        private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label lblErrors;
         private System.Windows.Forms.TextBox txtErrors;
         private System.Windows.Forms.Label lblFailures;
@@ -214,5 +226,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private System.Windows.Forms.Label lblDisabled;
         private System.Windows.Forms.TextBox txtDisabled;
         private System.Windows.Forms.DataGridView gridResults;
+        private System.Windows.Forms.TextBox txtBar;
+        private System.Windows.Forms.TextBox txtStatus;
     }
 }

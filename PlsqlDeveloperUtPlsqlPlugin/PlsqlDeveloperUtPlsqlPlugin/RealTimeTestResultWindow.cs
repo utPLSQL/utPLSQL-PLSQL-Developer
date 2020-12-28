@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using utPLSQL;
@@ -9,6 +10,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
     {
         private readonly RealTimeTestRunner testRunner;
         private BindingList<TestResult> testResults = new BindingList<TestResult>();
+        private int totalNumberOfTests;
 
         public RealTimeTestResultWindow(RealTimeTestRunner testRunner)
         {
@@ -20,20 +22,21 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             gridResults.DataSource = bindingSource;
 
             gridResults.Columns[0].MinimumWidth = 50;
-            gridResults.Columns[1].MinimumWidth = 422;
+            gridResults.Columns[1].MinimumWidth = 424;
             gridResults.Columns[2].MinimumWidth = 50;
             gridResults.Columns[3].MinimumWidth = 440;
         }
 
         internal void RunTests(string type, string owner, string name, string subType)
         {
-            lblStatus.Text = "";
-
             txtTests.Text = "";
             txtFailures.Text = "";
             txtErrors.Text = "";
             txtDisabled.Text = "";
+            txtStatus.Text = "";
             txtTime.Text = "";
+
+            txtBar.BackColor = Control.DefaultBackColor;
 
             testResults.Clear();
 
@@ -45,6 +48,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
             new Thread(() =>
             {
+                var completetedTests = 0; 
+
                 testRunner.RunTests(type, owner, name, subType);
                 testRunner.ConsumeResult(@event =>
                 {
@@ -52,23 +57,36 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                     {
                         if (@event.type.Equals("pre-run"))
                         {
-                            lblStatus.Text = "Running...";
+                            txtStatus.Text = "Running...";
 
+                            totalNumberOfTests = @event.totalNumberOfTests;
                             CreateTestResults(@event);
                         }
                         else if (@event.type.Equals("post-test"))
                         {
                             UpdateTestResult(@event);
+
+                            completetedTests++;
+                            txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
                         }
                         else if (@event.type.Equals("post-run"))
                         {
-                            lblStatus.Text = "Finished";
+                            txtStatus.Text = "Finished";
 
-                            txtTests.Text = "" + (@event.run.counter.disabled + @event.run.counter.success + @event.run.counter.failure + @event.run.counter.error + @event.run.counter.warning);
-                            txtFailures.Text = "" + @event.run.counter.failure;
-                            txtErrors.Text = "" + @event.run.counter.error;
-                            txtDisabled.Text = "" + @event.run.counter.disabled;
-                            txtTime.Text = "" + @event.run.executionTime;
+                            txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
+                            txtFailures.Text = @event.run.counter.failure + "";
+                            txtErrors.Text = @event.run.counter.error + "";
+                            txtDisabled.Text = @event.run.counter.disabled + "";
+                            txtTime.Text = @event.run.executionTime + "";
+
+                            if (@event.run.counter.failure == 0 && @event.run.counter.error == 0)
+                            {
+                                txtBar.BackColor = Color.Green;
+                            }
+                            else
+                            {
+                                txtBar.BackColor = Color.DarkRed;
+                            }
 
                         }
                     });
