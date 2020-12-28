@@ -60,6 +60,7 @@
 				<xs:element ref="procedureName" minOccurs="0"/>
 				<xs:element ref="disabled" minOccurs="0"/>
 				<xs:element ref="name" minOccurs="0"/>
+				<xs:element ref="description" minOccurs="0"/>
 				<xs:element ref="testNumber" minOccurs="0"/>
 				<xs:element ref="totalNumberOfTests" minOccurs="0"/>
 				<xs:element ref="startTime" minOccurs="0"/>

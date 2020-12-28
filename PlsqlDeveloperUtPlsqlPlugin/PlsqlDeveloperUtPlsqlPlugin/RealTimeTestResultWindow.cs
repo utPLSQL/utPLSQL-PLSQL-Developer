@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using FontAwesome.Sharp;
+using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -8,6 +10,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 {
     public partial class RealTimeTestResultWindow : Form
     {
+        private const int IconSize = 24;
+
         private readonly RealTimeTestRunner testRunner;
         private BindingList<TestResult> testResults = new BindingList<TestResult>();
         private int totalNumberOfTests;
@@ -21,10 +25,11 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             bindingSource.DataSource = testResults;
             gridResults.DataSource = bindingSource;
 
-            gridResults.Columns[0].MinimumWidth = 50;
+            gridResults.Columns[0].HeaderText = "";
+            gridResults.Columns[0].MinimumWidth = 30;
             gridResults.Columns[1].MinimumWidth = 424;
             gridResults.Columns[2].MinimumWidth = 50;
-            gridResults.Columns[3].MinimumWidth = 440;
+            gridResults.Columns[3].MinimumWidth = 460;
         }
 
         internal void RunTests(string type, string owner, string name, string subType)
@@ -35,8 +40,12 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             txtDisabled.Text = "";
             txtStatus.Text = "";
             txtTime.Text = "";
+            txtStatus.Text = "Running...";
 
-            txtBar.BackColor = Control.DefaultBackColor;
+            progressBar.ForeColor = Color.Green;
+            progressBar.Minimum = 0;
+            progressBar.Maximum = 100;
+            progressBar.Value = 0;
 
             testResults.Clear();
 
@@ -44,30 +53,40 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             {
                 WindowState = FormWindowState.Normal;
             }
+
             Show();
 
             new Thread(() =>
             {
-                var completetedTests = 0; 
-
                 testRunner.RunTests(type, owner, name, subType);
+
+            }).Start();
+            new Thread(() =>
+            {
+                var completetedTests = 0;
+
                 testRunner.ConsumeResult(@event =>
                 {
                     gridResults.BeginInvoke((MethodInvoker)delegate ()
                     {
                         if (@event.type.Equals("pre-run"))
                         {
-                            txtStatus.Text = "Running...";
-
                             totalNumberOfTests = @event.totalNumberOfTests;
+
+                            progressBar.Minimum = 0;
+                            progressBar.Maximum = totalNumberOfTests;
+
                             CreateTestResults(@event);
+
+                            gridResults.Rows[0].Cells[0].Selected = false;
                         }
                         else if (@event.type.Equals("post-test"))
                         {
-                            UpdateTestResult(@event);
-
                             completetedTests++;
                             txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
+                            progressBar.Value = completetedTests;
+
+                            UpdateTestResult(@event);
                         }
                         else if (@event.type.Equals("post-run"))
                         {
@@ -76,16 +95,13 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                             txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
                             txtFailures.Text = @event.run.counter.failure + "";
                             txtErrors.Text = @event.run.counter.error + "";
+                            txtWarning.Text = @event.run.counter.warning + "";
                             txtDisabled.Text = @event.run.counter.disabled + "";
-                            txtTime.Text = @event.run.executionTime + "";
+                            txtTime.Text = @event.run.executionTime + " s";
 
-                            if (@event.run.counter.failure == 0 && @event.run.counter.error == 0)
+                            if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
                             {
-                                txtBar.BackColor = Color.Green;
-                            }
-                            else
-                            {
-                                txtBar.BackColor = Color.DarkRed;
+                                progressBar.ForeColor = Color.DarkRed;
                             }
 
                         }
@@ -107,22 +123,27 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                         if (counter.disabled > 0)
                         {
                             testResult.Result = "Disabled";
+                            testResult.Icon = IconChar.Ban.ToBitmap(Color.Gray, IconSize);
                         }
                         else if (counter.success > 0)
                         {
                             testResult.Result = "Success";
+                            testResult.Icon = IconChar.Check.ToBitmap(Color.Green, IconSize);
                         }
                         else if (counter.failure > 0)
                         {
                             testResult.Result = "Failure";
+                            testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.DarkOrange, IconSize);
                         }
                         else if (counter.error > 0)
                         {
                             testResult.Result = "Error";
+                            testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.Red, IconSize);
                         }
                         else if (counter.warning > 0)
                         {
                             testResult.Result = "Warning";
+                            testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.Orange, IconSize);
                         }
 
                         if (@event.test.errorStack != null)
@@ -180,7 +201,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                 {
                     Id = test.id,
                     Result = "",
-                    Name = $"{suiteName}.{test.name}"
+                    Name = $"{suiteName}.{test.name}",
+                    Icon = IconChar.None.ToBitmap(Color.Black, IconSize)
                 });
             }
         }
