@@ -42,7 +42,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtFailures = new System.Windows.Forms.TextBox();
             this.lblDisabled = new System.Windows.Forms.Label();
             this.txtDisabled = new System.Windows.Forms.TextBox();
-            this.txtResult = new System.Windows.Forms.TextBox();
+            this.gridResults = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
             this.SuspendLayout();
             // 
             // btnClose
@@ -98,7 +99,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(500, 13);
             this.lblStatus.TabIndex = 11;
-            this.lblStatus.Text = "Running...";
             // 
             // lblErrors
             // 
@@ -151,25 +151,33 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtDisabled.Size = new System.Drawing.Size(100, 20);
             this.txtDisabled.TabIndex = 17;
             // 
-            // txtResult
+            // gridResults
             // 
-            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridResults.AllowUserToAddRows = false;
+            this.gridResults.AllowUserToDeleteRows = false;
+            this.gridResults.AllowUserToResizeRows = false;
+            this.gridResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtResult.Location = new System.Drawing.Point(15, 32);
-            this.txtResult.Multiline = true;
-            this.txtResult.Name = "txtResult";
-            this.txtResult.ReadOnly = true;
-            this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtResult.Size = new System.Drawing.Size(983, 658);
-            this.txtResult.TabIndex = 18;
+            this.gridResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.gridResults.ImeMode = System.Windows.Forms.ImeMode.On;
+            this.gridResults.Location = new System.Drawing.Point(15, 32);
+            this.gridResults.MultiSelect = false;
+            this.gridResults.Name = "gridResults";
+            this.gridResults.ReadOnly = true;
+            this.gridResults.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.gridResults.RowHeadersVisible = false;
+            this.gridResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridResults.ShowEditingIcon = false;
+            this.gridResults.Size = new System.Drawing.Size(983, 658);
+            this.gridResults.TabIndex = 18;
             // 
             // RealTimeTestResultWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
-            this.Controls.Add(this.txtResult);
+            this.Controls.Add(this.gridResults);
             this.Controls.Add(this.txtDisabled);
             this.Controls.Add(this.lblDisabled);
             this.Controls.Add(this.txtFailures);
@@ -186,6 +194,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.Name = "RealTimeTestResultWindow";
             this.Text = "utPLSQL TestRunner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestResultWindow_FormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this.gridResults)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -204,6 +213,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private System.Windows.Forms.TextBox txtFailures;
         private System.Windows.Forms.Label lblDisabled;
         private System.Windows.Forms.TextBox txtDisabled;
-        private System.Windows.Forms.TextBox txtResult;
+        private System.Windows.Forms.DataGridView gridResults;
     }
 }

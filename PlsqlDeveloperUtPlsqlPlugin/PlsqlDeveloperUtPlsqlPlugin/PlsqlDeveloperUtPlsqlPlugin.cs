@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
-using Oracle.ManagedDataAccess.Client;
+using utPLSQL;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
@@ -44,14 +44,13 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         internal static string password;
         internal static string database;
 
+        private static RealTimeTestRunner testRunner;
         private static RealTimeTestResultWindow testResultWindow;
-
-        internal static OracleConnection produceConnection;
-        internal static OracleConnection consumeConnection;
 
         private PlsqlDeveloperUtPlsqlPlugin()
         {
-            testResultWindow = new RealTimeTestResultWindow();
+            testRunner = new RealTimeTestRunner();
+            testResultWindow = new RealTimeTestResultWindow(testRunner);
         }
 
         #region DLL exported API
@@ -175,7 +174,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         {
             try
             {
-                PlsqlDeveloperUtPlsqlPlugin.DisconnectFromDatabase();
+                testRunner.Close();
 
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
@@ -188,11 +187,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                     password = Marshal.PtrToStringAnsi(ptrPassword);
                     database = Marshal.PtrToStringAnsi(ptrDatabase);
 
-                    string connectionString = $"User Id={username};Password={password};Data Source={database}";
-                    produceConnection = new OracleConnection(connectionString);
-                    produceConnection.Open();
-                    consumeConnection = new OracleConnection(connectionString);
-                    consumeConnection.Open();
+                    testRunner.Connect(username, password, database);
                 }
             }
             catch (Exception e)
@@ -201,30 +196,5 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             }
         }
 
-        private static void DisconnectFromDatabase()
-        {
-            if (produceConnection != null)
-            {
-                try
-                {
-                    produceConnection.Close();
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Produce Connection " + e.Message);
-                }
-            }
-            else if (consumeConnection != null)
-            {
-                try
-                {
-                    consumeConnection.Close();
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Consume Connectin " + e.Message);
-                }
-            }
-        }
     }
 }

@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlsqlDeveloperUtPlsqlPlugin", "PlsqlDeveloperUtPlsqlPlugin\PlsqlDeveloperUtPlsqlPlugin.csproj", "{0241FA41-E396-491A-B4EC-772B694EC689}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Lib.Test", "utPLSQL.Lib.Test\utPLSQL.Lib.Test.csproj", "{8E898B26-0A4C-4DDA-9820-D5D050D2336E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Lib", "utPLSQL.Lib\utPLSQL.Lib.csproj", "{DF09EACE-50EC-44EA-849A-80462A219CFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,22 @@ Global
 		{0241FA41-E396-491A-B4EC-772B694EC689}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0241FA41-E396-491A-B4EC-772B694EC689}.Release|x64.ActiveCfg = Release|x64
 		{0241FA41-E396-491A-B4EC-772B694EC689}.Release|x64.Build.0 = Release|x64
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Debug|x64.Build.0 = Debug|Any CPU
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Release|x64.ActiveCfg = Release|Any CPU
+		{8E898B26-0A4C-4DDA-9820-D5D050D2336E}.Release|x64.Build.0 = Release|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Debug|x64.Build.0 = Debug|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Release|x64.ActiveCfg = Release|Any CPU
+		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

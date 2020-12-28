@@ -64,9 +64,6 @@
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.19.10.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-    </Reference>
     <Reference Include="RGiesecke.DllExport.Metadata, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f52d83c1a22df51, processorArchitecture=MSIL">
       <HintPath>..\packages\UnmanagedExports.1.2.7\lib\net\RGiesecke.DllExport.Metadata.dll</HintPath>
       <Private>False</Private>
@@ -81,30 +78,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestRunner\JUnit4.cs" />
-    <Compile Include="TestRunner\RealTimeTestRunner.cs" />
-    <Compile Include="TestRunner\TestRunner.cs" />
-    <Compile Include="View\RealTimeTestResultWindow.cs">
+    <Compile Include="RealTimeTestResultWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\RealTimeTestResultWindow.Designer.cs">
+    <Compile Include="RealTimeTestResultWindow.Designer.cs">
       <DependentUpon>RealTimeTestResultWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\JUnitTestResultWindow.cs">
+    <Compile Include="JUnitTestResultWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\JUnitTestResultWindow.Designer.cs">
+    <Compile Include="JUnitTestResultWindow.Designer.cs">
       <DependentUpon>JUnitTestResultWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="PlsqlDeveloperUtPlsqlPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestRunner\JUnitTestRunner.cs" />
+    <Compile Include="TestResult.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="View\RealTimeTestResultWindow.resx">
+    <EmbeddedResource Include="RealTimeTestResultWindow.resx">
       <DependentUpon>RealTimeTestResultWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\JUnitTestResultWindow.resx">
+    <EmbeddedResource Include="JUnitTestResultWindow.resx">
       <DependentUpon>JUnitTestResultWindow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -121,6 +115,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\utPLSQL.Lib\utPLSQL.Lib.csproj">
+      <Project>{df09eace-50ec-44ea-849a-80462a219cfc}</Project>
+      <Name>utPLSQL.Lib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\UnmanagedExports.Repack.1.0.4\build\UnmanagedExports.Repack.targets" Condition="Exists('..\packages\UnmanagedExports.Repack.1.0.4\build\UnmanagedExports.Repack.targets')" />

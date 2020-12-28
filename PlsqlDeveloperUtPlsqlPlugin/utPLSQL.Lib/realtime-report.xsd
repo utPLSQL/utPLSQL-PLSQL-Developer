@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2020 rel. 2 (x64) (http://www.altova.com) by Simon Martinelli (72 Services LLC) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="description" type="xs:string"/>
+	<xs:element name="disabled" type="xs:boolean"/>
+	<xs:element name="event">
+		<xs:complexType>
+			<xs:sequence minOccurs="0">
+				<xs:element ref="items" minOccurs="0"/>
+				<xs:element ref="totalNumberOfTests" minOccurs="0"/>
+				<xs:element ref="suite" minOccurs="0"/>
+				<xs:element ref="test" minOccurs="0"/>
+				<xs:element name="run" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="startTime"/>
+							<xs:element ref="endTime"/>
+							<xs:element ref="executionTime"/>
+							<xs:element ref="counter"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="type" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="executableType" type="xs:string"/>
+	<xs:element name="items">
+		<xs:complexType>
+			<xs:sequence minOccurs="0">
+				<xs:element ref="suite" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="test" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="name" type="xs:string"/>
+	<xs:element name="objectName" type="xs:string"/>
+	<xs:element name="ownerName" type="xs:string"/>
+	<xs:element name="procedureName" type="xs:string"/>
+	<xs:element name="suite">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="name" minOccurs="0"/>
+				<xs:element ref="description" minOccurs="0"/>
+				<xs:element ref="items" minOccurs="0"/>
+				<xs:element ref="startTime" minOccurs="0"/>
+				<xs:element ref="endTime" minOccurs="0"/>
+				<xs:element ref="executionTime" minOccurs="0"/>
+				<xs:element ref="counter" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="test">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="executableType" minOccurs="0"/>
+				<xs:element ref="ownerName" minOccurs="0"/>
+				<xs:element ref="objectName" minOccurs="0"/>
+				<xs:element ref="procedureName" minOccurs="0"/>
+				<xs:element ref="disabled" minOccurs="0"/>
+				<xs:element ref="name" minOccurs="0"/>
+				<xs:element ref="testNumber" minOccurs="0"/>
+				<xs:element ref="totalNumberOfTests" minOccurs="0"/>
+				<xs:element ref="startTime" minOccurs="0"/>
+				<xs:element ref="endTime" minOccurs="0"/>
+				<xs:element ref="executionTime" minOccurs="0"/>
+				<xs:element ref="counter" minOccurs="0"/>
+				<xs:element name="errorStack" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="testNumber" type="xs:int"/>
+	<xs:element name="totalNumberOfTests" type="xs:int"/>
+	<xs:element name="startTime" type="xs:dateTime"/>
+	<xs:element name="endTime" type="xs:dateTime"/>
+	<xs:element name="executionTime" type="xs:decimal"/>
+	<xs:element name="counter">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="disabled" type="xs:int"/>
+				<xs:element name="success" type="xs:int"/>
+				<xs:element name="failure" type="xs:int"/>
+				<xs:element name="error" type="xs:int"/>
+				<xs:element name="warning" type="xs:int"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

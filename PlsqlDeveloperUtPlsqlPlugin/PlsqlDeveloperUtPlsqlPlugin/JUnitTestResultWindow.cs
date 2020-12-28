@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using utPLSQL;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
@@ -33,7 +34,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
             new Thread(() =>
             {
-                testRunner.Run(type, owner, name, subType);
+                testRunner.RunTests(type, owner, name, subType);
                 var testsuites = testRunner.GetJUnitResult();
 
                 if (testsuites != null)
