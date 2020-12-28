@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace utPLSQL
 {
@@ -13,28 +15,14 @@ namespace utPLSQL
 
             testRunner.RunTests(type: "USER", owner: null, name: "toscamtest", subType: null);
 
+            List<@event> events = new List<@event>();
             testRunner.ConsumeResult(@event =>
             {
-                System.Diagnostics.Trace.WriteLine(@event.type);
+                events.Add(@event);
             });
 
-            Assert.AreEqual("1", "1");
-        }
-
-        [TestMethod]
-        public void TestToscatest()
-        {
-            RealTimeTestRunner testRunner = new RealTimeTestRunner();
-            testRunner.Connect(username: "toscatest", password: "toscatest", database: "CA40");
-
-            testRunner.RunTests(type: "USER", owner: null, name: "toscatest", subType: null);
-
-            testRunner.ConsumeResult(@event =>
-            {
-                System.Diagnostics.Trace.WriteLine(@event.type);
-            });
-
-            Assert.AreEqual("1", "1");
+            Assert.AreEqual("pre-run", events[0].type);
+            Assert.AreEqual("post-run", events.Last().type);
         }
     }
 }
