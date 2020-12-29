@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Reflection;
 using System.IO;
 using utPLSQL;
+using System.Collections.Generic;
 
 namespace PlsqlDeveloperUtPlsqlPlugin
 {
@@ -43,6 +44,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         internal static string database;
 
         private static RealTimeTestRunner testRunner;
+
+        private static readonly List<RealTimeTestResultWindow> windows = new List<RealTimeTestResultWindow>();
 
         private PlsqlDeveloperUtPlsqlPlugin()
         {
@@ -86,6 +89,27 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "USER");
             PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "PACKAGE");
 
+        }
+
+        [DllExport("CanClose", CallingConvention = CallingConvention.Cdecl)]
+        public static bool CanClose()
+        {
+            foreach (RealTimeTestResultWindow window in windows)
+            {
+                if (window.Running)
+                {
+                    var confirmResult = MessageBox.Show("utPLSQL Tests are still running.\r\n\r\nDo you really want to close PL/SQL Developer?", "Running utPLSQL Tests", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (confirmResult == DialogResult.Yes)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         [DllExport("RegisterCallback", CallingConvention = CallingConvention.Cdecl)]
@@ -141,6 +165,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
                     var testResultWindow = new RealTimeTestResultWindow(testRunner);
+                    windows.Add(testResultWindow);
                     testResultWindow.RunTests("_ALL", username, null, null);
                 }
             }
@@ -155,6 +180,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                     PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
 
                     var testResultWindow = new RealTimeTestResultWindow(testRunner);
+                    windows.Add(testResultWindow);
                     testResultWindow.RunTests(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType));
                 }
             }

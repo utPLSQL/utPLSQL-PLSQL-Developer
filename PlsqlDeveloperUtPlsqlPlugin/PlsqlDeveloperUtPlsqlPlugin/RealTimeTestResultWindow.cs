@@ -10,12 +10,13 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 {
     public partial class RealTimeTestResultWindow : Form
     {
+        internal bool Running { get; set; }
+
         private const int IconSize = 24;
 
         private readonly RealTimeTestRunner testRunner;
         private BindingList<TestResult> testResults = new BindingList<TestResult>();
         private int totalNumberOfTests;
-        private bool running;
 
         public RealTimeTestResultWindow(RealTimeTestRunner testRunner)
         {
@@ -36,7 +37,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
         internal void RunTests(string type, string owner, string name, string subType)
         {
-            running = true;
+            Running = true;
 
             ResetComponents();
 
@@ -100,7 +101,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
                             gridResults.Rows[0].Selected = true;
 
-                            running = false;
+                            Running = false;
                         }
                     });
                 });
@@ -281,9 +282,9 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
-                if (running)
+                if (Running)
                 {
-                    var confirmResult = MessageBox.Show("Tests are still running.\r\nDo you really want to close the Dialog?", "Running Tests", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    var confirmResult = MessageBox.Show("utPLSQL Tests are still running.\r\n\r\nDo you really want to close?", "Running utPLSQL Tests", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.No)
                     {
                         e.Cancel = true;
