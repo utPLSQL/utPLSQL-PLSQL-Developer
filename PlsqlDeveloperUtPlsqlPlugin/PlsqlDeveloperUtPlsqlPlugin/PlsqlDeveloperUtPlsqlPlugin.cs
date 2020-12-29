@@ -28,8 +28,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private const int PLUGIN_MENU_INDEX_ALLTESTS = 3;
         private const int PLUGIN_POPUP_INDEX = 1;
 
-        private const string ABOUT_TEXT = "utPLSQL Plugin for PL/SQL Developer \r\nby Simon Martinelli, 72® Services LLC";
-
         private static PlsqlDeveloperUtPlsqlPlugin plugin;
 
         internal static IdeConnected connected;
@@ -165,7 +163,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         [DllExport("About", CallingConvention = CallingConvention.Cdecl)]
         public static string About()
         {
-            MessageBox.Show(ABOUT_TEXT);
+            new AboutDialog().Show();
             return "";
         }
         #endregion
