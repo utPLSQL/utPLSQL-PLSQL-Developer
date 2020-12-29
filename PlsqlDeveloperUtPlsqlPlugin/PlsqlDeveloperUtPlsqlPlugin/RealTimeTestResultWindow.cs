@@ -1,6 +1,5 @@
 ﻿using FontAwesome.Sharp;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
@@ -71,7 +70,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
                             CreateTestResults(@event);
 
-                            gridResults.Rows[0].Cells[0].Selected = false;
+                            gridResults.Rows[0].Selected = false;
                         }
                         else if (@event.type.Equals("post-test"))
                         {
@@ -92,13 +91,14 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                             txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
                             txtFailures.Text = @event.run.counter.failure + "";
                             txtErrors.Text = @event.run.counter.error + "";
-                            txtWarning.Text = @event.run.counter.warning + "";
                             txtDisabled.Text = @event.run.counter.disabled + "";
 
                             if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
                             {
                                 progressBar.ForeColor = Color.DarkRed;
                             }
+
+                            gridResults.Rows[0].Selected = true;
 
                             running = false;
                         }

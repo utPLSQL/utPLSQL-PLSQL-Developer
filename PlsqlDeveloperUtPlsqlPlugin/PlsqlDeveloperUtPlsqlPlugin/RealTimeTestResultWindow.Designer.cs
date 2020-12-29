@@ -44,12 +44,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.gridResults = new System.Windows.Forms.DataGridView();
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.lblWarning = new System.Windows.Forms.Label();
-            this.txtWarning = new System.Windows.Forms.TextBox();
             this.iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
             this.iconPictureBox2 = new FontAwesome.Sharp.IconPictureBox();
-            this.iconPictureBox3 = new FontAwesome.Sharp.IconPictureBox();
-            this.iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabTest = new System.Windows.Forms.TabPage();
             this.txtTestSuitePath = new System.Windows.Forms.TextBox();
@@ -81,16 +77,16 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtStart = new System.Windows.Forms.TextBox();
             this.lblEnd = new System.Windows.Forms.Label();
             this.txtEnd = new System.Windows.Forms.TextBox();
+            this.iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox4)).BeginInit();
             this.tabs.SuspendLayout();
             this.tabTest.SuspendLayout();
             this.tabFailures.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridTestFailures)).BeginInit();
             this.tabErrors.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox4)).BeginInit();
             this.SuspendLayout();
             // 
             // btnClose
@@ -178,7 +174,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // lblDisabled
             // 
             this.lblDisabled.AutoSize = true;
-            this.lblDisabled.Location = new System.Drawing.Point(732, 50);
+            this.lblDisabled.Location = new System.Drawing.Point(574, 49);
             this.lblDisabled.Name = "lblDisabled";
             this.lblDisabled.Size = new System.Drawing.Size(48, 13);
             this.lblDisabled.TabIndex = 16;
@@ -186,7 +182,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             // txtDisabled
             // 
-            this.txtDisabled.Location = new System.Drawing.Point(786, 47);
+            this.txtDisabled.Location = new System.Drawing.Point(628, 46);
             this.txtDisabled.Name = "txtDisabled";
             this.txtDisabled.ReadOnly = true;
             this.txtDisabled.Size = new System.Drawing.Size(50, 20);
@@ -235,24 +231,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.progressBar.Size = new System.Drawing.Size(986, 23);
             this.progressBar.TabIndex = 21;
             // 
-            // lblWarning
-            // 
-            this.lblWarning.AutoSize = true;
-            this.lblWarning.Location = new System.Drawing.Point(570, 48);
-            this.lblWarning.Name = "lblWarning";
-            this.lblWarning.Size = new System.Drawing.Size(52, 13);
-            this.lblWarning.TabIndex = 22;
-            this.lblWarning.Text = "Warnings";
-            // 
-            // txtWarning
-            // 
-            this.txtWarning.Location = new System.Drawing.Point(628, 46);
-            this.txtWarning.Name = "txtWarning";
-            this.txtWarning.ReadOnly = true;
-            this.txtWarning.Size = new System.Drawing.Size(50, 20);
-            this.txtWarning.TabIndex = 23;
-            this.txtWarning.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
             // iconPictureBox1
             // 
             this.iconPictureBox1.BackColor = System.Drawing.SystemColors.Control;
@@ -280,34 +258,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.iconPictureBox2.Size = new System.Drawing.Size(20, 20);
             this.iconPictureBox2.TabIndex = 25;
             this.iconPictureBox2.TabStop = false;
-            // 
-            // iconPictureBox3
-            // 
-            this.iconPictureBox3.BackColor = System.Drawing.SystemColors.Control;
-            this.iconPictureBox3.ForeColor = System.Drawing.Color.Orange;
-            this.iconPictureBox3.IconChar = FontAwesome.Sharp.IconChar.ExclamationTriangle;
-            this.iconPictureBox3.IconColor = System.Drawing.Color.Orange;
-            this.iconPictureBox3.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.iconPictureBox3.IconSize = 20;
-            this.iconPictureBox3.Location = new System.Drawing.Point(549, 46);
-            this.iconPictureBox3.Name = "iconPictureBox3";
-            this.iconPictureBox3.Size = new System.Drawing.Size(20, 20);
-            this.iconPictureBox3.TabIndex = 26;
-            this.iconPictureBox3.TabStop = false;
-            // 
-            // iconPictureBox4
-            // 
-            this.iconPictureBox4.BackColor = System.Drawing.SystemColors.Control;
-            this.iconPictureBox4.ForeColor = System.Drawing.Color.Gray;
-            this.iconPictureBox4.IconChar = FontAwesome.Sharp.IconChar.Ban;
-            this.iconPictureBox4.IconColor = System.Drawing.Color.Gray;
-            this.iconPictureBox4.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.iconPictureBox4.IconSize = 20;
-            this.iconPictureBox4.Location = new System.Drawing.Point(709, 49);
-            this.iconPictureBox4.Name = "iconPictureBox4";
-            this.iconPictureBox4.Size = new System.Drawing.Size(20, 20);
-            this.iconPictureBox4.TabIndex = 27;
-            this.iconPictureBox4.TabStop = false;
             // 
             // tabs
             // 
@@ -608,6 +558,20 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtEnd.Size = new System.Drawing.Size(120, 20);
             this.txtEnd.TabIndex = 34;
             // 
+            // iconPictureBox4
+            // 
+            this.iconPictureBox4.BackColor = System.Drawing.SystemColors.Control;
+            this.iconPictureBox4.ForeColor = System.Drawing.Color.Gray;
+            this.iconPictureBox4.IconChar = FontAwesome.Sharp.IconChar.Ban;
+            this.iconPictureBox4.IconColor = System.Drawing.Color.Gray;
+            this.iconPictureBox4.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.iconPictureBox4.IconSize = 20;
+            this.iconPictureBox4.Location = new System.Drawing.Point(551, 48);
+            this.iconPictureBox4.Name = "iconPictureBox4";
+            this.iconPictureBox4.Size = new System.Drawing.Size(20, 20);
+            this.iconPictureBox4.TabIndex = 27;
+            this.iconPictureBox4.TabStop = false;
+            // 
             // RealTimeTestResultWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -621,11 +585,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tabs);
             this.Controls.Add(this.iconPictureBox4);
-            this.Controls.Add(this.iconPictureBox3);
             this.Controls.Add(this.iconPictureBox2);
             this.Controls.Add(this.iconPictureBox1);
-            this.Controls.Add(this.txtWarning);
-            this.Controls.Add(this.lblWarning);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.gridResults);
@@ -648,8 +609,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox4)).EndInit();
             this.tabs.ResumeLayout(false);
             this.tabTest.ResumeLayout(false);
             this.tabTest.PerformLayout();
@@ -657,6 +616,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             ((System.ComponentModel.ISupportInitialize)(this.gridTestFailures)).EndInit();
             this.tabErrors.ResumeLayout(false);
             this.tabErrors.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -677,12 +637,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private System.Windows.Forms.DataGridView gridResults;
         private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Label lblWarning;
-        private System.Windows.Forms.TextBox txtWarning;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox1;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox2;
-        private FontAwesome.Sharp.IconPictureBox iconPictureBox3;
-        private FontAwesome.Sharp.IconPictureBox iconPictureBox4;
         private System.Windows.Forms.TabControl tabs;
         private System.Windows.Forms.TabPage tabFailures;
         private System.Windows.Forms.TabPage tabErrors;
@@ -714,5 +670,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblTestSuitePath;
         private System.Windows.Forms.TextBox txtTestSuitePath;
+        private FontAwesome.Sharp.IconPictureBox iconPictureBox4;
     }
 }
