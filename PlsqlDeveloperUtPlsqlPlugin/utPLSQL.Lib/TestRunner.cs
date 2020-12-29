@@ -5,6 +5,11 @@ namespace utPLSQL
 {
     public abstract class TestRunner<T>
     {
+        public const string USER = "USER";
+        public const string PACKAGE = "PACKAGE";
+        public const string PROCEDURE = "PROCEDURE";
+        public const string ALL = "_ALL";
+
         internal OracleConnection produceConnection;
         internal OracleConnection consumeConnection;
 

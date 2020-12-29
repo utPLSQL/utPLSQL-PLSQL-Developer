@@ -17,6 +17,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private readonly RealTimeTestRunner testRunner;
         private BindingList<TestResult> testResults = new BindingList<TestResult>();
         private int totalNumberOfTests;
+        private int rowIndexOnRightClick;
 
         public RealTimeTestResultWindow(RealTimeTestRunner testRunner)
         {
@@ -35,7 +36,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        internal void RunTests(string type, string owner, string name, string subType)
+        internal void RunTests(string type, string owner, string name, string procedure)
         {
             Running = true;
 
@@ -43,7 +44,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
             testResults.Clear();
 
-            setWindowTitle(type, owner, name, subType);
+            setWindowTitle(type, owner, name, procedure);
 
             CenterToScreen();
 
@@ -51,7 +52,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
             new Thread(() =>
             {
-                testRunner.RunTests(type, owner, name, subType);
+                testRunner.RunTests(type, owner, name, procedure);
 
             }).Start();
             new Thread(() =>
@@ -113,17 +114,22 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             var startTime = DateTime.Now.ToString();
             txtStart.Text = startTime;
 
-            if (type.Equals("USER"))
+            if (type.Equals(RealTimeTestRunner.USER))
             {
                 this.Text = name + " " + startTime;
                 txtTestExecution.Text = $"All Tests of {name}";
             }
-            else if (type.Equals("PACKAGE"))
+            else if (type.Equals(RealTimeTestRunner.PACKAGE))
             {
                 this.Text = $"{owner}.{name}" + " " + startTime;
                 txtTestExecution.Text = $"Package {owner}.{name}";
             }
-            else if (type.Equals("_ALL"))
+            else if (type.Equals(RealTimeTestRunner.PROCEDURE))
+            {
+                this.Text = $"{owner}.{name}" + " " + startTime;
+                txtTestExecution.Text = $"Package {owner}.{name}";
+            }
+            else if (type.Equals(RealTimeTestRunner.ALL))
             {
                 this.Text = owner + " " + startTime;
                 txtTestExecution.Text = $"All Tests of {owner}";
@@ -333,6 +339,19 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             TestResult testResult = testResults[e.RowIndex];
             PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
 
+        }
+
+        private void gridResults_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
+        {
+            rowIndexOnRightClick = e.RowIndex;
+        }
+
+        private void menuItemRunTests_Click(object sender, EventArgs e)
+        {
+            TestResult testResult = testResults[rowIndexOnRightClick];
+
+            var testResultWindow = new RealTimeTestResultWindow(testRunner);
+            testResultWindow.RunTests(RealTimeTestRunner.PROCEDURE, testResult.Owner, testResult.Package, testResult.Procedure);
         }
     }
 }

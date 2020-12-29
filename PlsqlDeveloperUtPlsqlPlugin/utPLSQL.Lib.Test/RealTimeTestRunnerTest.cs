@@ -13,7 +13,7 @@ namespace utPLSQL
             RealTimeTestRunner testRunner = new RealTimeTestRunner();
             testRunner.Connect(username: "toscamtest", password: "toscamtest", database: "CA40");
 
-            testRunner.RunTests(type: "USER", owner: null, name: "toscamtest", subType: null);
+            testRunner.RunTests(type: "USER", owner: null, name: "toscamtest", procedure: null);
 
             List<@event> events = new List<@event>();
             testRunner.ConsumeResult(@event =>

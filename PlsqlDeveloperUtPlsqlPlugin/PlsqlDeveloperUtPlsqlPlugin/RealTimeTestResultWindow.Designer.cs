@@ -29,6 +29,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RealTimeTestResultWindow));
             this.btnClose = new System.Windows.Forms.Button();
             this.lblTests = new System.Windows.Forms.Label();
@@ -42,6 +43,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.lblDisabled = new System.Windows.Forms.Label();
             this.txtDisabled = new System.Windows.Forms.TextBox();
             this.gridResults = new System.Windows.Forms.DataGridView();
+            this.contextMenuResults = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemRunTests = new System.Windows.Forms.ToolStripMenuItem();
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
@@ -79,6 +82,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.txtEnd = new System.Windows.Forms.TextBox();
             this.iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
+            this.contextMenuResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox2)).BeginInit();
             this.tabs.SuspendLayout();
@@ -198,6 +202,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gridResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.gridResults.ContextMenuStrip = this.contextMenuResults;
             this.gridResults.ImeMode = System.Windows.Forms.ImeMode.On;
             this.gridResults.Location = new System.Drawing.Point(12, 126);
             this.gridResults.MultiSelect = false;
@@ -209,8 +214,23 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.gridResults.ShowEditingIcon = false;
             this.gridResults.Size = new System.Drawing.Size(986, 324);
             this.gridResults.TabIndex = 18;
+            this.gridResults.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.gridResults_CellContextMenuStripNeeded);
             this.gridResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridResults_CellDoubleClick);
             this.gridResults.SelectionChanged += new System.EventHandler(this.gridResults_SelectionChanged);
+            // 
+            // contextMenuResults
+            // 
+            this.contextMenuResults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemRunTests});
+            this.contextMenuResults.Name = "contextMenuResults";
+            this.contextMenuResults.Size = new System.Drawing.Size(181, 48);
+            // 
+            // menuItemRunTests
+            // 
+            this.menuItemRunTests.Name = "menuItemRunTests";
+            this.menuItemRunTests.Size = new System.Drawing.Size(180, 22);
+            this.menuItemRunTests.Text = "Run Test";
+            this.menuItemRunTests.Click += new System.EventHandler(this.menuItemRunTests_Click);
             // 
             // txtStatus
             // 
@@ -609,6 +629,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.Text = "utPLSQL TestRunner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestResultWindow_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).EndInit();
+            this.contextMenuResults.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox2)).EndInit();
             this.tabs.ResumeLayout(false);
@@ -673,5 +694,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private System.Windows.Forms.Label lblTestSuitePath;
         private System.Windows.Forms.TextBox txtTestSuitePath;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox4;
+        private System.Windows.Forms.ContextMenuStrip contextMenuResults;
+        private System.Windows.Forms.ToolStripMenuItem menuItemRunTests;
     }
 }

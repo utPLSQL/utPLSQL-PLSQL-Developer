@@ -10,19 +10,23 @@ namespace utPLSQL
     {
         private string id;
 
-        public override void RunTests(string type, string owner, string name, string subType)
+        public override void RunTests(string type, string owner, string name, string procedure)
         {
             string testsToRun = null;
 
-            if (type.Equals("USER"))
+            if (type.Equals(USER))
             {
                 testsToRun = name;
             }
-            else if (type.Equals("PACKAGE"))
+            else if (type.Equals(PACKAGE))
             {
                 testsToRun = $"{owner}.{name}";
             }
-            else if (type.Equals("_ALL"))
+            else if (type.Equals(PROCEDURE))
+            {
+                testsToRun = $"{owner}.{name}.{procedure}";
+            }
+            else if (type.Equals(ALL))
             {
                 testsToRun = owner;
             }
@@ -31,16 +35,16 @@ namespace utPLSQL
             {
                 id = Guid.NewGuid().ToString().Replace("-", "");
 
-                string procedure = @"DECLARE
-                                           l_reporter ut_realtime_reporter := ut_realtime_reporter();
-                                         BEGIN
-                                           l_reporter.set_reporter_id(:id);
-                                           l_reporter.output_buffer.init();
-                                           ut_runner.run(a_paths     => ut_varchar2_list(:test),
-                                                         a_reporters => ut_reporters(l_reporter));
-                                         END;";
+                string proc = @"DECLARE
+                                  l_reporter ut_realtime_reporter := ut_realtime_reporter();
+                                BEGIN
+                                  l_reporter.set_reporter_id(:id);
+                                  l_reporter.output_buffer.init();
+                                  ut_runner.run(a_paths     => ut_varchar2_list(:test),
+                                                a_reporters => ut_reporters(l_reporter));
+                                END;";
 
-                OracleCommand cmd = new OracleCommand(procedure, produceConnection);
+                OracleCommand cmd = new OracleCommand(proc, produceConnection);
                 cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = id;
                 cmd.Parameters.Add("test", OracleDbType.Varchar2, ParameterDirection.Input).Value = testsToRun;
                 cmd.ExecuteNonQuery();
@@ -49,14 +53,14 @@ namespace utPLSQL
 
         public override void ConsumeResult(Action<@event> action)
         {
-            string procedure = @"DECLARE
-                                       l_reporter ut_realtime_reporter := ut_realtime_reporter();
-                                     BEGIN
-                                       l_reporter.set_reporter_id(:id);
-                                       :lines_cursor := l_reporter.get_lines_cursor();
-                                     END;";
+            string proc = @"DECLARE
+                              l_reporter ut_realtime_reporter := ut_realtime_reporter();
+                            BEGIN
+                              l_reporter.set_reporter_id(:id);
+                              :lines_cursor := l_reporter.get_lines_cursor();
+                            END;";
 
-            OracleCommand cmd = new OracleCommand(procedure, consumeConnection);
+            OracleCommand cmd = new OracleCommand(proc, consumeConnection);
             cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = id;
             cmd.Parameters.Add("lines_cursor", OracleDbType.RefCursor, ParameterDirection.Output);
 
