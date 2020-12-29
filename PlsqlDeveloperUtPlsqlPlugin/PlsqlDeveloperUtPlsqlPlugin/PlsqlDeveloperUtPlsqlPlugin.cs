@@ -208,7 +208,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
         internal static void OpenPackage(string owner, string name)
         {
-            IntPtr source = getObjectSource("PACKAGE", owner, name);
+            IntPtr source = getObjectSource("PACKAGE BODY", owner, name);
             createWindow(3, source, false);
         }
 
