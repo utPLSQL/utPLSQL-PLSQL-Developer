@@ -16,6 +16,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private readonly RealTimeTestRunner testRunner;
         private BindingList<TestResult> testResults = new BindingList<TestResult>();
         private int totalNumberOfTests;
+        private bool running;
 
         public RealTimeTestResultWindow(RealTimeTestRunner testRunner)
         {
@@ -28,21 +29,23 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
             gridResults.Columns[0].HeaderText = "";
             gridResults.Columns[0].MinimumWidth = 30;
-            gridResults.Columns[1].MinimumWidth = 835;
-            gridResults.Columns[2].MinimumWidth = 100;
-            gridResults.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            gridResults.Columns[1].MinimumWidth = 235;
+            gridResults.Columns[2].MinimumWidth = 600;
+            gridResults.Columns[3].MinimumWidth = 100;
+            gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
         internal void RunTests(string type, string owner, string name, string subType)
         {
+            running = true;
+
             ResetComponents();
 
             testResults.Clear();
 
-            if (WindowState == FormWindowState.Minimized)
-            {
-                WindowState = FormWindowState.Normal;
-            }
+            setWindowTitle(type, owner, name, subType);
+
+            CenterToScreen();
 
             Show();
 
@@ -80,6 +83,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                         }
                         else if (@event.type.Equals("post-run"))
                         {
+                            txtStart.Text = @event.run.startTime.ToString();
+                            txtEnd.Text = @event.run.endTime.ToString();
+                            txtTime.Text = @event.run.executionTime + " s";
+
                             txtStatus.Text = "Finished";
 
                             txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
@@ -87,27 +94,53 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                             txtErrors.Text = @event.run.counter.error + "";
                             txtWarning.Text = @event.run.counter.warning + "";
                             txtDisabled.Text = @event.run.counter.disabled + "";
-                            txtTime.Text = @event.run.executionTime + " s";
 
                             if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
                             {
                                 progressBar.ForeColor = Color.DarkRed;
                             }
 
+                            running = false;
                         }
                     });
                 });
             }).Start();
         }
 
+        private void setWindowTitle(string type, string owner, string name, string subType)
+        {
+            var startTime = DateTime.Now.ToString();
+            txtStart.Text = startTime;
+
+            if (type.Equals("USER"))
+            {
+                this.Text = name + " " + startTime;
+                txtTestExecution.Text = $"All Tests of {name}";
+            }
+            else if (type.Equals("PACKAGE"))
+            {
+                this.Text = $"{owner}.{name}" + " " + startTime;
+                txtTestExecution.Text = $"Package {owner}.{name}";
+            }
+            else if (type.Equals("_ALL"))
+            {
+                this.Text = owner + " " + startTime;
+                txtTestExecution.Text = $"All Tests of {owner}";
+            }
+        }
+
         private void ResetComponents()
         {
+            txtTestExecution.Text = "";
+            txtStart.Text = "";
+            txtTime.Text = "";
+
+            txtEnd.Text = "";
             txtTests.Text = "";
             txtFailures.Text = "";
             txtErrors.Text = "";
             txtDisabled.Text = "";
             txtStatus.Text = "";
-            txtTime.Text = "";
             txtStatus.Text = "Running...";
 
             txtTestOwner.Text = "";
@@ -115,9 +148,11 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             txtTestProcuedure.Text = "";
             txtTestName.Text = "";
             txtTestDescription.Text = "";
+            txtTestSuitePath.Text = "";
 
             txtTestStart.Text = "";
             txtTestEnd.Text = "";
+            txtTestTime.Text = "";
 
             txtErrorMessage.Text = "";
 
@@ -143,7 +178,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                         testResult.End = @event.test.endTime;
 
                         testResult.Time = @event.test.executionTime;
-                        
+
                         var counter = @event.test.counter;
                         if (counter.disabled > 0)
                         {
@@ -239,15 +274,21 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
         private void btnClose_Click(object sender, System.EventArgs e)
         {
-            Hide();
+            Close();
         }
 
         private void TestResultWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
-                e.Cancel = true;
-                Hide();
+                if (running)
+                {
+                    var confirmResult = MessageBox.Show("Tests are still running.\r\nDo you really want to close the Dialog?", "Running Tests", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (confirmResult == DialogResult.No)
+                    {
+                        e.Cancel = true;
+                    }
+                }
             }
         }
 
@@ -263,9 +304,11 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                 txtTestProcuedure.Text = testResult.Procedure;
                 txtTestName.Text = testResult.Name;
                 txtTestDescription.Text = testResult.Description;
+                txtTestSuitePath.Text = testResult.Id;
 
                 txtTestStart.Text = testResult.Start == null ? "" : testResult.Start.ToString();
                 txtTestEnd.Text = testResult.End == null ? "" : testResult.End.ToString();
+                txtTestTime.Text = testResult.Time + " s";
 
                 txtErrorMessage.Text = testResult.Error;
 
@@ -277,6 +320,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                 gridTestFailures.Columns[1].MinimumWidth = 480;
             }
         }
+
     }
 }
 

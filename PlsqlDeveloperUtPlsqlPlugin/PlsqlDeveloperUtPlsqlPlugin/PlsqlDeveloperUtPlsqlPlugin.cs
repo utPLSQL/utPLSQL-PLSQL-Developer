@@ -45,12 +45,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         internal static string database;
 
         private static RealTimeTestRunner testRunner;
-        private static RealTimeTestResultWindow testResultWindow;
 
         private PlsqlDeveloperUtPlsqlPlugin()
         {
             testRunner = new RealTimeTestRunner();
-            testResultWindow = new RealTimeTestResultWindow(testRunner);
         }
 
         #region DLL exported API
@@ -144,6 +142,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             {
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
+                    var testResultWindow = new RealTimeTestResultWindow(testRunner);
                     testResultWindow.RunTests("_ALL", username, null, null);
                 }
             }
@@ -157,6 +156,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                     IntPtr subType;
                     PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
 
+                    var testResultWindow = new RealTimeTestResultWindow(testRunner);
                     testResultWindow.RunTests(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType));
                 }
             }

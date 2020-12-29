@@ -7,18 +7,18 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 {
     class TestResult
     {
-        internal string Id { get; set; }
-        
         public Bitmap Icon { get; set; }
-        public string Name { get; set; }
+
+        public string Package { get; set; }
+        public string Procedure { get; set; }
         public decimal Time { get; set; }
+        internal string Id { get; set; }
 
         internal DateTime Start { get; set; }
         internal DateTime End { get; set; }
 
         internal string Owner { get; set; }
-        internal string Package { get; set; }
-        internal string Procedure { get; set; }
+        internal string Name { get; set; }
         internal string Description { get; set; }
 
         internal string Error { get; set; }
