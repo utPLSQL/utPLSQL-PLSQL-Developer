@@ -392,6 +392,8 @@ public partial class test {
     
     private string nameField;
     
+    private string descriptionField;
+    
     private int testNumberField;
     
     private bool testNumberFieldSpecified;
@@ -415,6 +417,8 @@ public partial class test {
     private counter counterField;
     
     private string errorStackField;
+    
+    private testExpectation[] failedExpectationsField;
     
     private string idField;
     
@@ -486,6 +490,16 @@ public partial class test {
         }
         set {
             this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    public string description {
+        get {
+            return this.descriptionField;
+        }
+        set {
+            this.descriptionField = value;
         }
     }
     
@@ -616,6 +630,18 @@ public partial class test {
     }
     
     /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("expectation", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public testExpectation[] failedExpectations {
+        get {
+            return this.failedExpectationsField;
+        }
+        set {
+            this.failedExpectationsField = value;
+        }
+    }
+    
+    /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string id {
         get {
@@ -623,6 +649,41 @@ public partial class test {
         }
         set {
             this.idField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class testExpectation {
+    
+    private string messageField;
+    
+    private string callerField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public string message {
+        get {
+            return this.messageField;
+        }
+        set {
+            this.messageField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public string caller {
+        get {
+            return this.callerField;
+        }
+        set {
+            this.callerField = value;
         }
     }
 }

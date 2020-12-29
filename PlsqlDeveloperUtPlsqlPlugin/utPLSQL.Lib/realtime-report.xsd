@@ -68,6 +68,20 @@
 				<xs:element ref="executionTime" minOccurs="0"/>
 				<xs:element ref="counter" minOccurs="0"/>
 				<xs:element name="errorStack" type="xs:string" minOccurs="0"/>
+				<xs:element name="failedExpectations" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="expectation" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="message" type="xs:string" minOccurs="0"/>
+										<xs:element name="caller" type="xs:string" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 			<xs:attribute name="id" type="xs:string" use="required"/>
 		</xs:complexType>
