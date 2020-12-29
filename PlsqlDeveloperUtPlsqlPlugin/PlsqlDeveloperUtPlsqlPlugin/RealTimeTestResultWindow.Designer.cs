@@ -209,6 +209,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.gridResults.ShowEditingIcon = false;
             this.gridResults.Size = new System.Drawing.Size(986, 324);
             this.gridResults.TabIndex = 18;
+            this.gridResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridResults_CellDoubleClick);
             this.gridResults.SelectionChanged += new System.EventHandler(this.gridResults_SelectionChanged);
             // 
             // txtStatus
@@ -485,6 +486,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.gridTestFailures.ShowEditingIcon = false;
             this.gridTestFailures.Size = new System.Drawing.Size(966, 188);
             this.gridTestFailures.TabIndex = 0;
+            this.gridTestFailures.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridTestFailures_CellDoubleClick);
             // 
             // tabErrors
             // 

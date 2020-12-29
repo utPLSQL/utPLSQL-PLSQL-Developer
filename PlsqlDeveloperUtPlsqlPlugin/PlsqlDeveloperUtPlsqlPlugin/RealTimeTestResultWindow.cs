@@ -322,6 +322,18 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             }
         }
 
+        private void gridResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            TestResult testResult = testResults[e.RowIndex];
+            PlsqlDeveloperUtPlsqlPlugin.OpenPackage(testResult.Owner, testResult.Package);
+        }
+
+        private void gridTestFailures_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            TestResult testResult = testResults[e.RowIndex];
+            PlsqlDeveloperUtPlsqlPlugin.OpenPackage(testResult.Owner, testResult.Package);
+
+        }
     }
 }
 

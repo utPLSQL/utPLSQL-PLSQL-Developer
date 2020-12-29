@@ -15,10 +15,14 @@ namespace PlsqlDeveloperUtPlsqlPlugin
     //*FUNC: 12*/ void (*IDE_GetConnectionInfo)(char **Username, char **Password, char **Database);
     internal delegate void IdeGetConnectionInfo(out IntPtr username, out IntPtr password, out IntPtr database);
 
+    //*FUNC: 20*/ void (*IDE_CreateWindow)(int WindowType, char *Text, BOOL Execute);
+    internal delegate void IdeCreateWindow(int windowType, IntPtr text, bool execute);
     //*FUNC: 69*/ void *(*IDE_CreatePopupItem)(int ID, int Index, char *Name, char *ObjectType);
     internal delegate void IdeCreatePopupItem(int id, int index, string name, string objectType);
     //*FUNC: 74*/ int (*IDE_GetPopupObject)(char **ObjectType, char **ObjectOwner, char **ObjectName, char **SubObject);
     internal delegate int IdeGetPopupObject(out IntPtr objectType, out IntPtr objectOwner, out IntPtr objectName, out IntPtr subObject);
+    //*FUNC: 79*/ char *(*IDE_GetObjectSource)(char *ObjectType, char *ObjectOwner, char *ObjectName);
+    internal delegate IntPtr IdeGetObjectSource(string objectType, string objectOwner, string objectName);
     //*FUNC: 150*/ void (*IDE_CreateToolButton)(int ID, int Index, char *Name, char *BitmapFile, int BitmapHandle);
     internal delegate void IdeCreateToolButton(int id, int index, string name, string bitmapFile, long bitmapHandle);
 
@@ -34,8 +38,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         internal static IdeConnected connected;
         internal static IdeGetConnectionInfo getConnectionInfo;
 
+        internal static IdeCreateWindow createWindow;
         internal static IdeCreatePopupItem createPopupItem;
         internal static IdeGetPopupObject getPopupObject;
+        internal static IdeGetObjectSource getObjectSource;
         internal static IdeCreateToolButton createToolButton;
 
         internal static int pluginId;
@@ -123,11 +129,17 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                 case 12:
                     PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo = (IdeGetConnectionInfo)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetConnectionInfo));
                     break;
+                case 20:
+                    PlsqlDeveloperUtPlsqlPlugin.createWindow = (IdeCreateWindow)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateWindow));
+                    break;
                 case 69:
                     PlsqlDeveloperUtPlsqlPlugin.createPopupItem = (IdeCreatePopupItem)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreatePopupItem));
                     break;
                 case 74:
                     PlsqlDeveloperUtPlsqlPlugin.getPopupObject = (IdeGetPopupObject)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetPopupObject));
+                    break;
+                case 79:
+                    PlsqlDeveloperUtPlsqlPlugin.getObjectSource = (IdeGetObjectSource)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetObjectSource));
                     break;
                 case 150:
                     PlsqlDeveloperUtPlsqlPlugin.createToolButton = (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateToolButton));
@@ -193,6 +205,12 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             return "";
         }
         #endregion
+
+        internal static void OpenPackage(string owner, string name)
+        {
+            IntPtr source = getObjectSource("PACKAGE", owner, name);
+            createWindow(3, source, false);
+        }
 
         private static void ConnectToDatabase()
         {
