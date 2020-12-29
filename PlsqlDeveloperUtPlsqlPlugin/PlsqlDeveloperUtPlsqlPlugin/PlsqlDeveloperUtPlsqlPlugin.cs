@@ -206,7 +206,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         }
         #endregion
 
-        internal static void OpenPackage(string owner, string name)
+        internal static void OpenPackageBody(string owner, string name)
         {
             IntPtr source = getObjectSource("PACKAGE BODY", owner, name);
             createWindow(3, source, false);
