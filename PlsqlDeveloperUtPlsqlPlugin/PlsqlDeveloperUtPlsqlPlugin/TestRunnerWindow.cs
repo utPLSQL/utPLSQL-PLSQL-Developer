@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using utPLSQL;
 
 namespace utPLSQL
 {
@@ -39,15 +38,15 @@ namespace utPLSQL
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        internal async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
+        internal void RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
-            Running = true;
-
             ResetComponents();
 
             testResults.Clear();
 
             setWindowTitle(type, owner, name, procedure);
+
+            Running = true;
 
             if (coverage)
             {
@@ -55,6 +54,8 @@ namespace utPLSQL
                 DialogResult dialogResult = codeCoverateReportDialog.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
+                    txtStatus.Text = "Running tests with coverage...";
+
                     RunWithCoverage(type, owner, name, procedure, codeCoverateReportDialog);
 
                     Show();
@@ -65,6 +66,8 @@ namespace utPLSQL
             }
             else
             {
+                txtStatus.Text = "Running tests...";
+
                 RunTests(type, owner, name, procedure);
 
                 Show();
@@ -93,30 +96,35 @@ namespace utPLSQL
 
             Task.Factory.StartNew(() => testRunner.ConsumeResult(@event =>
             {
-                gridResults.BeginInvoke((MethodInvoker)delegate ()
+                if (@event.type.Equals("pre-run"))
                 {
-                    if (@event.type.Equals("pre-run"))
+                    gridResults.BeginInvoke((MethodInvoker)delegate ()
                     {
                         totalNumberOfTests = @event.totalNumberOfTests;
 
                         progressBar.Minimum = 0;
                         progressBar.Maximum = totalNumberOfTests * STEPS;
                         progressBar.Step = STEPS;
-
                         CreateTestResults(@event);
 
                         gridResults.Rows[0].Selected = false;
-                    }
-                    else if (@event.type.Equals("post-test"))
+                    });
+                }
+                else if (@event.type.Equals("post-test"))
+                {
+                    gridResults.BeginInvoke((MethodInvoker)delegate ()
                     {
                         completetedTests++;
-                        txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
 
+                        txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
                         UpdateProgressBar(completetedTests);
 
                         UpdateTestResult(@event);
-                    }
-                    else if (@event.type.Equals("post-run"))
+                    });
+                }
+                else if (@event.type.Equals("post-run"))
+                {
+                    gridResults.BeginInvoke((MethodInvoker)delegate ()
                     {
                         txtStart.Text = @event.run.startTime.ToString();
                         txtEnd.Text = @event.run.endTime.ToString();
@@ -135,10 +143,11 @@ namespace utPLSQL
                         if (!coverage)
                         {
                             txtStatus.Text = "Finished";
+
                             Running = false;
                         }
-                    }
-                });
+                    });
+                }
             }));
         }
 
@@ -146,9 +155,6 @@ namespace utPLSQL
         {
             Task.Factory.StartNew(() =>
             {
-                var start = DateTime.Now;
-                txtStatus.Text = "Running with Coverage...";
-
                 string report = testRunner.GetCoverageReport();
 
                 string filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
@@ -157,7 +163,11 @@ namespace utPLSQL
                     sw.WriteLine(report);
                 }
 
-                txtStatus.Text = $"Finished in {(DateTime.Now - start)}";
+                txtStatus.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    txtStatus.Text = "Finished";
+                });
+
                 Running = false;
 
                 System.Diagnostics.Process.Start(filePath);
@@ -293,7 +303,7 @@ namespace utPLSQL
             txtErrors.Text = "";
             txtDisabled.Text = "";
             txtStatus.Text = "";
-            txtStatus.Text = "Running...";
+            txtStatus.Text = "";
 
             txtTestOwner.Text = "";
             txtTestPackage.Text = "";
