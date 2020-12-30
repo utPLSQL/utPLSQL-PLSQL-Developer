@@ -1,14 +1,12 @@
 ﻿using System.Windows.Forms;
 
-namespace PlsqlDeveloperUtPlsqlPlugin
+namespace utPLSQL
 {
     public partial class AboutDialog : Form
     {
         public AboutDialog()
         {
             InitializeComponent();
-
-            CenterToScreen();
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

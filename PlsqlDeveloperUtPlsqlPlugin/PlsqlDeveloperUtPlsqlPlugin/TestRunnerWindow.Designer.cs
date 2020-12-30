@@ -1,7 +1,7 @@
 ﻿
-namespace PlsqlDeveloperUtPlsqlPlugin
+namespace utPLSQL
 {
-    partial class RealTimeTestResultWindow
+    partial class TestRunnerWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RealTimeTestResultWindow));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestRunnerWindow));
             this.btnClose = new System.Windows.Forms.Button();
             this.lblTests = new System.Windows.Forms.Label();
             this.txtTests = new System.Windows.Forms.TextBox();
@@ -96,7 +96,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClose.Location = new System.Drawing.Point(12, 696);
+            this.btnClose.Location = new System.Drawing.Point(921, 696);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 21);
             this.btnClose.TabIndex = 4;
@@ -223,12 +223,12 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.contextMenuResults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemRunTests});
             this.contextMenuResults.Name = "contextMenuResults";
-            this.contextMenuResults.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuResults.Size = new System.Drawing.Size(119, 26);
             // 
             // menuItemRunTests
             // 
             this.menuItemRunTests.Name = "menuItemRunTests";
-            this.menuItemRunTests.Size = new System.Drawing.Size(180, 22);
+            this.menuItemRunTests.Size = new System.Drawing.Size(118, 22);
             this.menuItemRunTests.Text = "Run Test";
             this.menuItemRunTests.Click += new System.EventHandler(this.menuItemRunTests_Click);
             // 
@@ -238,10 +238,10 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtStatus.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtStatus.Location = new System.Drawing.Point(878, 49);
+            this.txtStatus.Location = new System.Drawing.Point(698, 48);
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.ReadOnly = true;
-            this.txtStatus.Size = new System.Drawing.Size(120, 13);
+            this.txtStatus.Size = new System.Drawing.Size(300, 13);
             this.txtStatus.TabIndex = 20;
             this.txtStatus.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -594,7 +594,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.iconPictureBox4.TabIndex = 27;
             this.iconPictureBox4.TabStop = false;
             // 
-            // RealTimeTestResultWindow
+            // TestRunnerWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -625,7 +625,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.Controls.Add(this.btnClose);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1024, 768);
-            this.Name = "RealTimeTestResultWindow";
+            this.Name = "TestRunnerWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "utPLSQL TestRunner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestResultWindow_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).EndInit();

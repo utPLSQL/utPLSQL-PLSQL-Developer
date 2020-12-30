@@ -2,24 +2,27 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using utPLSQL;
 
-namespace PlsqlDeveloperUtPlsqlPlugin
+namespace utPLSQL
 {
-    public partial class RealTimeTestResultWindow : Form
+    public partial class TestRunnerWindow : Form
     {
         internal bool Running { get; set; }
 
         private const int IconSize = 24;
+        private const int STEPS = 1000;
 
         private readonly RealTimeTestRunner testRunner;
         private BindingList<TestResult> testResults = new BindingList<TestResult>();
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
 
-        public RealTimeTestResultWindow(RealTimeTestRunner testRunner)
+        public TestRunnerWindow(RealTimeTestRunner testRunner)
         {
             this.testRunner = testRunner;
             InitializeComponent();
@@ -36,7 +39,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        internal void RunTests(string type, string owner, string name, string procedure)
+        internal void RunTests(string type, string owner, string name, string procedure, bool coverage)
         {
             Running = true;
 
@@ -46,15 +49,117 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
             setWindowTitle(type, owner, name, procedure);
 
-            CenterToScreen();
+            if (coverage)
+            {
+                var codeCoverateReportDialog = new CodeCoverateReportDialog(getPath(type, owner, name, procedure));
+                DialogResult dialogResult = codeCoverateReportDialog.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    new Thread(() =>
+                    {
+                        var schemas = ConvertToVarcharList(codeCoverateReportDialog.GetSchemas());
+                        var includes = ConvertToVarcharList(codeCoverateReportDialog.GetIncludes());
+                        var excludes = ConvertToVarcharList(codeCoverateReportDialog.GetExcludes());
 
-            Show();
+                        testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes);
+                    }).Start();
 
+                    Show();
+
+                    CollectResults(coverage);
+                    CollectReport(coverage);
+                }
+            }
+            else
+            {
+                new Thread(() =>
+                {
+                    testRunner.RunTests(type, owner, name, procedure);
+                }).Start();
+
+                Show();
+
+                CollectResults(coverage);
+            }
+        }
+
+        private string ConvertToVarcharList(string listValue)
+        {
+            if (String.IsNullOrWhiteSpace(listValue))
+            {
+                return null;
+            }
+            else
+            {
+                if (listValue.Contains(" "))
+                {
+                    string[] parts = listValue.Split(' ');
+                    return JoinParts(parts);
+                }
+                else if (listValue.Contains(","))
+                {
+                    string[] parts = listValue.Split(',');
+                    return JoinParts(parts);
+                }
+                else if (listValue.Contains("\n"))
+                {
+                    string[] parts = listValue.Split('\n');
+                    return JoinParts(parts);
+                }
+                else
+                {
+                    return $"'{listValue}'";
+                }
+            }
+        }
+
+        private static string JoinParts(string[] parts)
+        {
+            StringBuilder sb = new StringBuilder();
+            bool first = true;
+            foreach (var part in parts)
+            {
+                if (part != null && part.Length > 0)
+                {
+                    if (!first)
+                    {
+                        sb.Append(",");
+                    }
+                    sb.Append("'").Append(part).Append("'");
+
+                    first = false;
+                }
+            }
+            return sb.ToString();
+        }
+
+        private void CollectReport(bool coverage)
+        {
             new Thread(() =>
             {
-                testRunner.RunTests(type, owner, name, procedure);
+                if (coverage)
+                {
+                    var start = DateTime.Now;
+                    txtStatus.Text = "Running with Coverage...";
 
+                    string report = testRunner.GetCoverageReport();
+
+                    string filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
+                    using (StreamWriter sw = new StreamWriter(filePath))
+                    {
+                        sw.WriteLine(report);
+                    }
+
+                    txtStatus.Text = $"Finished in {(DateTime.Now - start)}";
+                    Running = false;
+
+                    System.Diagnostics.Process.Start(filePath);
+                }
             }).Start();
+        }
+
+        private void CollectResults(bool coverage)
+        {
             new Thread(() =>
             {
                 var completetedTests = 0;
@@ -68,7 +173,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                             totalNumberOfTests = @event.totalNumberOfTests;
 
                             progressBar.Minimum = 0;
-                            progressBar.Maximum = totalNumberOfTests;
+                            progressBar.Maximum = totalNumberOfTests * STEPS;
+                            progressBar.Step = STEPS;
 
                             CreateTestResults(@event);
 
@@ -78,7 +184,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                         {
                             completetedTests++;
                             txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
-                            progressBar.Value = completetedTests;
+
+                            UpdateProgressBar(completetedTests);
 
                             UpdateTestResult(@event);
                         }
@@ -87,8 +194,6 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                             txtStart.Text = @event.run.startTime.ToString();
                             txtEnd.Text = @event.run.endTime.ToString();
                             txtTime.Text = @event.run.executionTime + " s";
-
-                            txtStatus.Text = "Finished";
 
                             txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
                             txtFailures.Text = @event.run.counter.failure + "";
@@ -100,39 +205,82 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                                 progressBar.ForeColor = Color.DarkRed;
                             }
 
-                            gridResults.Rows[0].Selected = true;
-
-                            Running = false;
+                            if (!coverage)
+                            {
+                                txtStatus.Text = "Finished";
+                                Running = false;
+                            }
                         }
                     });
                 });
             }).Start();
         }
 
-        private void setWindowTitle(string type, string owner, string name, string subType)
+        private void UpdateProgressBar(int completetedTests)
+        {
+            int newValue = (completetedTests * STEPS) + 1;
+            if (newValue > progressBar.Maximum)
+            {
+                progressBar.Value = progressBar.Maximum;
+                progressBar.Value--;
+                progressBar.Value++;
+            }
+            else
+            {
+                progressBar.Value = newValue;
+                progressBar.Value--;
+            }
+        }
+
+        private void setWindowTitle(string type, string owner, string name, string procedure)
         {
             var startTime = DateTime.Now.ToString();
             txtStart.Text = startTime;
+            string path = getPath(type, owner, name, procedure);
 
             if (type.Equals(RealTimeTestRunner.USER))
             {
                 this.Text = name + " " + startTime;
-                txtTestExecution.Text = $"All Tests of {name}";
+                txtTestExecution.Text = $"All Tests of {path}";
             }
             else if (type.Equals(RealTimeTestRunner.PACKAGE))
             {
                 this.Text = $"{owner}.{name}" + " " + startTime;
-                txtTestExecution.Text = $"Package {owner}.{name}";
+                txtTestExecution.Text = $"Package {path}";
             }
             else if (type.Equals(RealTimeTestRunner.PROCEDURE))
             {
                 this.Text = $"{owner}.{name}" + " " + startTime;
-                txtTestExecution.Text = $"Package {owner}.{name}";
+                txtTestExecution.Text = $"Procedure {path}";
             }
             else if (type.Equals(RealTimeTestRunner.ALL))
             {
                 this.Text = owner + " " + startTime;
-                txtTestExecution.Text = $"All Tests of {owner}";
+                txtTestExecution.Text = $"All Tests of {path}";
+            }
+        }
+
+        private String getPath(string type, string owner, string name, string procedure)
+        {
+            if (type.Equals(RealTimeTestRunner.USER))
+            {
+                return name;
+            }
+            else if (type.Equals(RealTimeTestRunner.PACKAGE))
+            {
+                return $"{owner}.{name}";
+            }
+            else if (type.Equals(RealTimeTestRunner.PROCEDURE))
+            {
+                return $"{owner}.{name}.{procedure}";
+            }
+            else if (type.Equals(RealTimeTestRunner.ALL))
+            {
+                return owner;
+            }
+            else
+            {
+                return "";
             }
         }
 
@@ -221,6 +369,9 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                         }
 
                         gridResults.Refresh();
+                        int rowIndex = testResults.IndexOf(testResult);
+                        gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
+                        gridResults.Rows[rowIndex].Selected = true;
                     }
                 }
             }
@@ -350,8 +501,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         {
             TestResult testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new RealTimeTestResultWindow(testRunner);
-            testResultWindow.RunTests(RealTimeTestRunner.PROCEDURE, testResult.Owner, testResult.Package, testResult.Procedure);
+            var testResultWindow = new TestRunnerWindow(testRunner);
+            testResultWindow.RunTests(RealTimeTestRunner.PROCEDURE, testResult.Owner, testResult.Package, testResult.Procedure, false);
         }
     }
 }

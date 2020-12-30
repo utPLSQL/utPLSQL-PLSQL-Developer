@@ -1,5 +1,5 @@
 ﻿
-namespace PlsqlDeveloperUtPlsqlPlugin
+namespace utPLSQL
 {
     partial class AboutDialog
     {
@@ -39,8 +39,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::PlsqlDeveloperUtPlsqlPlugin.Properties.Resources.utPLSQL;
-            this.pictureBox1.InitialImage = global::PlsqlDeveloperUtPlsqlPlugin.Properties.Resources.utPLSQL;
+            this.pictureBox1.Image = global::utPLSQL.Properties.Resources.utPLSQL;
+            this.pictureBox1.InitialImage = global::utPLSQL.Properties.Resources.utPLSQL;
             this.pictureBox1.Location = new System.Drawing.Point(12, 12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(43, 41);
@@ -69,7 +69,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(81, 92);
+            this.button1.Location = new System.Drawing.Point(215, 78);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
@@ -81,7 +81,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(302, 127);
+            this.ClientSize = new System.Drawing.Size(302, 113);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label1);
@@ -91,6 +91,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             this.MinimizeBox = false;
             this.Name = "AboutDialog";
             this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "About utPLSQL Plugin";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

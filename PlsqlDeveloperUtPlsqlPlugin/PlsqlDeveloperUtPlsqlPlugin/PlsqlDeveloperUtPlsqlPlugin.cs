@@ -5,10 +5,9 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
-using utPLSQL;
 using System.Collections.Generic;
 
-namespace PlsqlDeveloperUtPlsqlPlugin
+namespace utPLSQL
 {
     //*FUNC: 11*/ BOOL (*IDE_Connected)();
     internal delegate bool IdeConnected();
@@ -16,7 +15,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
     internal delegate void IdeGetConnectionInfo(out IntPtr username, out IntPtr password, out IntPtr database);
 
     //*FUNC: 20*/ void (*IDE_CreateWindow)(int WindowType, char *Text, BOOL Execute);
-    internal delegate void IdeCreateWindow(int windowType, IntPtr text, bool execute);
+    internal delegate void IdeCreateWindow(int windowType, string text, bool execute);
     //*FUNC: 69*/ void *(*IDE_CreatePopupItem)(int ID, int Index, char *Name, char *ObjectType);
     internal delegate void IdeCreatePopupItem(int id, int index, string name, string objectType);
     //*FUNC: 74*/ int (*IDE_GetPopupObject)(char **ObjectType, char **ObjectOwner, char **ObjectName, char **SubObject);
@@ -31,6 +30,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         private const string PLUGIN_NAME = "utPLSQL Plugin";
 
         private const int PLUGIN_MENU_INDEX_ALLTESTS = 3;
+        private const int PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE = 4;
         private const int PLUGIN_POPUP_INDEX = 1;
 
         private static PlsqlDeveloperUtPlsqlPlugin plugin;
@@ -51,7 +51,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
 
         private static RealTimeTestRunner testRunner;
 
-        private static readonly List<RealTimeTestResultWindow> windows = new List<RealTimeTestResultWindow>();
+        private static readonly List<TestRunnerWindow> windows = new List<TestRunnerWindow>();
 
         private PlsqlDeveloperUtPlsqlPlugin()
         {
@@ -77,13 +77,18 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             {
                 PlsqlDeveloperUtPlsqlPlugin.ConnectToDatabase();
 
-                // Two seperate streams are needed!
+                // Seperate streams are needed!
                 var assembly = Assembly.GetExecutingAssembly();
-                using (Stream stream = assembly.GetManifestResourceStream("PlsqlDeveloperUtPlsqlPlugin.utPLSQL.bmp"))
+                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
                 {
                     PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_MENU_INDEX_ALLTESTS, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                 }
-                using (Stream stream = assembly.GetManifestResourceStream("PlsqlDeveloperUtPlsqlPlugin.utPLSQL.bmp"))
+                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
+                {
+                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                }
+
+                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
                 {
                     PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_POPUP_INDEX, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                 }
@@ -92,15 +97,15 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             {
                 MessageBox.Show(e.Message);
             }
+
             PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "USER");
             PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "PACKAGE");
-
         }
 
         [DllExport("CanClose", CallingConvention = CallingConvention.Cdecl)]
         public static bool CanClose()
         {
-            foreach (RealTimeTestResultWindow window in windows)
+            foreach (TestRunnerWindow window in windows)
             {
                 if (window.Running)
                 {
@@ -164,6 +169,8 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                     return "GROUP=utPLSQL";
                 case PLUGIN_MENU_INDEX_ALLTESTS:
                     return "LARGEITEM=Run all tests of current user";
+                case PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE:
+                    return "LARGEITEM=Run code coverage for current user";
                 default:
                     return "";
             }
@@ -176,9 +183,18 @@ namespace PlsqlDeveloperUtPlsqlPlugin
             {
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
-                    var testResultWindow = new RealTimeTestResultWindow(testRunner);
+                    var testResultWindow = new TestRunnerWindow(testRunner);
                     windows.Add(testResultWindow);
-                    testResultWindow.RunTests("_ALL", username, null, null);
+                    testResultWindow.RunTests("_ALL", username, null, null, false);
+                }
+            }
+            else if (index == PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE)
+            {
+                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                {
+                    var testResultWindow = new TestRunnerWindow(testRunner);
+                    windows.Add(testResultWindow);
+                    testResultWindow.RunTests("_ALL", username, null, null, true);
                 }
             }
             else if (index == PLUGIN_POPUP_INDEX)
@@ -191,9 +207,9 @@ namespace PlsqlDeveloperUtPlsqlPlugin
                     IntPtr subType;
                     PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
 
-                    var testResultWindow = new RealTimeTestResultWindow(testRunner);
+                    var testResultWindow = new TestRunnerWindow(testRunner);
                     windows.Add(testResultWindow);
-                    testResultWindow.RunTests(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType));
+                    testResultWindow.RunTests(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
                 }
             }
         }
@@ -209,7 +225,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin
         internal static void OpenPackageBody(string owner, string name)
         {
             IntPtr source = getObjectSource("PACKAGE BODY", owner, name);
-            createWindow(3, source, false);
+            createWindow(3, Marshal.PtrToStringAnsi(source), false);
         }
 
         private static void ConnectToDatabase()
