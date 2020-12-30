@@ -25,5 +25,13 @@ namespace utPLSQL
         {
             return txtExluces.Text;
         }
+
+        private void keyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnRun.PerformClick();
+            }
+        }
     }
 }

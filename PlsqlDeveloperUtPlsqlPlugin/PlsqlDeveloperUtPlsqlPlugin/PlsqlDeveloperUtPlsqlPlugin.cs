@@ -32,6 +32,7 @@ namespace utPLSQL
         private const int PLUGIN_MENU_INDEX_ALLTESTS = 3;
         private const int PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE = 4;
         private const int PLUGIN_POPUP_INDEX = 1;
+        private const int PLUGIN_POPUP_INDEX_WITH_COVERAGE = 2;
 
         private static PlsqlDeveloperUtPlsqlPlugin plugin;
 
@@ -92,6 +93,10 @@ namespace utPLSQL
                 {
                     PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_POPUP_INDEX, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                 }
+                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
+                {
+                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_POPUP_INDEX_WITH_COVERAGE, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                }
             }
             catch (Exception e)
             {
@@ -99,7 +104,10 @@ namespace utPLSQL
             }
 
             PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "USER");
+            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX_WITH_COVERAGE, "Run Code Coverage", "USER");
+
             PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX, "Run utPLSQL Test", "PACKAGE");
+            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PLUGIN_POPUP_INDEX_WITH_COVERAGE, "Run Code Coverage", "PACKAGE");
         }
 
         [DllExport("CanClose", CallingConvention = CallingConvention.Cdecl)]
@@ -210,6 +218,21 @@ namespace utPLSQL
                     var testResultWindow = new TestRunnerWindow(testRunner);
                     windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
+                }
+            }
+            else if (index == PLUGIN_POPUP_INDEX_WITH_COVERAGE)
+            {
+                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                {
+                    IntPtr type;
+                    IntPtr owner;
+                    IntPtr name;
+                    IntPtr subType;
+                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
+
+                    var testResultWindow = new TestRunnerWindow(testRunner);
+                    windows.Add(testResultWindow);
+                    testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
                 }
             }
         }

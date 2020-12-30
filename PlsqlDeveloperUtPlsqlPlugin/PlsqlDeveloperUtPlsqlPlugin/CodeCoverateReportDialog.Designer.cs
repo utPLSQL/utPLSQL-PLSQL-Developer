@@ -58,6 +58,7 @@ namespace utPLSQL
             this.txtSchemas.Name = "txtSchemas";
             this.txtSchemas.Size = new System.Drawing.Size(453, 20);
             this.txtSchemas.TabIndex = 1;
+            this.txtSchemas.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
             // 
             // txtIncludes
             // 
@@ -66,6 +67,7 @@ namespace utPLSQL
             this.txtIncludes.Name = "txtIncludes";
             this.txtIncludes.Size = new System.Drawing.Size(453, 80);
             this.txtIncludes.TabIndex = 2;
+            this.txtIncludes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
             // 
             // txtExluces
             // 
@@ -74,6 +76,7 @@ namespace utPLSQL
             this.txtExluces.Name = "txtExluces";
             this.txtExluces.Size = new System.Drawing.Size(453, 80);
             this.txtExluces.TabIndex = 3;
+            this.txtExluces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
             // 
             // label1
             // 
@@ -100,7 +103,7 @@ namespace utPLSQL
             this.btnRun.Location = new System.Drawing.Point(416, 296);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
-            this.btnRun.TabIndex = 6;
+            this.btnRun.TabIndex = 4;
             this.btnRun.Text = "Run";
             this.btnRun.UseVisualStyleBackColor = true;
             // 
