@@ -112,7 +112,7 @@ namespace utPLSQL
                 var xml = reader.GetString(0);
 
                 var serializer = new XmlSerializer(typeof(@event));
-                var @event = (@event) serializer.Deserialize(new StringReader(xml));
+                var @event = (@event)serializer.Deserialize(new StringReader(xml));
 
                 action.Invoke(@event);
             }

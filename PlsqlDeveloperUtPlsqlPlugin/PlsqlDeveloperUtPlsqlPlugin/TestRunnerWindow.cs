@@ -27,7 +27,7 @@ namespace utPLSQL
             this.testRunner = testRunner;
             InitializeComponent();
 
-            var bindingSource = new BindingSource {DataSource = testResults};
+            var bindingSource = new BindingSource { DataSource = testResults };
             gridResults.DataSource = bindingSource;
 
             gridResults.Columns[0].HeaderText = "";
@@ -100,59 +100,59 @@ namespace utPLSQL
             {
                 if (@event.type.Equals("pre-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker) delegate()
-                    {
-                        totalNumberOfTests = @event.totalNumberOfTests;
+                    gridResults.BeginInvoke((MethodInvoker)delegate ()
+                   {
+                       totalNumberOfTests = @event.totalNumberOfTests;
 
-                        progressBar.Minimum = 0;
-                        progressBar.Maximum = totalNumberOfTests * Steps;
-                        progressBar.Step = Steps;
-                        CreateTestResults(@event);
+                       progressBar.Minimum = 0;
+                       progressBar.Maximum = totalNumberOfTests * Steps;
+                       progressBar.Step = Steps;
+                       CreateTestResults(@event);
 
-                        gridResults.Rows[0].Selected = false;
-                    });
+                       gridResults.Rows[0].Selected = false;
+                   });
                 }
                 else if (@event.type.Equals("post-test"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker) delegate()
-                    {
-                        completedTests++;
+                    gridResults.BeginInvoke((MethodInvoker)delegate ()
+                   {
+                       completedTests++;
 
-                        txtTests.Text =
-                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                            totalNumberOfTests;
-                        UpdateProgressBar(completedTests);
+                       txtTests.Text =
+                           (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
+                           totalNumberOfTests;
+                       UpdateProgressBar(completedTests);
 
-                        UpdateTestResult(@event);
-                    });
+                       UpdateTestResult(@event);
+                   });
                 }
                 else if (@event.type.Equals("post-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker) delegate()
-                    {
-                        txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
-                        txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
-                        txtTime.Text = @event.run.executionTime + " s";
+                    gridResults.BeginInvoke((MethodInvoker)delegate ()
+                   {
+                       txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
+                       txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
+                       txtTime.Text = @event.run.executionTime + " s";
 
-                        txtTests.Text =
-                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                            totalNumberOfTests;
-                        txtFailures.Text = @event.run.counter.failure + "";
-                        txtErrors.Text = @event.run.counter.error + "";
-                        txtDisabled.Text = @event.run.counter.disabled + "";
+                       txtTests.Text =
+                           (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
+                           totalNumberOfTests;
+                       txtFailures.Text = @event.run.counter.failure + "";
+                       txtErrors.Text = @event.run.counter.error + "";
+                       txtDisabled.Text = @event.run.counter.disabled + "";
 
-                        if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
-                        {
-                            progressBar.ForeColor = Color.DarkRed;
-                        }
+                       if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
+                       {
+                           progressBar.ForeColor = Color.DarkRed;
+                       }
 
-                        if (!coverage)
-                        {
-                            txtStatus.Text = "Finished";
+                       if (!coverage)
+                       {
+                           txtStatus.Text = "Finished";
 
-                            Running = false;
-                        }
-                    });
+                           Running = false;
+                       }
+                   });
                 }
             }));
         }
@@ -169,7 +169,7 @@ namespace utPLSQL
                     sw.WriteLine(report);
                 }
 
-                txtStatus.BeginInvoke((MethodInvoker) delegate() { txtStatus.Text = "Finished"; });
+                txtStatus.BeginInvoke((MethodInvoker)delegate () { txtStatus.Text = "Finished"; });
 
                 Running = false;
 
@@ -324,7 +324,7 @@ namespace utPLSQL
 
             txtErrorMessage.Text = "";
 
-            var bindingSource = new BindingSource {DataSource = new BindingList<Expectation>()};
+            var bindingSource = new BindingSource { DataSource = new BindingList<Expectation>() };
             gridTestFailures.DataSource = bindingSource;
 
             progressBar.ForeColor = Color.Green;
@@ -472,7 +472,7 @@ namespace utPLSQL
             if (gridResults.SelectedRows.Count > 0)
             {
                 var row = gridResults.SelectedRows[0];
-                var testResult = (TestResult) row.DataBoundItem;
+                var testResult = (TestResult)row.DataBoundItem;
 
                 txtTestOwner.Text = testResult.Owner;
                 txtTestPackage.Text = testResult.Package;
@@ -487,7 +487,7 @@ namespace utPLSQL
 
                 txtErrorMessage.Text = testResult.Error;
 
-                var bindingSource = new BindingSource {DataSource = testResult.failedExpectations};
+                var bindingSource = new BindingSource { DataSource = testResult.failedExpectations };
                 gridTestFailures.DataSource = bindingSource;
 
                 gridTestFailures.Columns[0].MinimumWidth = 480;

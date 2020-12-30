@@ -1,12 +1,11 @@
-﻿using System;
-using RGiesecke.DllExport;
+﻿using RGiesecke.DllExport;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Reflection;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace utPLSQL
 {
@@ -160,34 +159,34 @@ namespace utPLSQL
             {
                 case 11:
                     PlsqlDeveloperUtPlsqlPlugin.connected =
-                        (IdeConnected) Marshal.GetDelegateForFunctionPointer(function, typeof(IdeConnected));
+                        (IdeConnected)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeConnected));
                     break;
                 case 12:
                     PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo =
-                        (IdeGetConnectionInfo) Marshal.GetDelegateForFunctionPointer(function,
+                        (IdeGetConnectionInfo)Marshal.GetDelegateForFunctionPointer(function,
                             typeof(IdeGetConnectionInfo));
                     break;
                 case 20:
                     PlsqlDeveloperUtPlsqlPlugin.createWindow =
-                        (IdeCreateWindow) Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateWindow));
+                        (IdeCreateWindow)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateWindow));
                     break;
                 case 69:
                     PlsqlDeveloperUtPlsqlPlugin.createPopupItem =
-                        (IdeCreatePopupItem) Marshal.GetDelegateForFunctionPointer(function,
+                        (IdeCreatePopupItem)Marshal.GetDelegateForFunctionPointer(function,
                             typeof(IdeCreatePopupItem));
                     break;
                 case 74:
                     PlsqlDeveloperUtPlsqlPlugin.getPopupObject =
-                        (IdeGetPopupObject) Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetPopupObject));
+                        (IdeGetPopupObject)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetPopupObject));
                     break;
                 case 79:
                     PlsqlDeveloperUtPlsqlPlugin.getObjectSource =
-                        (IdeGetObjectSource) Marshal.GetDelegateForFunctionPointer(function,
+                        (IdeGetObjectSource)Marshal.GetDelegateForFunctionPointer(function,
                             typeof(IdeGetObjectSource));
                     break;
                 case 150:
                     PlsqlDeveloperUtPlsqlPlugin.createToolButton =
-                        (IdeCreateToolButton) Marshal.GetDelegateForFunctionPointer(function,
+                        (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function,
                             typeof(IdeCreateToolButton));
                     break;
             }
