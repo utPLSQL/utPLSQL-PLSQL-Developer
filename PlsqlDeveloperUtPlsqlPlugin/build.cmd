@@ -1,0 +1,7 @@
+msbuild PlsqlDeveloperUtPlsqlPlugin.sln /p:Configuration=Release;Platform=x64
+
+copy PlsqlDeveloperUtPlsqlPlugin\bin\x64\Release\PlsqlDeveloperUtPlsqlPlugin.dll build\PlsqlDeveloperUtPlsqlPlugin.dll
+
+msbuild PlsqlDeveloperUtPlsqlPlugin.sln /p:Configuration=Release;Platform=x86
+
+copy PlsqlDeveloperUtPlsqlPlugin\bin\x86\Release\PlsqlDeveloperUtPlsqlPlugin.dll build\PlsqlDeveloperUtPlsqlPlugin_x86.dll

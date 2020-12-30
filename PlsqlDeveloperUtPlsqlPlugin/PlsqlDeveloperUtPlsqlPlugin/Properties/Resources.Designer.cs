@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PlsqlDeveloperUtPlsqlPlugin.Properties {
+namespace utPLSQL.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace PlsqlDeveloperUtPlsqlPlugin.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PlsqlDeveloperUtPlsqlPlugin.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("utPLSQL.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -66,6 +66,16 @@ namespace PlsqlDeveloperUtPlsqlPlugin.Properties {
         internal static System.Drawing.Bitmap utPLSQL {
             get {
                 object obj = ResourceManager.GetObject("utPLSQL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap utPLSQL_coverage {
+            get {
+                object obj = ResourceManager.GetObject("utPLSQL_coverage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

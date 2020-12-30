@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace PlsqlDeveloperUtPlsqlPlugin
+namespace utPLSQL
 {
     class TestResult
     {

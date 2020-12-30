@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="realtime-report.cs" />
-    <Compile Include="RealTimeXmlTestRunner.cs" />
     <Compile Include="RealTimeTestRunner.cs" />
     <Compile Include="TestRunner.cs" />
   </ItemGroup>
