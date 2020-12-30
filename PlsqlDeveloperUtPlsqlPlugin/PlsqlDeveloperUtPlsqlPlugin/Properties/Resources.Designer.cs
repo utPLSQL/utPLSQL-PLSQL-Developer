@@ -69,5 +69,15 @@ namespace utPLSQL.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap utPLSQL_coverage {
+            get {
+                object obj = ResourceManager.GetObject("utPLSQL_coverage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

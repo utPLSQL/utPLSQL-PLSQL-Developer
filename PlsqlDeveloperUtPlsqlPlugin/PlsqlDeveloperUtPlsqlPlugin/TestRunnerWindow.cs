@@ -46,8 +46,6 @@ namespace utPLSQL
 
             setWindowTitle(type, owner, name, procedure);
 
-            Running = true;
-
             if (coverage)
             {
                 var codeCoverateReportDialog = new CodeCoverateReportDialog(getPath(type, owner, name, procedure));
@@ -79,6 +77,7 @@ namespace utPLSQL
         private void RunTests(string type, string owner, string name, string procedure)
         {
             Task.Factory.StartNew(() => testRunner.RunTests(type, owner, name, procedure));
+            Running = true;
         }
 
         private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverateReportDialog codeCoverateReportDialog)
@@ -88,6 +87,7 @@ namespace utPLSQL
             var excludes = ConvertToVarcharList(codeCoverateReportDialog.GetExcludes());
 
             Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes));
+            Running = true;
         }
 
         private void CollectResults(bool coverage)

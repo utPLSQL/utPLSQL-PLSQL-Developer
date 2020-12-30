@@ -84,18 +84,18 @@ namespace utPLSQL
                 {
                     PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_MENU_INDEX_ALLTESTS, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                 }
-                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
+                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL_coverage.bmp"))
                 {
-                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE, "utPLSQL", "utPLSQL_coverage.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                 }
 
                 using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
                 {
                     PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_POPUP_INDEX, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                 }
-                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
+                using (Stream stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL_coverage.bmp"))
                 {
-                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_POPUP_INDEX_WITH_COVERAGE, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                    PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PLUGIN_POPUP_INDEX_WITH_COVERAGE, "utPLSQL", "utPLSQL_coverage.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                 }
             }
             catch (Exception e)
