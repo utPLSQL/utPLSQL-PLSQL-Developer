@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using utPLSQL;
 
@@ -39,7 +39,7 @@ namespace utPLSQL
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        internal void RunTests(string type, string owner, string name, string procedure, bool coverage)
+        internal async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
             Running = true;
 
@@ -55,32 +55,113 @@ namespace utPLSQL
                 DialogResult dialogResult = codeCoverateReportDialog.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
-                    new Thread(() =>
-                    {
-                        var schemas = ConvertToVarcharList(codeCoverateReportDialog.GetSchemas());
-                        var includes = ConvertToVarcharList(codeCoverateReportDialog.GetIncludes());
-                        var excludes = ConvertToVarcharList(codeCoverateReportDialog.GetExcludes());
-
-                        testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes);
-                    }).Start();
+                    RunWithCoverage(type, owner, name, procedure, codeCoverateReportDialog);
 
                     Show();
 
                     CollectResults(coverage);
-                    CollectReport(coverage);
+                    CollectReport();
                 }
             }
             else
             {
-                new Thread(() =>
-                {
-                    testRunner.RunTests(type, owner, name, procedure);
-                }).Start();
+                RunTests(type, owner, name, procedure);
 
                 Show();
 
                 CollectResults(coverage);
             }
+        }
+
+        private void RunTests(string type, string owner, string name, string procedure)
+        {
+            Task.Factory.StartNew(() => testRunner.RunTests(type, owner, name, procedure));
+        }
+
+        private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverateReportDialog codeCoverateReportDialog)
+        {
+            var schemas = ConvertToVarcharList(codeCoverateReportDialog.GetSchemas());
+            var includes = ConvertToVarcharList(codeCoverateReportDialog.GetIncludes());
+            var excludes = ConvertToVarcharList(codeCoverateReportDialog.GetExcludes());
+
+            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes));
+        }
+
+        private void CollectResults(bool coverage)
+        {
+            var completetedTests = 0;
+
+            Task.Factory.StartNew(() => testRunner.ConsumeResult(@event =>
+            {
+                gridResults.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    if (@event.type.Equals("pre-run"))
+                    {
+                        totalNumberOfTests = @event.totalNumberOfTests;
+
+                        progressBar.Minimum = 0;
+                        progressBar.Maximum = totalNumberOfTests * STEPS;
+                        progressBar.Step = STEPS;
+
+                        CreateTestResults(@event);
+
+                        gridResults.Rows[0].Selected = false;
+                    }
+                    else if (@event.type.Equals("post-test"))
+                    {
+                        completetedTests++;
+                        txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
+
+                        UpdateProgressBar(completetedTests);
+
+                        UpdateTestResult(@event);
+                    }
+                    else if (@event.type.Equals("post-run"))
+                    {
+                        txtStart.Text = @event.run.startTime.ToString();
+                        txtEnd.Text = @event.run.endTime.ToString();
+                        txtTime.Text = @event.run.executionTime + " s";
+
+                        txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
+                        txtFailures.Text = @event.run.counter.failure + "";
+                        txtErrors.Text = @event.run.counter.error + "";
+                        txtDisabled.Text = @event.run.counter.disabled + "";
+
+                        if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
+                        {
+                            progressBar.ForeColor = Color.DarkRed;
+                        }
+
+                        if (!coverage)
+                        {
+                            txtStatus.Text = "Finished";
+                            Running = false;
+                        }
+                    }
+                });
+            }));
+        }
+
+        private void CollectReport()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                var start = DateTime.Now;
+                txtStatus.Text = "Running with Coverage...";
+
+                string report = testRunner.GetCoverageReport();
+
+                string filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
+                using (StreamWriter sw = new StreamWriter(filePath))
+                {
+                    sw.WriteLine(report);
+                }
+
+                txtStatus.Text = $"Finished in {(DateTime.Now - start)}";
+                Running = false;
+
+                System.Diagnostics.Process.Start(filePath);
+            });
         }
 
         private string ConvertToVarcharList(string listValue)
@@ -132,90 +213,6 @@ namespace utPLSQL
             }
             return sb.ToString();
         }
-
-        private void CollectReport(bool coverage)
-        {
-            new Thread(() =>
-            {
-                if (coverage)
-                {
-                    var start = DateTime.Now;
-                    txtStatus.Text = "Running with Coverage...";
-
-                    string report = testRunner.GetCoverageReport();
-
-                    string filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
-                    using (StreamWriter sw = new StreamWriter(filePath))
-                    {
-                        sw.WriteLine(report);
-                    }
-
-                    txtStatus.Text = $"Finished in {(DateTime.Now - start)}";
-                    Running = false;
-
-                    System.Diagnostics.Process.Start(filePath);
-                }
-            }).Start();
-        }
-
-        private void CollectResults(bool coverage)
-        {
-            new Thread(() =>
-            {
-                var completetedTests = 0;
-
-                testRunner.ConsumeResult(@event =>
-                {
-                    gridResults.BeginInvoke((MethodInvoker)delegate ()
-                    {
-                        if (@event.type.Equals("pre-run"))
-                        {
-                            totalNumberOfTests = @event.totalNumberOfTests;
-
-                            progressBar.Minimum = 0;
-                            progressBar.Maximum = totalNumberOfTests * STEPS;
-                            progressBar.Step = STEPS;
-
-                            CreateTestResults(@event);
-
-                            gridResults.Rows[0].Selected = false;
-                        }
-                        else if (@event.type.Equals("post-test"))
-                        {
-                            completetedTests++;
-                            txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
-
-                            UpdateProgressBar(completetedTests);
-
-                            UpdateTestResult(@event);
-                        }
-                        else if (@event.type.Equals("post-run"))
-                        {
-                            txtStart.Text = @event.run.startTime.ToString();
-                            txtEnd.Text = @event.run.endTime.ToString();
-                            txtTime.Text = @event.run.executionTime + " s";
-
-                            txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
-                            txtFailures.Text = @event.run.counter.failure + "";
-                            txtErrors.Text = @event.run.counter.error + "";
-                            txtDisabled.Text = @event.run.counter.disabled + "";
-
-                            if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
-                            {
-                                progressBar.ForeColor = Color.DarkRed;
-                            }
-
-                            if (!coverage)
-                            {
-                                txtStatus.Text = "Finished";
-                                Running = false;
-                            }
-                        }
-                    });
-                });
-            }).Start();
-        }
-
         private void UpdateProgressBar(int completetedTests)
         {
             int newValue = (completetedTests * STEPS) + 1;
@@ -502,7 +499,7 @@ namespace utPLSQL
             TestResult testResult = testResults[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(testRunner);
-            testResultWindow.RunTests(RealTimeTestRunner.PROCEDURE, testResult.Owner, testResult.Package, testResult.Procedure, false);
+            testResultWindow.RunTestsAsync(RealTimeTestRunner.PROCEDURE, testResult.Owner, testResult.Package, testResult.Procedure, false);
         }
     }
 }

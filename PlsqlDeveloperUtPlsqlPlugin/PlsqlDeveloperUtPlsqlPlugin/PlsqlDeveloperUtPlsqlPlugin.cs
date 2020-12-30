@@ -185,7 +185,7 @@ namespace utPLSQL
                 {
                     var testResultWindow = new TestRunnerWindow(testRunner);
                     windows.Add(testResultWindow);
-                    testResultWindow.RunTests("_ALL", username, null, null, false);
+                    testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
                 }
             }
             else if (index == PLUGIN_MENU_INDEX_ALLTESTS_WITH_COVERAGE)
@@ -194,7 +194,7 @@ namespace utPLSQL
                 {
                     var testResultWindow = new TestRunnerWindow(testRunner);
                     windows.Add(testResultWindow);
-                    testResultWindow.RunTests("_ALL", username, null, null, true);
+                    testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
                 }
             }
             else if (index == PLUGIN_POPUP_INDEX)
@@ -209,7 +209,7 @@ namespace utPLSQL
 
                     var testResultWindow = new TestRunnerWindow(testRunner);
                     windows.Add(testResultWindow);
-                    testResultWindow.RunTests(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
+                    testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner), Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
                 }
             }
         }

@@ -70,26 +70,22 @@ namespace utPLSQL
                         "sys.dbms_output.disable; " +
                         "END;";
 
-                using (EventLog eventLog = new EventLog("Application"))
+                OracleCommand cmd = new OracleCommand(proc, produceConnection);
+                cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = realtimeReporterId;
+                cmd.Parameters.Add("coverage_id", OracleDbType.Varchar2, ParameterDirection.Input).Value = coverageReporterId;
+                cmd.Parameters.Add("test", OracleDbType.Varchar2, ParameterDirection.Input).Value = testsToRun;
+
+                try
                 {
-                    //eventLog.Source = "Application";
-                    //eventLog.WriteEntry($"RunTestsWithCoverage: {proc}", EventLogEntryType.Information, 101, 1);
-
-                    OracleCommand cmd = new OracleCommand(proc, produceConnection);
-                    cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = realtimeReporterId;
-                    cmd.Parameters.Add("coverage_id", OracleDbType.Varchar2, ParameterDirection.Input).Value = coverageReporterId;
-                    cmd.Parameters.Add("test", OracleDbType.Varchar2, ParameterDirection.Input).Value = testsToRun;
-
-                    try
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    using (EventLog eventLog = new EventLog("Application"))
                     {
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (Exception e)
-                    {
-                        eventLog.WriteEntry($"{e.Message} {e.StackTrace}", EventLogEntryType.Error, 101, 1);
+                        eventLog.WriteEntry($"{e.Message} {e.StackTrace}", EventLogEntryType.Error, 0);
                     }
                 }
-
             }
         }
 
@@ -105,6 +101,7 @@ namespace utPLSQL
             OracleCommand cmd = new OracleCommand(proc, consumeConnection);
             cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = realtimeReporterId;
             cmd.Parameters.Add("lines_cursor", OracleDbType.RefCursor, ParameterDirection.Output);
+            cmd.InitialLOBFetchSize = -1;
 
             OracleDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

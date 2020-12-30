@@ -1,6 +1,7 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Text;
 
 namespace utPLSQL
@@ -69,7 +70,7 @@ namespace utPLSQL
             OracleCommand cmd = new OracleCommand(proc, coverageConnection);
             cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = coverageReporterId;
             cmd.Parameters.Add("lines_cursor", OracleDbType.RefCursor, ParameterDirection.Output);
-            cmd.FetchSize = 10000;
+            cmd.InitialLOBFetchSize = -1;
 
             OracleDataReader reader = cmd.ExecuteReader();
 
