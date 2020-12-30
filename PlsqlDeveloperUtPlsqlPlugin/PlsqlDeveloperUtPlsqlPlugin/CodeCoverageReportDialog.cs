@@ -2,9 +2,9 @@
 
 namespace utPLSQL
 {
-    public partial class CodeCoverateReportDialog : Form
+    public partial class CodeCoverageReportDialog : Form
     {
-        public CodeCoverateReportDialog(string path)
+        public CodeCoverageReportDialog(string path)
         {
             InitializeComponent();
 

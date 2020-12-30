@@ -81,6 +81,7 @@ namespace utPLSQL
             this.lblEnd = new System.Windows.Forms.Label();
             this.txtEnd = new System.Windows.Forms.TextBox();
             this.iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
+            this.menuItemCoverage = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
             this.contextMenuResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).BeginInit();
@@ -221,14 +222,15 @@ namespace utPLSQL
             // contextMenuResults
             // 
             this.contextMenuResults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItemRunTests});
+            this.menuItemRunTests,
+            this.menuItemCoverage});
             this.contextMenuResults.Name = "contextMenuResults";
-            this.contextMenuResults.Size = new System.Drawing.Size(119, 26);
+            this.contextMenuResults.Size = new System.Drawing.Size(181, 70);
             // 
             // menuItemRunTests
             // 
             this.menuItemRunTests.Name = "menuItemRunTests";
-            this.menuItemRunTests.Size = new System.Drawing.Size(118, 22);
+            this.menuItemRunTests.Size = new System.Drawing.Size(180, 22);
             this.menuItemRunTests.Text = "Run Test";
             this.menuItemRunTests.Click += new System.EventHandler(this.menuItemRunTests_Click);
             // 
@@ -594,6 +596,13 @@ namespace utPLSQL
             this.iconPictureBox4.TabIndex = 27;
             this.iconPictureBox4.TabStop = false;
             // 
+            // menuItemCoverage
+            // 
+            this.menuItemCoverage.Name = "menuItemCoverage";
+            this.menuItemCoverage.Size = new System.Drawing.Size(180, 22);
+            this.menuItemCoverage.Text = "Run Code Coverage";
+            this.menuItemCoverage.Click += new System.EventHandler(this.menuItemCoverage_Click);
+            // 
             // TestRunnerWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -697,5 +706,6 @@ namespace utPLSQL
         private FontAwesome.Sharp.IconPictureBox iconPictureBox4;
         private System.Windows.Forms.ContextMenuStrip contextMenuResults;
         private System.Windows.Forms.ToolStripMenuItem menuItemRunTests;
+        private System.Windows.Forms.ToolStripMenuItem menuItemCoverage;
     }
 }

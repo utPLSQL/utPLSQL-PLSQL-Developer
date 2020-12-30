@@ -8,81 +8,68 @@ namespace utPLSQL
 {
     public abstract class TestRunner<T>
     {
-        public const string USER = "USER";
-        public const string PACKAGE = "PACKAGE";
-        public const string PROCEDURE = "PROCEDURE";
-        public const string ALL = "_ALL";
+        public const string User = "USER";
+        public const string Package = "PACKAGE";
+        public const string Procedure = "PROCEDURE";
+        public const string All = "_ALL";
 
         internal OracleConnection produceConnection;
         internal OracleConnection consumeConnection;
-        internal OracleConnection coverageConnection;
 
         protected string realtimeReporterId;
         protected string coverageReporterId;
 
         public void Connect(string username, string password, string database)
         {
-            string connectionString = $"User Id={username};Password={password};Data Source={database}";
+            var connectionString = $"User Id={username};Password={password};Data Source={database}";
 
             produceConnection = new OracleConnection(connectionString);
             produceConnection.Open();
 
             consumeConnection = new OracleConnection(connectionString);
             consumeConnection.Open();
-
-            coverageConnection = new OracleConnection(connectionString);
-            coverageConnection.Open();
         }
 
         public void Close()
         {
-            if (produceConnection != null)
-            {
-                produceConnection.Close();
-            }
-            if (consumeConnection != null)
-            {
-                consumeConnection.Close();
-            }
-            if (coverageConnection != null)
-            {
-                coverageConnection.Close();
-            }
+            produceConnection?.Close();
+            consumeConnection?.Close();
         }
 
         public abstract void RunTests(string type, string owner, string name, string procedure);
 
-        public abstract void RunTestsWithCoverage(string type, string owner, string name, string procedure, string coverageSchemas, string includeObjects, string excludeObjects);
+        public abstract void RunTestsWithCoverage(string type, string owner, string name, string procedure, string coverageSchemas,
+            string includeObjects, string excludeObjects);
 
         public abstract void ConsumeResult(Action<T> consumer);
 
         public string GetCoverageReport()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            string proc = @"DECLARE
-                              l_reporter ut_coverage_html_reporter := ut_coverage_html_reporter();
-                            BEGIN
-                              l_reporter.set_reporter_id(:id);
-                              :lines_cursor := l_reporter.get_lines_cursor();
-                            END;";
+            var proc = @"DECLARE
+                           l_reporter ut_coverage_html_reporter := ut_coverage_html_reporter();
+                         BEGIN
+                           l_reporter.set_reporter_id(:id);
+                           :lines_cursor := l_reporter.get_lines_cursor();
+                         END;";
 
-            OracleCommand cmd = new OracleCommand(proc, coverageConnection);
+            var cmd = new OracleCommand(proc, consumeConnection);
             cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = coverageReporterId;
             cmd.Parameters.Add("lines_cursor", OracleDbType.RefCursor, ParameterDirection.Output);
             cmd.InitialLOBFetchSize = -1;
 
-            OracleDataReader reader = cmd.ExecuteReader();
+            var reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                string line = reader.GetString(0);
+                var line = reader.GetString(0);
                 sb.Append(line);
             }
+
             reader.Close();
 
             return sb.ToString();
         }
     }
-
 }

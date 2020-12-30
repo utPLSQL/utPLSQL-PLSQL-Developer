@@ -1,7 +1,7 @@
 ﻿
 namespace utPLSQL
 {
-    partial class CodeCoverateReportDialog
+    partial class CodeCoverageReportDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace utPLSQL
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CodeCoverateReportDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CodeCoverageReportDialog));
             this.txtPaths = new System.Windows.Forms.TextBox();
             this.txtSchemas = new System.Windows.Forms.TextBox();
             this.txtIncludes = new System.Windows.Forms.TextBox();

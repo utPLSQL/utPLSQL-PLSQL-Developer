@@ -10,7 +10,7 @@ namespace utPLSQL
         [TestMethod]
         public void TestToscamtest()
         {
-            RealTimeTestRunner testRunner = new RealTimeTestRunner();
+            var testRunner = new RealTimeTestRunner();
             testRunner.Connect(username: "toscamtest", password: "toscamtest", database: "CA40");
 
             testRunner.RunTestsWithCoverage(type: "USER", owner: null, name: "toscamtest", procedure: null, coverageSchemas: "'toscam'", "'pa_m720','pa_m770'", null);
@@ -24,7 +24,7 @@ namespace utPLSQL
             Assert.AreEqual("pre-run", events[0].type);
             Assert.AreEqual("post-run", events.Last().type);
 
-            string report = testRunner.GetCoverageReport();
+            var report = testRunner.GetCoverageReport();
 
             System.Diagnostics.Trace.WriteLine(report);
         }
