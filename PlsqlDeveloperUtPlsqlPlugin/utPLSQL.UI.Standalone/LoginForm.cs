@@ -13,10 +13,10 @@ namespace utPLSQL.UI.Standalone
         private void BtnRunTests_Click(object sender, EventArgs e)
         {
             var realTimeTestRunner = new RealTimeTestRunner();
-            realTimeTestRunner.Connect("toscamtest", "toscamtest", "CA40");
+            realTimeTestRunner.Connect(txtUsername.Text, txtPassword.Text, txtDatabase.Text);
 
             var testRunnerWindow = new TestRunnerWindow(realTimeTestRunner, null);
-            testRunnerWindow.RunTestsAsync("USER", null, "toscamtest", null, false);
+            testRunnerWindow.RunTestsAsync("USER", null, txtUsername.Text, null, false);
         }
     }
 }
