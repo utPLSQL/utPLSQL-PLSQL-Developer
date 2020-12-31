@@ -12,7 +12,7 @@ namespace utPLSQL
 {
     public partial class TestRunnerWindow : Form
     {
-        internal bool Running { get; set; }
+        public bool Running { get; set; }
 
         private const int IconSize = 24;
         private const int Steps = 1000;
@@ -38,7 +38,7 @@ namespace utPLSQL
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        internal void RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
+        public void RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
             ResetComponents();
 
@@ -498,13 +498,13 @@ namespace utPLSQL
         private void gridResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var testResult = testResults[e.RowIndex];
-            PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
+            //PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
         }
 
         private void gridTestFailures_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var testResult = testResults[e.RowIndex];
-            PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
+            //PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
         }
 
         private void gridResults_CellContextMenuStripNeeded(object sender,
