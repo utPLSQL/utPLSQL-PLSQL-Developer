@@ -77,9 +77,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\utPLSQL.Lib\utPLSQL.Lib.csproj">
+    <ProjectReference Include="..\utPLSQL.Api\utPLSQL.Api.csproj">
       <Project>{df09eace-50ec-44ea-849a-80462a219cfc}</Project>
-      <Name>utPLSQL.Lib</Name>
+      <Name>utPLSQL.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

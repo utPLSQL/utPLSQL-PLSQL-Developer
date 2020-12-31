@@ -106,57 +106,60 @@ namespace utPLSQL
                 {
                     gridResults.BeginInvoke((MethodInvoker)delegate
                     {
-                       totalNumberOfTests = @event.totalNumberOfTests;
+                        totalNumberOfTests = @event.totalNumberOfTests;
 
-                       progressBar.Minimum = 0;
-                       progressBar.Maximum = totalNumberOfTests * Steps;
-                       progressBar.Step = Steps;
-                       CreateTestResults(@event);
+                        progressBar.Minimum = 0;
+                        progressBar.Maximum = totalNumberOfTests * Steps;
+                        progressBar.Step = Steps;
+                        CreateTestResults(@event);
 
-                       gridResults.Rows[0].Selected = false;
-                   });
+                        if (gridResults.Rows.Count > 0)
+                        {
+                            gridResults.Rows[0].Selected = false;
+                        }
+                    });
                 }
                 else if (@event.type.Equals("post-test"))
                 {
                     gridResults.BeginInvoke((MethodInvoker)delegate
                     {
-                       completedTests++;
+                        completedTests++;
 
-                       txtTests.Text =
-                           (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                           totalNumberOfTests;
-                       UpdateProgressBar(completedTests);
+                        txtTests.Text =
+                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
+                            totalNumberOfTests;
+                        UpdateProgressBar(completedTests);
 
-                       UpdateTestResult(@event);
-                   });
+                        UpdateTestResult(@event);
+                    });
                 }
                 else if (@event.type.Equals("post-run"))
                 {
                     gridResults.BeginInvoke((MethodInvoker)delegate
                     {
-                       txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
-                       txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
-                       txtTime.Text = @event.run.executionTime + " s";
+                        txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
+                        txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
+                        txtTime.Text = @event.run.executionTime + " s";
 
-                       txtTests.Text =
-                           (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                           totalNumberOfTests;
-                       txtFailures.Text = @event.run.counter.failure + "";
-                       txtErrors.Text = @event.run.counter.error + "";
-                       txtDisabled.Text = @event.run.counter.disabled + "";
+                        txtTests.Text =
+                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
+                            totalNumberOfTests;
+                        txtFailures.Text = @event.run.counter.failure + "";
+                        txtErrors.Text = @event.run.counter.error + "";
+                        txtDisabled.Text = @event.run.counter.disabled + "";
 
-                       if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
-                       {
-                           progressBar.ForeColor = Color.DarkRed;
-                       }
+                        if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
+                        {
+                            progressBar.ForeColor = Color.DarkRed;
+                        }
 
-                       if (!coverage)
-                       {
-                           txtStatus.Text = "Finished";
+                        if (!coverage)
+                        {
+                            txtStatus.Text = "Finished";
 
-                           Running = false;
-                       }
-                   });
+                            Running = false;
+                        }
+                    });
                 }
             }));
         }

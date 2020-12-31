@@ -145,17 +145,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\utPLSQL.Lib\utPLSQL.Lib.csproj">
-      <Project>{df09eace-50ec-44ea-849a-80462a219cfc}</Project>
-      <Name>utPLSQL.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\utPLSQL.UI\utPLSQL.UI.csproj">
-      <Project>{7669189c-4a58-4e82-9dcb-7956624a719b}</Project>
-      <Name>utPLSQL.UI</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
+    <ProjectReference Include="..\utPLSQL.Api\utPLSQL.Api.csproj">
+      <Project>{df09eace-50ec-44ea-849a-80462a219cfc}</Project>
+      <Name>utPLSQL.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\utPLSQL.Ui\utPLSQL.Ui.csproj">
+      <Project>{7669189c-4a58-4e82-9dcb-7956624a719b}</Project>
+      <Name>utPLSQL.Ui</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\UnmanagedExports.Repack.1.0.4\build\UnmanagedExports.Repack.targets" Condition="Exists('..\packages\UnmanagedExports.Repack.1.0.4\build\UnmanagedExports.Repack.targets')" />

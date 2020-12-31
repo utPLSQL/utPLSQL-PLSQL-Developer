@@ -8,7 +8,7 @@
     <ProjectGuid>{8E898B26-0A4C-4DDA-9820-D5D050D2336E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>utPLSQL</RootNamespace>
-    <AssemblyName>utPLSQL.Lib.Test</AssemblyName>
+    <AssemblyName>utPLSQL.Api.Test</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -64,9 +64,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\utPLSQL.Lib\utPLSQL.Lib.csproj">
+    <ProjectReference Include="..\utPLSQL.Api\utPLSQL.Api.csproj">
       <Project>{df09eace-50ec-44ea-849a-80462a219cfc}</Project>
-      <Name>utPLSQL.Lib</Name>
+      <Name>utPLSQL.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

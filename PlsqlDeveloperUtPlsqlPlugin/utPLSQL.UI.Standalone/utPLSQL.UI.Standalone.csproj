@@ -75,13 +75,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\utPLSQL.Lib\utPLSQL.Lib.csproj">
+    <ProjectReference Include="..\utPLSQL.Api\utPLSQL.Api.csproj">
       <Project>{df09eace-50ec-44ea-849a-80462a219cfc}</Project>
-      <Name>utPLSQL.Lib</Name>
+      <Name>utPLSQL.Api</Name>
     </ProjectReference>
-    <ProjectReference Include="..\utPLSQL.UI\utPLSQL.UI.csproj">
-      <Project>{7cf5c5d4-3732-4098-a27f-2085d4d84cfe}</Project>
-      <Name>utPLSQL.UI</Name>
+    <ProjectReference Include="..\utPLSQL.Ui\utPLSQL.Ui.csproj">
+      <Project>{7669189c-4a58-4e82-9dcb-7956624a719b}</Project>
+      <Name>utPLSQL.Ui</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
