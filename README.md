@@ -2,19 +2,19 @@
 
 The utPLSQL Plugin integrates [utPLSQL](https://utplsql.org) with [Allround Automations PL/SQL Developer](https://www.allroundautomations.com/products/pl-sql-developer/).
 
-## Running Tests
+## Running Tests and Code Coverage
 
-The plugin adds a Button to the Tools ribbon to execute all tests of the current user.
+The plugin adds a Button to the Tools ribbon to execute all tests of the current user or run code coverage.
 
 ![img.png](screenshots/tools_ribbon.png)
 
-In the object browser on Packages or Users there is a context menu entry to run the tests of either the packages or the users.
+In the object browser on Packages or Users there is a context menu entry to run the tests or code coverage of either the packages or the users.
 
 ![img.png](screenshots/context_menu.png)
 
 ## Viewing Results
 
-The results are opened in a new window.
+The results are opened in a new window. If you've chosen code coverage the coverage report will be opened in the default browser. 
 
 ![img.png](screenshots/result_window.png)
 
