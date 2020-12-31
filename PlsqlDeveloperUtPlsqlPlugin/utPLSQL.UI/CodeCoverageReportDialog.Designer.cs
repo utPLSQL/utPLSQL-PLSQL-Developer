@@ -58,7 +58,7 @@ namespace utPLSQL
             this.txtSchemas.Name = "txtSchemas";
             this.txtSchemas.Size = new System.Drawing.Size(453, 20);
             this.txtSchemas.TabIndex = 1;
-            this.txtSchemas.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
+            this.txtSchemas.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EnterPressed);
             // 
             // txtIncludes
             // 
@@ -67,7 +67,7 @@ namespace utPLSQL
             this.txtIncludes.Name = "txtIncludes";
             this.txtIncludes.Size = new System.Drawing.Size(453, 80);
             this.txtIncludes.TabIndex = 2;
-            this.txtIncludes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
+            this.txtIncludes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EnterPressed);
             // 
             // txtExluces
             // 
@@ -76,7 +76,7 @@ namespace utPLSQL
             this.txtExluces.Name = "txtExluces";
             this.txtExluces.Size = new System.Drawing.Size(453, 80);
             this.txtExluces.TabIndex = 3;
-            this.txtExluces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
+            this.txtExluces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EnterPressed);
             // 
             // label1
             // 

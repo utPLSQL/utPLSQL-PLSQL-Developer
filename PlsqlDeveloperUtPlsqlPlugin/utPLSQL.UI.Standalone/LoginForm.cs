@@ -10,7 +10,7 @@ namespace utPLSQL.UI.Standalone
             InitializeComponent();
         }
 
-        private void btnRunTests_Click(object sender, EventArgs e)
+        private void BtnRunTests_Click(object sender, EventArgs e)
         {
             var realTimeTestRunner = new RealTimeTestRunner();
             realTimeTestRunner.Connect("toscamtest", "toscamtest", "CA40");

@@ -47,7 +47,7 @@ namespace utPLSQL.UI.Standalone
             this.btnRunTests.TabIndex = 0;
             this.btnRunTests.Text = "Run Tests";
             this.btnRunTests.UseVisualStyleBackColor = true;
-            this.btnRunTests.Click += new System.EventHandler(this.btnRunTests_Click);
+            this.btnRunTests.Click += new System.EventHandler(this.BtnRunTests_Click);
             // 
             // txtUsername
             // 

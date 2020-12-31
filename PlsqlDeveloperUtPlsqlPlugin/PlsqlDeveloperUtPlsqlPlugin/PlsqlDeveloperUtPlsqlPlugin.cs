@@ -241,11 +241,7 @@ namespace utPLSQL
             {
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
-                    IntPtr type;
-                    IntPtr owner;
-                    IntPtr name;
-                    IntPtr subType;
-                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
+                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
                     var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
@@ -257,11 +253,7 @@ namespace utPLSQL
             {
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
-                    IntPtr type;
-                    IntPtr owner;
-                    IntPtr name;
-                    IntPtr subType;
-                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
+                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
                     var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
@@ -294,10 +286,7 @@ namespace utPLSQL
 
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
-                    IntPtr ptrUsername;
-                    IntPtr ptrPassword;
-                    IntPtr ptrDatabase;
-                    PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo(out ptrUsername, out ptrPassword, out ptrDatabase);
+                    PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo(out IntPtr ptrUsername, out IntPtr ptrPassword, out IntPtr ptrDatabase);
 
                     username = Marshal.PtrToStringAnsi(ptrUsername);
                     password = Marshal.PtrToStringAnsi(ptrPassword);
