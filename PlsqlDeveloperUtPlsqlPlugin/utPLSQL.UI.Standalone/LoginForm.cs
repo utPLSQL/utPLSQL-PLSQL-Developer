@@ -21,7 +21,7 @@ namespace utPLSQL.UI.Standalone
             var realTimeTestRunner = new RealTimeTestRunner();
             realTimeTestRunner.Connect("toscamtest", "toscamtest", "CA40");
 
-            var testRunnerWindow = new TestRunnerWindow(realTimeTestRunner);
+            var testRunnerWindow = new TestRunnerWindow(realTimeTestRunner, null);
             testRunnerWindow.RunTestsAsync("USER", null, "toscamtest", null, false);
         }
     }

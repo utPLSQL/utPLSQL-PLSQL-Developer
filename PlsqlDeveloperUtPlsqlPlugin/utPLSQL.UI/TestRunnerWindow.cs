@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,13 +19,17 @@ namespace utPLSQL
         private const int Steps = 1000;
 
         private readonly RealTimeTestRunner testRunner;
+        private readonly object pluginIntegration;
         private readonly BindingList<TestResult> testResults = new BindingList<TestResult>();
+
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
 
-        public TestRunnerWindow(RealTimeTestRunner testRunner)
+        public TestRunnerWindow(RealTimeTestRunner testRunner, object pluginIntegration)
         {
             this.testRunner = testRunner;
+            this.pluginIntegration = pluginIntegration;
+
             InitializeComponent();
 
             var bindingSource = new BindingSource { DataSource = testResults };
@@ -497,18 +502,29 @@ namespace utPLSQL
 
         private void gridResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            var testResult = testResults[e.RowIndex];
-            //PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
+            if (pluginIntegration != null)
+            {
+                invokeOpenPackageBody(e);
+            }
         }
 
         private void gridTestFailures_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            var testResult = testResults[e.RowIndex];
-            //PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
+            if (pluginIntegration != null)
+            {
+                invokeOpenPackageBody(e);
+            }
         }
 
-        private void gridResults_CellContextMenuStripNeeded(object sender,
-            DataGridViewCellContextMenuStripNeededEventArgs e)
+        private void invokeOpenPackageBody(DataGridViewCellEventArgs e)
+        {
+            var testResult = testResults[e.RowIndex];
+
+            MethodInfo methodInfo = pluginIntegration.GetType().GetMethod("OpenPackageBody");
+            methodInfo.Invoke(pluginIntegration, new object[] { testResult.Owner, testResult.Package });
+        }
+
+        private void gridResults_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
         {
             rowIndexOnRightClick = e.RowIndex;
         }
@@ -517,7 +533,7 @@ namespace utPLSQL
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(testRunner);
+            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
             testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
                 testResult.Procedure, false);
         }
@@ -526,7 +542,7 @@ namespace utPLSQL
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(testRunner);
+            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
             testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
                 testResult.Procedure, true);
         }

@@ -223,7 +223,7 @@ namespace utPLSQL
             {
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
-                    var testResultWindow = new TestRunnerWindow(_testRunner);
+                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
                 }
@@ -232,7 +232,7 @@ namespace utPLSQL
             {
                 if (PlsqlDeveloperUtPlsqlPlugin.connected())
                 {
-                    var testResultWindow = new TestRunnerWindow(_testRunner);
+                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
                 }
@@ -247,7 +247,7 @@ namespace utPLSQL
                     IntPtr subType;
                     PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
 
-                    var testResultWindow = new TestRunnerWindow(_testRunner);
+                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
@@ -263,7 +263,7 @@ namespace utPLSQL
                     IntPtr subType;
                     PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out type, out owner, out name, out subType);
 
-                    var testResultWindow = new TestRunnerWindow(_testRunner);
+                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
@@ -280,10 +280,10 @@ namespace utPLSQL
 
         #endregion
 
-        internal static void OpenPackageBody(string owner, string name)
+        public void OpenPackageBody(string owner, string name)
         {
             IntPtr source = getObjectSource("PACKAGE BODY", owner, name);
-            createWindow(3, Marshal.PtrToStringAnsi(source), false);
+            PlsqlDeveloperUtPlsqlPlugin.createWindow(3, Marshal.PtrToStringAnsi(source), false);
         }
 
         private static void ConnectToDatabase()
