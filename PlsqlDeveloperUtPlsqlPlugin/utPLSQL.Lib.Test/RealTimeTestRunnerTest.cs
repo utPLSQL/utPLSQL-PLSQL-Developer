@@ -15,7 +15,7 @@ namespace utPLSQL
 
             testRunner.RunTestsWithCoverage(type: "USER", owner: null, name: "toscamtest", procedure: null, coverageSchemas: "'toscam'", "'pa_m720','pa_m770'", null);
 
-            List<@event> events = new List<@event>();
+            var events = new List<@event>();
             testRunner.ConsumeResult(@event =>
             {
                 events.Add(@event);

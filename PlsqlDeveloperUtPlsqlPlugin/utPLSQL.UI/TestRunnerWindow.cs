@@ -13,7 +13,7 @@ namespace utPLSQL
 {
     public partial class TestRunnerWindow : Form
     {
-        public bool Running { get; set; }
+        public bool Running { get; private set; }
 
         private const int IconSize = 24;
         private const int Steps = 1000;
@@ -53,7 +53,7 @@ namespace utPLSQL
 
             if (coverage)
             {
-                var codeCoverageReportDialog = new CodeCoverageReportDialog(getPath(type, owner, name, procedure));
+                var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
                 var dialogResult = codeCoverageReportDialog.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
@@ -86,14 +86,13 @@ namespace utPLSQL
         }
 
         private void RunWithCoverage(string type, string owner, string name, string procedure,
-            CodeCoverageReportDialog codeCoverageReporteReportDialog)
+            CodeCoverageReportDialog codeCoverageReportDialog)
         {
-            var schemas = ConvertToVarcharList(codeCoverageReporteReportDialog.GetSchemas());
-            var includes = ConvertToVarcharList(codeCoverageReporteReportDialog.GetIncludes());
-            var excludes = ConvertToVarcharList(codeCoverageReporteReportDialog.GetExcludes());
+            var schemas = ConvertToVarcharList(codeCoverageReportDialog.GetSchemas());
+            var includes = ConvertToVarcharList(codeCoverageReportDialog.GetIncludes());
+            var excludes = ConvertToVarcharList(codeCoverageReportDialog.GetExcludes());
 
-            Task.Factory.StartNew(() =>
-                testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes));
+            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes));
             Running = true;
         }
 
@@ -105,8 +104,8 @@ namespace utPLSQL
             {
                 if (@event.type.Equals("pre-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate ()
-                   {
+                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    {
                        totalNumberOfTests = @event.totalNumberOfTests;
 
                        progressBar.Minimum = 0;
@@ -119,8 +118,8 @@ namespace utPLSQL
                 }
                 else if (@event.type.Equals("post-test"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate ()
-                   {
+                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    {
                        completedTests++;
 
                        txtTests.Text =
@@ -133,8 +132,8 @@ namespace utPLSQL
                 }
                 else if (@event.type.Equals("post-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate ()
-                   {
+                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    {
                        txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
                        txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
                        txtTime.Text = @event.run.executionTime + " s";
@@ -166,15 +165,15 @@ namespace utPLSQL
         {
             Task.Factory.StartNew(() =>
             {
-                string report = testRunner.GetCoverageReport();
+                var report = testRunner.GetCoverageReport();
 
-                string filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
-                using (StreamWriter sw = new StreamWriter(filePath))
+                var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
+                using (var sw = new StreamWriter(filePath))
                 {
                     sw.WriteLine(report);
                 }
 
-                txtStatus.BeginInvoke((MethodInvoker)delegate () { txtStatus.Text = "Finished"; });
+                txtStatus.BeginInvoke((MethodInvoker)delegate { txtStatus.Text = "Finished"; });
 
                 Running = false;
 
@@ -184,7 +183,7 @@ namespace utPLSQL
 
         private string ConvertToVarcharList(string listValue)
         {
-            if (String.IsNullOrWhiteSpace(listValue))
+            if (string.IsNullOrWhiteSpace(listValue))
             {
                 return null;
             }
@@ -192,17 +191,17 @@ namespace utPLSQL
             {
                 if (listValue.Contains(" "))
                 {
-                    string[] parts = listValue.Split(' ');
+                    var parts = listValue.Split(' ');
                     return JoinParts(parts);
                 }
                 else if (listValue.Contains(","))
                 {
-                    string[] parts = listValue.Split(',');
+                    var parts = listValue.Split(',');
                     return JoinParts(parts);
                 }
                 else if (listValue.Contains("\n"))
                 {
-                    string[] parts = listValue.Split('\n');
+                    var parts = listValue.Split('\n');
                     return JoinParts(parts);
                 }
                 else
@@ -214,8 +213,8 @@ namespace utPLSQL
 
         private static string JoinParts(string[] parts)
         {
-            StringBuilder sb = new StringBuilder();
-            bool first = true;
+            var sb = new StringBuilder();
+            var first = true;
             foreach (var part in parts)
             {
                 if (!string.IsNullOrEmpty(part))
@@ -236,7 +235,7 @@ namespace utPLSQL
 
         private void UpdateProgressBar(int completedTests)
         {
-            int newValue = (completedTests * Steps) + 1;
+            int newValue = completedTests * Steps + 1;
             if (newValue > progressBar.Maximum)
             {
                 progressBar.Value = progressBar.Maximum;
@@ -254,51 +253,44 @@ namespace utPLSQL
         {
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
-            string path = getPath(type, owner, name, procedure);
+            var path = GetPath(type, owner, name, procedure);
 
             if (type.Equals(RealTimeTestRunner.User))
             {
-                this.Text = name + " " + startTime;
+                this.Text = $"{name} {startTime}";
                 txtTestExecution.Text = $"All Tests of {path}";
             }
             else if (type.Equals(RealTimeTestRunner.Package))
             {
-                this.Text = $"{owner}.{name}" + " " + startTime;
+                this.Text = $"{owner}.{name} {startTime}";
                 txtTestExecution.Text = $"Package {path}";
             }
             else if (type.Equals(RealTimeTestRunner.Procedure))
             {
-                this.Text = $"{owner}.{name}" + " " + startTime;
+                this.Text = $"{owner}.{name} {startTime}";
                 txtTestExecution.Text = $"Procedure {path}";
             }
             else if (type.Equals(RealTimeTestRunner.All))
             {
-                this.Text = owner + " " + startTime;
+                this.Text = $"{owner} {startTime}";
                 txtTestExecution.Text = $"All Tests of {path}";
             }
         }
 
-        private string getPath(string type, string owner, string name, string procedure)
+        private string GetPath(string type, string owner, string name, string procedure)
         {
-            if (type.Equals(RealTimeTestRunner.User))
+            switch (type)
             {
-                return name;
-            }
-            else if (type.Equals(RealTimeTestRunner.Package))
-            {
-                return $"{owner}.{name}";
-            }
-            else if (type.Equals(RealTimeTestRunner.Procedure))
-            {
-                return $"{owner}.{name}.{procedure}";
-            }
-            else if (type.Equals(RealTimeTestRunner.All))
-            {
-                return owner;
-            }
-            else
-            {
-                return "";
+                case RealTimeTestRunner.User:
+                    return name;
+                case RealTimeTestRunner.Package:
+                    return $"{owner}.{name}";
+                case RealTimeTestRunner.Procedure:
+                    return $"{owner}.{name}.{procedure}";
+                case RealTimeTestRunner.All:
+                    return owner;
+                default:
+                    return "";
             }
         }
 
@@ -520,7 +512,7 @@ namespace utPLSQL
         {
             var testResult = testResults[e.RowIndex];
 
-            MethodInfo methodInfo = pluginIntegration.GetType().GetMethod("OpenPackageBody");
+            var methodInfo = pluginIntegration.GetType().GetMethod("OpenPackageBody");
             methodInfo.Invoke(pluginIntegration, new object[] { testResult.Owner, testResult.Package });
         }
 

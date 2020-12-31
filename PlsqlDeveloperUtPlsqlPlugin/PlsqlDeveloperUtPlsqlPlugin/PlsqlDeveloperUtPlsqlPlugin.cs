@@ -83,7 +83,7 @@ namespace utPLSQL
         {
             try
             {
-                PlsqlDeveloperUtPlsqlPlugin.ConnectToDatabase();
+                ConnectToDatabase();
 
                 // Separate streams are needed!
                 var assembly = Assembly.GetExecutingAssembly();
@@ -91,8 +91,7 @@ namespace utPLSQL
                 {
                     if (stream != null)
                     {
-                        PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PluginMenuIndexAllTests, "utPLSQL",
-                            "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                        createToolButton(pluginId, PluginMenuIndexAllTests, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                     }
                 }
 
@@ -100,8 +99,7 @@ namespace utPLSQL
                 {
                     if (stream != null)
                     {
-                        PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PluginMenuIndexAllTestsWithCoverage,
-                            "utPLSQL", "utPLSQL_coverage.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                        createToolButton(pluginId, PluginMenuIndexAllTestsWithCoverage, "utPLSQL", "utPLSQL_coverage.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                     }
                 }
 
@@ -109,9 +107,7 @@ namespace utPLSQL
                 {
                     if (stream != null)
                     {
-                        PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PluginPopupIndex, "utPLSQL",
-                            "utPLSQL.bmp",
-                            new Bitmap(stream).GetHbitmap().ToInt64());
+                        createToolButton(pluginId, PluginPopupIndex, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                     }
                 }
 
@@ -119,8 +115,7 @@ namespace utPLSQL
                 {
                     if (stream != null)
                     {
-                        PlsqlDeveloperUtPlsqlPlugin.createToolButton(pluginId, PluginPopupIndexWithCoverage, "utPLSQL",
-                            "utPLSQL_coverage.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                        createToolButton(pluginId, PluginPopupIndexWithCoverage, "utPLSQL", "utPLSQL_coverage.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                     }
                 }
             }
@@ -129,13 +124,11 @@ namespace utPLSQL
                 MessageBox.Show(e.Message);
             }
 
-            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PluginPopupIndex, "Run utPLSQL Test", "USER");
-            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PluginPopupIndexWithCoverage, "Run Code Coverage",
-                "USER");
+            createPopupItem(pluginId, PluginPopupIndex, "Run utPLSQL Test", "USER");
+            createPopupItem(pluginId, PluginPopupIndexWithCoverage, "Run Code Coverage", "USER");
 
-            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PluginPopupIndex, "Run utPLSQL Test", "PACKAGE");
-            PlsqlDeveloperUtPlsqlPlugin.createPopupItem(pluginId, PluginPopupIndexWithCoverage, "Run Code Coverage",
-                "PACKAGE");
+            createPopupItem(pluginId, PluginPopupIndex, "Run utPLSQL Test", "PACKAGE");
+            createPopupItem(pluginId, PluginPopupIndexWithCoverage, "Run Code Coverage", "PACKAGE");
         }
 
         [DllExport("CanClose", CallingConvention = CallingConvention.Cdecl)]
@@ -158,36 +151,26 @@ namespace utPLSQL
             switch (index)
             {
                 case 11:
-                    PlsqlDeveloperUtPlsqlPlugin.connected =
-                        (IdeConnected)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeConnected));
+                    connected = (IdeConnected)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeConnected));
                     break;
                 case 12:
-                    PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo =
-                        (IdeGetConnectionInfo)Marshal.GetDelegateForFunctionPointer(function,
+                    getConnectionInfo = (IdeGetConnectionInfo)Marshal.GetDelegateForFunctionPointer(function,
                             typeof(IdeGetConnectionInfo));
                     break;
                 case 20:
-                    PlsqlDeveloperUtPlsqlPlugin.createWindow =
-                        (IdeCreateWindow)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateWindow));
+                    createWindow = (IdeCreateWindow)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateWindow));
                     break;
                 case 69:
-                    PlsqlDeveloperUtPlsqlPlugin.createPopupItem =
-                        (IdeCreatePopupItem)Marshal.GetDelegateForFunctionPointer(function,
-                            typeof(IdeCreatePopupItem));
+                    createPopupItem = (IdeCreatePopupItem)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreatePopupItem));
                     break;
                 case 74:
-                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject =
-                        (IdeGetPopupObject)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetPopupObject));
+                    getPopupObject = (IdeGetPopupObject)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetPopupObject));
                     break;
                 case 79:
-                    PlsqlDeveloperUtPlsqlPlugin.getObjectSource =
-                        (IdeGetObjectSource)Marshal.GetDelegateForFunctionPointer(function,
-                            typeof(IdeGetObjectSource));
+                    getObjectSource = (IdeGetObjectSource)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetObjectSource));
                     break;
                 case 150:
-                    PlsqlDeveloperUtPlsqlPlugin.createToolButton =
-                        (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function,
-                            typeof(IdeCreateToolButton));
+                    createToolButton = (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateToolButton));
                     break;
             }
         }
@@ -195,7 +178,7 @@ namespace utPLSQL
         [DllExport("OnConnectionChange", CallingConvention = CallingConvention.Cdecl)]
         public static void OnConnectionChange()
         {
-            PlsqlDeveloperUtPlsqlPlugin.ConnectToDatabase();
+            ConnectToDatabase();
         }
 
         [DllExport("CreateMenuItem", CallingConvention = CallingConvention.Cdecl)]
@@ -221,7 +204,7 @@ namespace utPLSQL
         {
             if (index == PluginMenuIndexAllTests)
             {
-                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                if (connected())
                 {
                     var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
@@ -230,7 +213,7 @@ namespace utPLSQL
             }
             else if (index == PluginMenuIndexAllTestsWithCoverage)
             {
-                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                if (connected())
                 {
                     var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
@@ -239,9 +222,9 @@ namespace utPLSQL
             }
             else if (index == PluginPopupIndex)
             {
-                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                if (connected())
                 {
-                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
+                    getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
                     var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
@@ -251,9 +234,9 @@ namespace utPLSQL
             }
             else if (index == PluginPopupIndexWithCoverage)
             {
-                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                if (connected())
                 {
-                    PlsqlDeveloperUtPlsqlPlugin.getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
+                    getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
                     var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
                     Windows.Add(testResultWindow);
@@ -274,8 +257,8 @@ namespace utPLSQL
 
         public void OpenPackageBody(string owner, string name)
         {
-            IntPtr source = getObjectSource("PACKAGE BODY", owner, name);
-            PlsqlDeveloperUtPlsqlPlugin.createWindow(3, Marshal.PtrToStringAnsi(source), false);
+            var source = getObjectSource("PACKAGE BODY", owner, name);
+            createWindow(3, Marshal.PtrToStringAnsi(source), false);
         }
 
         private static void ConnectToDatabase()
@@ -284,9 +267,9 @@ namespace utPLSQL
             {
                 _testRunner.Close();
 
-                if (PlsqlDeveloperUtPlsqlPlugin.connected())
+                if (connected())
                 {
-                    PlsqlDeveloperUtPlsqlPlugin.getConnectionInfo(out IntPtr ptrUsername, out IntPtr ptrPassword, out IntPtr ptrDatabase);
+                    getConnectionInfo(out IntPtr ptrUsername, out IntPtr ptrPassword, out IntPtr ptrDatabase);
 
                     username = Marshal.PtrToStringAnsi(ptrUsername);
                     password = Marshal.PtrToStringAnsi(ptrPassword);
