@@ -35,6 +35,16 @@ namespace utPLSQL
             consumeConnection?.Close();
         }
 
+        public String GetVersion()
+        {
+            var cmd = new OracleCommand("select ut.version() from dual", produceConnection);
+            OracleDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            var version = reader.GetString(0);
+            reader.Close();
+            return version;
+        }
+
         public abstract void RunTests(string type, string owner, string name, string procedure);
 
         public abstract void RunTestsWithCoverage(string type, string owner, string name, string procedure, string coverageSchemas,

@@ -51,31 +51,40 @@ namespace utPLSQL
 
             SetWindowTitle(type, owner, name, procedure);
 
-            if (coverage)
+            try
             {
-                var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
-                var dialogResult = codeCoverageReportDialog.ShowDialog();
-                if (dialogResult == DialogResult.OK)
-                {
-                    txtStatus.Text = "Running tests with coverage...";
+                testRunner.GetVersion();
 
-                    RunWithCoverage(type, owner, name, procedure, codeCoverageReportDialog);
+                if (coverage)
+                {
+                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
+                    var dialogResult = codeCoverageReportDialog.ShowDialog();
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        txtStatus.Text = "Running tests with coverage...";
+
+                        RunWithCoverage(type, owner, name, procedure, codeCoverageReportDialog);
+
+                        Show();
+
+                        CollectResults(true);
+                        CollectReport();
+                    }
+                }
+                else
+                {
+                    txtStatus.Text = "Running tests...";
+
+                    RunTests(type, owner, name, procedure);
 
                     Show();
 
-                    CollectResults(true);
-                    CollectReport();
+                    CollectResults(false);
                 }
             }
-            else
+            catch (Exception e)
             {
-                txtStatus.Text = "Running tests...";
-
-                RunTests(type, owner, name, procedure);
-
-                Show();
-
-                CollectResults(false);
+                MessageBox.Show("utPLSQL is not installed", "utPLSQL not installed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
