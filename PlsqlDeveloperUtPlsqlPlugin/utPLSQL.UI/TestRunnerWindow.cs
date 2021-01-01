@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,23 +12,26 @@ namespace utPLSQL
 {
     public partial class TestRunnerWindow : Form
     {
-        internal bool Running { get; set; }
+        public bool Running { get; private set; }
 
         private const int IconSize = 24;
-        private const int STEPS = 1000;
+        private const int Steps = 1000;
 
         private readonly RealTimeTestRunner testRunner;
-        private BindingList<TestResult> testResults = new BindingList<TestResult>();
+        private readonly object pluginIntegration;
+        private readonly BindingList<TestResult> testResults = new BindingList<TestResult>();
+
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
 
-        public TestRunnerWindow(RealTimeTestRunner testRunner)
+        public TestRunnerWindow(RealTimeTestRunner testRunner, object pluginIntegration)
         {
             this.testRunner = testRunner;
+            this.pluginIntegration = pluginIntegration;
+
             InitializeComponent();
 
-            var bindingSource = new BindingSource();
-            bindingSource.DataSource = testResults;
+            var bindingSource = new BindingSource { DataSource = testResults };
             gridResults.DataSource = bindingSource;
 
             gridResults.Columns[0].HeaderText = "";
@@ -38,39 +42,48 @@ namespace utPLSQL
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        internal void RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
+        public void RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
             ResetComponents();
 
             testResults.Clear();
 
-            setWindowTitle(type, owner, name, procedure);
+            SetWindowTitle(type, owner, name, procedure);
 
-            if (coverage)
+            try
             {
-                var codeCoverateReportDialog = new CodeCoverateReportDialog(getPath(type, owner, name, procedure));
-                DialogResult dialogResult = codeCoverateReportDialog.ShowDialog();
-                if (dialogResult == DialogResult.OK)
-                {
-                    txtStatus.Text = "Running tests with coverage...";
+                testRunner.GetVersion();
 
-                    RunWithCoverage(type, owner, name, procedure, codeCoverateReportDialog);
+                if (coverage)
+                {
+                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
+                    var dialogResult = codeCoverageReportDialog.ShowDialog();
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        txtStatus.Text = "Running tests with coverage...";
+
+                        RunWithCoverage(type, owner, name, procedure, codeCoverageReportDialog);
+
+                        Show();
+
+                        CollectResults(true);
+                        CollectReport();
+                    }
+                }
+                else
+                {
+                    txtStatus.Text = "Running tests...";
+
+                    RunTests(type, owner, name, procedure);
 
                     Show();
 
-                    CollectResults(coverage);
-                    CollectReport();
+                    CollectResults(false);
                 }
             }
-            else
+            catch (Exception e)
             {
-                txtStatus.Text = "Running tests...";
-
-                RunTests(type, owner, name, procedure);
-
-                Show();
-
-                CollectResults(coverage);
+                MessageBox.Show("utPLSQL is not installed", "utPLSQL not installed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -80,11 +93,12 @@ namespace utPLSQL
             Running = true;
         }
 
-        private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverateReportDialog codeCoverateReportDialog)
+        private void RunWithCoverage(string type, string owner, string name, string procedure,
+            CodeCoverageReportDialog codeCoverageReportDialog)
         {
-            var schemas = ConvertToVarcharList(codeCoverateReportDialog.GetSchemas());
-            var includes = ConvertToVarcharList(codeCoverateReportDialog.GetIncludes());
-            var excludes = ConvertToVarcharList(codeCoverateReportDialog.GetExcludes());
+            var schemas = ConvertToVarcharList(codeCoverageReportDialog.GetSchemas());
+            var includes = ConvertToVarcharList(codeCoverageReportDialog.GetIncludes());
+            var excludes = ConvertToVarcharList(codeCoverageReportDialog.GetExcludes());
 
             Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes));
             Running = true;
@@ -92,45 +106,52 @@ namespace utPLSQL
 
         private void CollectResults(bool coverage)
         {
-            var completetedTests = 0;
+            var completedTests = 0;
 
             Task.Factory.StartNew(() => testRunner.ConsumeResult(@event =>
             {
                 if (@event.type.Equals("pre-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate ()
+                    gridResults.BeginInvoke((MethodInvoker)delegate
                     {
                         totalNumberOfTests = @event.totalNumberOfTests;
 
                         progressBar.Minimum = 0;
-                        progressBar.Maximum = totalNumberOfTests * STEPS;
-                        progressBar.Step = STEPS;
+                        progressBar.Maximum = totalNumberOfTests * Steps;
+                        progressBar.Step = Steps;
                         CreateTestResults(@event);
 
-                        gridResults.Rows[0].Selected = false;
+                        if (gridResults.Rows.Count > 0)
+                        {
+                            gridResults.Rows[0].Selected = false;
+                        }
                     });
                 }
                 else if (@event.type.Equals("post-test"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate ()
+                    gridResults.BeginInvoke((MethodInvoker)delegate
                     {
-                        completetedTests++;
+                        completedTests++;
 
-                        txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
-                        UpdateProgressBar(completetedTests);
+                        txtTests.Text =
+                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
+                            totalNumberOfTests;
+                        UpdateProgressBar(completedTests);
 
                         UpdateTestResult(@event);
                     });
                 }
                 else if (@event.type.Equals("post-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate ()
+                    gridResults.BeginInvoke((MethodInvoker)delegate
                     {
-                        txtStart.Text = @event.run.startTime.ToString();
-                        txtEnd.Text = @event.run.endTime.ToString();
+                        txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
+                        txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
                         txtTime.Text = @event.run.executionTime + " s";
 
-                        txtTests.Text = (completetedTests > totalNumberOfTests ? totalNumberOfTests : completetedTests) + "/" + totalNumberOfTests;
+                        txtTests.Text =
+                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
+                            totalNumberOfTests;
                         txtFailures.Text = @event.run.counter.failure + "";
                         txtErrors.Text = @event.run.counter.error + "";
                         txtDisabled.Text = @event.run.counter.disabled + "";
@@ -155,18 +176,15 @@ namespace utPLSQL
         {
             Task.Factory.StartNew(() =>
             {
-                string report = testRunner.GetCoverageReport();
+                var report = testRunner.GetCoverageReport();
 
-                string filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
-                using (StreamWriter sw = new StreamWriter(filePath))
+                var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
+                using (var sw = new StreamWriter(filePath))
                 {
                     sw.WriteLine(report);
                 }
 
-                txtStatus.BeginInvoke((MethodInvoker)delegate ()
-                {
-                    txtStatus.Text = "Finished";
-                });
+                txtStatus.BeginInvoke((MethodInvoker)delegate { txtStatus.Text = "Finished"; });
 
                 Running = false;
 
@@ -176,7 +194,7 @@ namespace utPLSQL
 
         private string ConvertToVarcharList(string listValue)
         {
-            if (String.IsNullOrWhiteSpace(listValue))
+            if (string.IsNullOrWhiteSpace(listValue))
             {
                 return null;
             }
@@ -184,17 +202,17 @@ namespace utPLSQL
             {
                 if (listValue.Contains(" "))
                 {
-                    string[] parts = listValue.Split(' ');
+                    var parts = listValue.Split(' ');
                     return JoinParts(parts);
                 }
                 else if (listValue.Contains(","))
                 {
-                    string[] parts = listValue.Split(',');
+                    var parts = listValue.Split(',');
                     return JoinParts(parts);
                 }
                 else if (listValue.Contains("\n"))
                 {
-                    string[] parts = listValue.Split('\n');
+                    var parts = listValue.Split('\n');
                     return JoinParts(parts);
                 }
                 else
@@ -206,26 +224,29 @@ namespace utPLSQL
 
         private static string JoinParts(string[] parts)
         {
-            StringBuilder sb = new StringBuilder();
-            bool first = true;
+            var sb = new StringBuilder();
+            var first = true;
             foreach (var part in parts)
             {
-                if (part != null && part.Length > 0)
+                if (!string.IsNullOrEmpty(part))
                 {
                     if (!first)
                     {
                         sb.Append(",");
                     }
+
                     sb.Append("'").Append(part).Append("'");
 
                     first = false;
                 }
             }
+
             return sb.ToString();
         }
-        private void UpdateProgressBar(int completetedTests)
+
+        private void UpdateProgressBar(int completedTests)
         {
-            int newValue = (completetedTests * STEPS) + 1;
+            int newValue = completedTests * Steps + 1;
             if (newValue > progressBar.Maximum)
             {
                 progressBar.Value = progressBar.Maximum;
@@ -239,61 +260,35 @@ namespace utPLSQL
             }
         }
 
-        private void setWindowTitle(string type, string owner, string name, string procedure)
+        private void SetWindowTitle(string type, string owner, string name, string procedure)
         {
-            var startTime = DateTime.Now.ToString();
+            var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
-            string path = getPath(type, owner, name, procedure);
-
-            if (type.Equals(RealTimeTestRunner.USER))
-            {
-                this.Text = name + " " + startTime;
-                txtTestExecution.Text = $"All Tests of {path}";
-            }
-            else if (type.Equals(RealTimeTestRunner.PACKAGE))
-            {
-                this.Text = $"{owner}.{name}" + " " + startTime;
-                txtTestExecution.Text = $"Package {path}";
-            }
-            else if (type.Equals(RealTimeTestRunner.PROCEDURE))
-            {
-                this.Text = $"{owner}.{name}" + " " + startTime;
-                txtTestExecution.Text = $"Procedure {path}";
-            }
-            else if (type.Equals(RealTimeTestRunner.ALL))
-            {
-                this.Text = owner + " " + startTime;
-                txtTestExecution.Text = $"All Tests of {path}";
-            }
+            var path = GetPath(type, owner, name, procedure);
+            txtPath.Text = path;
+            this.Text = $"{path} {startTime}";
         }
 
-        private String getPath(string type, string owner, string name, string procedure)
+        private string GetPath(string type, string owner, string name, string procedure)
         {
-            if (type.Equals(RealTimeTestRunner.USER))
+            switch (type)
             {
-                return name;
-            }
-            else if (type.Equals(RealTimeTestRunner.PACKAGE))
-            {
-                return $"{owner}.{name}";
-            }
-            else if (type.Equals(RealTimeTestRunner.PROCEDURE))
-            {
-                return $"{owner}.{name}.{procedure}";
-            }
-            else if (type.Equals(RealTimeTestRunner.ALL))
-            {
-                return owner;
-            }
-            else
-            {
-                return "";
+                case RealTimeTestRunner.User:
+                    return name;
+                case RealTimeTestRunner.Package:
+                    return $"{owner}.{name}";
+                case RealTimeTestRunner.Procedure:
+                    return $"{owner}.{name}.{procedure}";
+                case RealTimeTestRunner.All:
+                    return owner;
+                default:
+                    return "";
             }
         }
 
         private void ResetComponents()
         {
-            txtTestExecution.Text = "";
+            txtPath.Text = "";
             txtStart.Text = "";
             txtTime.Text = "";
 
@@ -318,8 +313,7 @@ namespace utPLSQL
 
             txtErrorMessage.Text = "";
 
-            var bindingSource = new BindingSource();
-            bindingSource.DataSource = new BindingList<Expectation>();
+            var bindingSource = new BindingSource { DataSource = new BindingList<Expectation>() };
             gridTestFailures.DataSource = bindingSource;
 
             progressBar.ForeColor = Color.Green;
@@ -367,16 +361,18 @@ namespace utPLSQL
                         {
                             testResult.Error = @event.test.errorStack;
                         }
+
                         if (@event.test.failedExpectations != null)
                         {
                             foreach (var expectation in @event.test.failedExpectations)
                             {
-                                testResult.failedExpectations.Add(new Expectation(expectation.message, expectation.caller));
+                                testResult.failedExpectations.Add(new Expectation(expectation.message,
+                                    expectation.caller));
                             }
                         }
 
                         gridResults.Refresh();
-                        int rowIndex = testResults.IndexOf(testResult);
+                        var rowIndex = testResults.IndexOf(testResult);
                         gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
                         gridResults.Rows[rowIndex].Selected = true;
                     }
@@ -402,6 +398,7 @@ namespace utPLSQL
                         CreateTestResults(itemSuite);
                     }
                 }
+
                 if (items.test != null)
                 {
                     foreach (var test in items.test)
@@ -414,7 +411,7 @@ namespace utPLSQL
 
         private void CreateTestResults(suite suite)
         {
-            if (suite != null && suite.items != null)
+            if (suite?.items != null)
             {
                 CreateTestResults(suite.items);
             }
@@ -448,7 +445,9 @@ namespace utPLSQL
             {
                 if (Running)
                 {
-                    var confirmResult = MessageBox.Show("utPLSQL Tests are still running.\r\n\r\nDo you really want to close?", "Running utPLSQL Tests", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    var confirmResult =
+                        MessageBox.Show("utPLSQL Tests are still running.\r\n\r\nDo you really want to close?",
+                            "Running utPLSQL Tests", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.No)
                     {
                         e.Cancel = true;
@@ -461,8 +460,8 @@ namespace utPLSQL
         {
             if (gridResults.SelectedRows.Count > 0)
             {
-                DataGridViewRow row = gridResults.SelectedRows[0];
-                TestResult testResult = (TestResult)row.DataBoundItem;
+                var row = gridResults.SelectedRows[0];
+                var testResult = (TestResult)row.DataBoundItem;
 
                 txtTestOwner.Text = testResult.Owner;
                 txtTestPackage.Text = testResult.Package;
@@ -471,14 +470,13 @@ namespace utPLSQL
                 txtTestDescription.Text = testResult.Description;
                 txtTestSuitePath.Text = testResult.Id;
 
-                txtTestStart.Text = testResult.Start == null ? "" : testResult.Start.ToString();
-                txtTestEnd.Text = testResult.End == null ? "" : testResult.End.ToString();
-                txtTestTime.Text = testResult.Time + " s";
+                txtTestStart.Text = testResult.Start.ToString(CultureInfo.CurrentCulture);
+                txtTestEnd.Text = testResult.End.ToString(CultureInfo.CurrentCulture);
+                txtTestTime.Text = $"{testResult.Time} s";
 
                 txtErrorMessage.Text = testResult.Error;
 
-                var bindingSource = new BindingSource();
-                bindingSource.DataSource = testResult.failedExpectations;
+                var bindingSource = new BindingSource { DataSource = testResult.failedExpectations };
                 gridTestFailures.DataSource = bindingSource;
 
                 gridTestFailures.Columns[0].MinimumWidth = 480;
@@ -488,15 +486,26 @@ namespace utPLSQL
 
         private void gridResults_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            TestResult testResult = testResults[e.RowIndex];
-            PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
+            if (pluginIntegration != null)
+            {
+                invokeOpenPackageBody(e);
+            }
         }
 
         private void gridTestFailures_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            TestResult testResult = testResults[e.RowIndex];
-            PlsqlDeveloperUtPlsqlPlugin.OpenPackageBody(testResult.Owner, testResult.Package);
+            if (pluginIntegration != null)
+            {
+                invokeOpenPackageBody(e);
+            }
+        }
 
+        private void invokeOpenPackageBody(DataGridViewCellEventArgs e)
+        {
+            var testResult = testResults[e.RowIndex];
+
+            var methodInfo = pluginIntegration.GetType().GetMethod("OpenPackageBody");
+            methodInfo.Invoke(pluginIntegration, new object[] { testResult.Owner, testResult.Package });
         }
 
         private void gridResults_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
@@ -506,10 +515,20 @@ namespace utPLSQL
 
         private void menuItemRunTests_Click(object sender, EventArgs e)
         {
-            TestResult testResult = testResults[rowIndexOnRightClick];
+            var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(testRunner);
-            testResultWindow.RunTestsAsync(RealTimeTestRunner.PROCEDURE, testResult.Owner, testResult.Package, testResult.Procedure, false);
+            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
+            testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
+                testResult.Procedure, false);
+        }
+
+        private void menuItemCoverage_Click(object sender, EventArgs e)
+        {
+            var testResult = testResults[rowIndexOnRightClick];
+
+            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
+            testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
+                testResult.Procedure, true);
         }
     }
 }

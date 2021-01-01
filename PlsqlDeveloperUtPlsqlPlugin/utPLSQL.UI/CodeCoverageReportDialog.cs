@@ -2,9 +2,9 @@
 
 namespace utPLSQL
 {
-    public partial class CodeCoverateReportDialog : Form
+    public partial class CodeCoverageReportDialog : Form
     {
-        public CodeCoverateReportDialog(string path)
+        public CodeCoverageReportDialog(string path)
         {
             InitializeComponent();
 
@@ -26,7 +26,7 @@ namespace utPLSQL
             return txtExluces.Text;
         }
 
-        private void keyDown(object sender, KeyEventArgs e)
+        private void EnterPressed(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {

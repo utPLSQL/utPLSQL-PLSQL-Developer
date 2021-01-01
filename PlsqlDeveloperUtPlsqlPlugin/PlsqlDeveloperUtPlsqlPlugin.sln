@@ -5,9 +5,13 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlsqlDeveloperUtPlsqlPlugin", "PlsqlDeveloperUtPlsqlPlugin\PlsqlDeveloperUtPlsqlPlugin.csproj", "{0241FA41-E396-491A-B4EC-772B694EC689}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Lib.Test", "utPLSQL.Lib.Test\utPLSQL.Lib.Test.csproj", "{8E898B26-0A4C-4DDA-9820-D5D050D2336E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Api.Test", "utPLSQL.Api.Test\utPLSQL.Api.Test.csproj", "{8E898B26-0A4C-4DDA-9820-D5D050D2336E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Lib", "utPLSQL.Lib\utPLSQL.Lib.csproj", "{DF09EACE-50EC-44EA-849A-80462A219CFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Api", "utPLSQL.Api\utPLSQL.Api.csproj", "{DF09EACE-50EC-44EA-849A-80462A219CFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Ui", "utPLSQL.Ui\utPLSQL.Ui.csproj", "{7669189C-4A58-4E82-9DCB-7956624A719B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Ui.Standalone", "utPLSQL.Ui.Standalone\utPLSQL.Ui.Standalone.csproj", "{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +59,30 @@ Global
 		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Release|x64.Build.0 = Release|Any CPU
 		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Release|x86.ActiveCfg = Release|Any CPU
 		{DF09EACE-50EC-44EA-849A-80462A219CFC}.Release|x86.Build.0 = Release|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Debug|x64.Build.0 = Debug|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Debug|x86.Build.0 = Debug|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Release|x64.ActiveCfg = Release|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Release|x64.Build.0 = Release|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Release|x86.ActiveCfg = Release|Any CPU
+		{7669189C-4A58-4E82-9DCB-7956624A719B}.Release|x86.Build.0 = Release|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Debug|x64.Build.0 = Debug|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|x64.ActiveCfg = Release|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|x64.Build.0 = Release|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

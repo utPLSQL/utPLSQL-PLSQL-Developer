@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace utPLSQL
 {
-    class TestResult
+    internal class TestResult
     {
         public Bitmap Icon { get; set; }
 

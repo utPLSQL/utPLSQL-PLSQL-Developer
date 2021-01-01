@@ -1,15 +1,16 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PlsqlDeveloperUtPlsqlPlugin")]
+[assembly: AssemblyTitle("utPLSQL.UI.Standalone")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("utPLSQL.org")]
-[assembly: AssemblyProduct("PlsqlDeveloperUtPlsqlPlugin")]
-[assembly: AssemblyCopyright("Copyright © 2020")]
+[assembly: AssemblyCompany("HP Inc.")]
+[assembly: AssemblyProduct("utPLSQL.UI.Standalone")]
+[assembly: AssemblyCopyright("Copyright © HP Inc. 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0241fa41-e396-491a-b4ec-772b694ec689")]
+[assembly: Guid("5d3ea63e-aafe-47db-9d48-4ba9c205adbe")]
 
 // Version information for an assembly consists of the following four values:
 //

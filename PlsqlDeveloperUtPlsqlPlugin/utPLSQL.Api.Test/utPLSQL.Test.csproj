@@ -8,7 +8,7 @@
     <ProjectGuid>{8E898B26-0A4C-4DDA-9820-D5D050D2336E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>utPLSQL</RootNamespace>
-    <AssemblyName>utPLSQL.Lib.Test</AssemblyName>
+    <AssemblyName>utPLSQL.Test</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
