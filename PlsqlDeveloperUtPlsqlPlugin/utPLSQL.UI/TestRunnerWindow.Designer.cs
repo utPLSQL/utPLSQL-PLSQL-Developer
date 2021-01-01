@@ -45,6 +45,7 @@ namespace utPLSQL
             this.gridResults = new System.Windows.Forms.DataGridView();
             this.contextMenuResults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemRunTests = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemCoverage = new System.Windows.Forms.ToolStripMenuItem();
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
@@ -75,13 +76,12 @@ namespace utPLSQL
             this.tabErrors = new System.Windows.Forms.TabPage();
             this.txtErrorMessage = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtTestExecution = new System.Windows.Forms.TextBox();
+            this.txtPath = new System.Windows.Forms.TextBox();
             this.lblStart = new System.Windows.Forms.Label();
             this.txtStart = new System.Windows.Forms.TextBox();
             this.lblEnd = new System.Windows.Forms.Label();
             this.txtEnd = new System.Windows.Forms.TextBox();
             this.iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
-            this.menuItemCoverage = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
             this.contextMenuResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).BeginInit();
@@ -97,7 +97,7 @@ namespace utPLSQL
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClose.Location = new System.Drawing.Point(921, 696);
+            this.btnClose.Location = new System.Drawing.Point(921, 588);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 21);
             this.btnClose.TabIndex = 4;
@@ -108,7 +108,7 @@ namespace utPLSQL
             // lblTests
             // 
             this.lblTests.AutoSize = true;
-            this.lblTests.Location = new System.Drawing.Point(12, 48);
+            this.lblTests.Location = new System.Drawing.Point(12, 49);
             this.lblTests.Name = "lblTests";
             this.lblTests.Size = new System.Drawing.Size(33, 13);
             this.lblTests.TabIndex = 6;
@@ -116,10 +116,10 @@ namespace utPLSQL
             // 
             // txtTests
             // 
-            this.txtTests.Location = new System.Drawing.Point(96, 46);
+            this.txtTests.Location = new System.Drawing.Point(51, 46);
             this.txtTests.Name = "txtTests";
             this.txtTests.ReadOnly = true;
-            this.txtTests.Size = new System.Drawing.Size(97, 20);
+            this.txtTests.Size = new System.Drawing.Size(120, 20);
             this.txtTests.TabIndex = 7;
             // 
             // lblTime
@@ -143,7 +143,7 @@ namespace utPLSQL
             // lblErrors
             // 
             this.lblErrors.AutoSize = true;
-            this.lblErrors.Location = new System.Drawing.Point(427, 48);
+            this.lblErrors.Location = new System.Drawing.Point(368, 49);
             this.lblErrors.Name = "lblErrors";
             this.lblErrors.Size = new System.Drawing.Size(34, 13);
             this.lblErrors.TabIndex = 12;
@@ -151,7 +151,7 @@ namespace utPLSQL
             // 
             // txtErrors
             // 
-            this.txtErrors.Location = new System.Drawing.Point(467, 45);
+            this.txtErrors.Location = new System.Drawing.Point(408, 45);
             this.txtErrors.Name = "txtErrors";
             this.txtErrors.ReadOnly = true;
             this.txtErrors.Size = new System.Drawing.Size(50, 20);
@@ -161,7 +161,7 @@ namespace utPLSQL
             // lblFailures
             // 
             this.lblFailures.AutoSize = true;
-            this.lblFailures.Location = new System.Drawing.Point(272, 47);
+            this.lblFailures.Location = new System.Drawing.Point(221, 48);
             this.lblFailures.Name = "lblFailures";
             this.lblFailures.Size = new System.Drawing.Size(43, 13);
             this.lblFailures.TabIndex = 14;
@@ -169,7 +169,7 @@ namespace utPLSQL
             // 
             // txtFailures
             // 
-            this.txtFailures.Location = new System.Drawing.Point(321, 45);
+            this.txtFailures.Location = new System.Drawing.Point(270, 45);
             this.txtFailures.Name = "txtFailures";
             this.txtFailures.ReadOnly = true;
             this.txtFailures.Size = new System.Drawing.Size(50, 20);
@@ -179,7 +179,7 @@ namespace utPLSQL
             // lblDisabled
             // 
             this.lblDisabled.AutoSize = true;
-            this.lblDisabled.Location = new System.Drawing.Point(574, 49);
+            this.lblDisabled.Location = new System.Drawing.Point(504, 48);
             this.lblDisabled.Name = "lblDisabled";
             this.lblDisabled.Size = new System.Drawing.Size(48, 13);
             this.lblDisabled.TabIndex = 16;
@@ -187,7 +187,7 @@ namespace utPLSQL
             // 
             // txtDisabled
             // 
-            this.txtDisabled.Location = new System.Drawing.Point(628, 46);
+            this.txtDisabled.Location = new System.Drawing.Point(558, 45);
             this.txtDisabled.Name = "txtDisabled";
             this.txtDisabled.ReadOnly = true;
             this.txtDisabled.Size = new System.Drawing.Size(50, 20);
@@ -213,7 +213,7 @@ namespace utPLSQL
             this.gridResults.RowHeadersVisible = false;
             this.gridResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridResults.ShowEditingIcon = false;
-            this.gridResults.Size = new System.Drawing.Size(986, 324);
+            this.gridResults.Size = new System.Drawing.Size(986, 216);
             this.gridResults.TabIndex = 18;
             this.gridResults.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.gridResults_CellContextMenuStripNeeded);
             this.gridResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridResults_CellDoubleClick);
@@ -221,18 +221,26 @@ namespace utPLSQL
             // 
             // contextMenuResults
             // 
+            this.contextMenuResults.ImageScalingSize = new System.Drawing.Size(36, 36);
             this.contextMenuResults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemRunTests,
             this.menuItemCoverage});
             this.contextMenuResults.Name = "contextMenuResults";
-            this.contextMenuResults.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuResults.Size = new System.Drawing.Size(180, 48);
             // 
             // menuItemRunTests
             // 
             this.menuItemRunTests.Name = "menuItemRunTests";
-            this.menuItemRunTests.Size = new System.Drawing.Size(180, 22);
+            this.menuItemRunTests.Size = new System.Drawing.Size(179, 22);
             this.menuItemRunTests.Text = "Run Test";
             this.menuItemRunTests.Click += new System.EventHandler(this.menuItemRunTests_Click);
+            // 
+            // menuItemCoverage
+            // 
+            this.menuItemCoverage.Name = "menuItemCoverage";
+            this.menuItemCoverage.Size = new System.Drawing.Size(179, 22);
+            this.menuItemCoverage.Text = "Run Code Coverage";
+            this.menuItemCoverage.Click += new System.EventHandler(this.menuItemCoverage_Click);
             // 
             // txtStatus
             // 
@@ -240,7 +248,7 @@ namespace utPLSQL
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtStatus.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtStatus.Location = new System.Drawing.Point(698, 48);
+            this.txtStatus.Location = new System.Drawing.Point(698, 49);
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.ReadOnly = true;
             this.txtStatus.Size = new System.Drawing.Size(300, 13);
@@ -262,7 +270,7 @@ namespace utPLSQL
             this.iconPictureBox1.IconColor = System.Drawing.Color.Orange;
             this.iconPictureBox1.IconFont = FontAwesome.Sharp.IconFont.Solid;
             this.iconPictureBox1.IconSize = 20;
-            this.iconPictureBox1.Location = new System.Drawing.Point(251, 46);
+            this.iconPictureBox1.Location = new System.Drawing.Point(195, 46);
             this.iconPictureBox1.Name = "iconPictureBox1";
             this.iconPictureBox1.Size = new System.Drawing.Size(20, 20);
             this.iconPictureBox1.TabIndex = 24;
@@ -276,7 +284,7 @@ namespace utPLSQL
             this.iconPictureBox2.IconColor = System.Drawing.Color.Red;
             this.iconPictureBox2.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.iconPictureBox2.IconSize = 20;
-            this.iconPictureBox2.Location = new System.Drawing.Point(406, 47);
+            this.iconPictureBox2.Location = new System.Drawing.Point(342, 47);
             this.iconPictureBox2.Name = "iconPictureBox2";
             this.iconPictureBox2.Size = new System.Drawing.Size(20, 20);
             this.iconPictureBox2.TabIndex = 25;
@@ -289,7 +297,7 @@ namespace utPLSQL
             this.tabs.Controls.Add(this.tabTest);
             this.tabs.Controls.Add(this.tabFailures);
             this.tabs.Controls.Add(this.tabErrors);
-            this.tabs.Location = new System.Drawing.Point(12, 465);
+            this.tabs.Location = new System.Drawing.Point(12, 357);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
             this.tabs.Size = new System.Drawing.Size(986, 225);
@@ -536,17 +544,17 @@ namespace utPLSQL
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
             this.label1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.label1.Size = new System.Drawing.Size(78, 13);
+            this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 29;
-            this.label1.Text = "Test Execution";
+            this.label1.Text = "Path";
             // 
-            // txtTestExecution
+            // txtPath
             // 
-            this.txtTestExecution.Location = new System.Drawing.Point(96, 6);
-            this.txtTestExecution.Name = "txtTestExecution";
-            this.txtTestExecution.ReadOnly = true;
-            this.txtTestExecution.Size = new System.Drawing.Size(421, 20);
-            this.txtTestExecution.TabIndex = 30;
+            this.txtPath.Location = new System.Drawing.Point(51, 6);
+            this.txtPath.Name = "txtPath";
+            this.txtPath.ReadOnly = true;
+            this.txtPath.Size = new System.Drawing.Size(466, 20);
+            this.txtPath.TabIndex = 30;
             // 
             // lblStart
             // 
@@ -590,29 +598,22 @@ namespace utPLSQL
             this.iconPictureBox4.IconColor = System.Drawing.Color.Gray;
             this.iconPictureBox4.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.iconPictureBox4.IconSize = 20;
-            this.iconPictureBox4.Location = new System.Drawing.Point(551, 48);
+            this.iconPictureBox4.Location = new System.Drawing.Point(478, 47);
             this.iconPictureBox4.Name = "iconPictureBox4";
             this.iconPictureBox4.Size = new System.Drawing.Size(20, 20);
             this.iconPictureBox4.TabIndex = 27;
             this.iconPictureBox4.TabStop = false;
             // 
-            // menuItemCoverage
-            // 
-            this.menuItemCoverage.Name = "menuItemCoverage";
-            this.menuItemCoverage.Size = new System.Drawing.Size(180, 22);
-            this.menuItemCoverage.Text = "Run Code Coverage";
-            this.menuItemCoverage.Click += new System.EventHandler(this.menuItemCoverage_Click);
-            // 
             // TestRunnerWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.ClientSize = new System.Drawing.Size(1008, 621);
             this.Controls.Add(this.txtEnd);
             this.Controls.Add(this.lblEnd);
             this.Controls.Add(this.txtStart);
             this.Controls.Add(this.lblStart);
-            this.Controls.Add(this.txtTestExecution);
+            this.Controls.Add(this.txtPath);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tabs);
             this.Controls.Add(this.iconPictureBox4);
@@ -633,7 +634,7 @@ namespace utPLSQL
             this.Controls.Add(this.lblTests);
             this.Controls.Add(this.btnClose);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1024, 768);
+            this.MinimumSize = new System.Drawing.Size(1024, 598);
             this.Name = "TestRunnerWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "utPLSQL TestRunner";
@@ -693,7 +694,7 @@ namespace utPLSQL
         private System.Windows.Forms.Label lblTestEnd;
         private System.Windows.Forms.DataGridView gridTestFailures;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtTestExecution;
+        private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.Label lblStart;
         private System.Windows.Forms.TextBox txtStart;
         private System.Windows.Forms.Label lblEnd;

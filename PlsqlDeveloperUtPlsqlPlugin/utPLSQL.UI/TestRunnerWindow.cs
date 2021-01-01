@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -266,27 +265,8 @@ namespace utPLSQL
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
             var path = GetPath(type, owner, name, procedure);
-
-            if (type.Equals(RealTimeTestRunner.User))
-            {
-                this.Text = $"{name} {startTime}";
-                txtTestExecution.Text = $"All Tests of {path}";
-            }
-            else if (type.Equals(RealTimeTestRunner.Package))
-            {
-                this.Text = $"{owner}.{name} {startTime}";
-                txtTestExecution.Text = $"Package {path}";
-            }
-            else if (type.Equals(RealTimeTestRunner.Procedure))
-            {
-                this.Text = $"{owner}.{name} {startTime}";
-                txtTestExecution.Text = $"Procedure {path}";
-            }
-            else if (type.Equals(RealTimeTestRunner.All))
-            {
-                this.Text = $"{owner} {startTime}";
-                txtTestExecution.Text = $"All Tests of {path}";
-            }
+            txtPath.Text = path;
+            this.Text = $"{path} {startTime}";
         }
 
         private string GetPath(string type, string owner, string name, string procedure)
@@ -308,7 +288,7 @@ namespace utPLSQL
 
         private void ResetComponents()
         {
-            txtTestExecution.Text = "";
+            txtPath.Text = "";
             txtStart.Text = "";
             txtTime.Text = "";
 
