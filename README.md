@@ -6,17 +6,17 @@ The utPLSQL Plugin integrates [utPLSQL](https://utplsql.org) with [Allround Auto
 
 The plugin adds a Button to the Tools ribbon to execute all tests of the current user or run code coverage.
 
-![img.png](screenshots/tools_ribbon.png)
+![Tools Ribbon](screenshots/tools_ribbon.png)
 
 In the object browser on Packages or Users there is a context menu entry to run the tests or code coverage of either the packages or the users.
 
-![img.png](screenshots/context_menu.png)
+![Context Menu](screenshots/context_menu.png)
 
 ## Viewing Results
 
 The results are opened in a new window. If you've chosen code coverage the coverage report will be opened in the default browser. 
 
-![img.png](screenshots/result_window.png)
+![Result Window](screenshots/result_window.png)
 
 ## Releases
 
