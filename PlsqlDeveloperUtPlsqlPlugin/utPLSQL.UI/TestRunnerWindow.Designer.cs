@@ -102,7 +102,6 @@ namespace utPLSQL
             this.btnClose.Size = new System.Drawing.Size(75, 21);
             this.btnClose.TabIndex = 4;
             this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // lblTests
@@ -606,6 +605,7 @@ namespace utPLSQL
             // 
             // TestRunnerWindow
             // 
+            this.AcceptButton = this.btnClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 621);

@@ -56,7 +56,7 @@ namespace utPLSQL
 
                 if (coverage)
                 {
-                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
+                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(convertToType(type), owner, name, procedure));
                     var dialogResult = codeCoverageReportDialog.ShowDialog();
                     if (dialogResult == DialogResult.OK)
                     {
@@ -66,12 +66,9 @@ namespace utPLSQL
 
                         Show();
 
-                        CollectResults(totalNumberOfTests > 0);
+                        CollectResults(true);
 
-                        if (totalNumberOfTests > 0)
-                        {
-                            CollectReport();
-                        }
+                        CollectReport();
                     }
                 }
                 else
@@ -93,9 +90,11 @@ namespace utPLSQL
 
         private void RunTests(string type, string owner, string name, string procedure)
         {
-            Task.Factory.StartNew(() => testRunner.RunTests(type, owner, name, procedure));
+            Task.Factory.StartNew(() => testRunner.RunTests(convertToType(type), owner, name, procedure));
             Running = true;
         }
+
+
 
         private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverageReportDialog codeCoverageReportDialog)
         {
@@ -103,7 +102,7 @@ namespace utPLSQL
             var includes = ConvertToVarcharList(codeCoverageReportDialog.GetIncludes());
             var excludes = ConvertToVarcharList(codeCoverageReportDialog.GetExcludes());
 
-            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes));
+            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(convertToType(type), owner, name, procedure, schemas, includes, excludes));
             Running = true;
         }
 
@@ -191,7 +190,17 @@ namespace utPLSQL
                     sw.WriteLine(report);
                 }
 
-                txtStatus.BeginInvoke((MethodInvoker)delegate { txtStatus.Text = "Finished"; });
+                txtStatus.BeginInvoke((MethodInvoker)delegate
+                {
+                    if (totalNumberOfTests > 0)
+                    {
+                        txtStatus.Text = "Finished";
+                    }
+                    else
+                    {
+                        txtStatus.Text = "No tests found";
+                    }
+                });
 
                 Running = false;
 
@@ -275,22 +284,22 @@ namespace utPLSQL
         {
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
-            var path = GetPath(type, owner, name, procedure);
+            var path = GetPath(convertToType(type), owner, name, procedure);
             txtPath.Text = path;
             this.Text = $"{path} {startTime}";
         }
 
-        private string GetPath(string type, string owner, string name, string procedure)
+        private string GetPath(Type type, string owner, string name, string procedure)
         {
             switch (type)
             {
-                case RealTimeTestRunner.User:
+                case Type.User:
                     return name;
-                case RealTimeTestRunner.Package:
+                case Type.Package:
                     return $"{owner}.{name}";
-                case RealTimeTestRunner.Procedure:
+                case Type.Procedure:
                     return $"{owner}.{name}.{procedure}";
-                case RealTimeTestRunner.All:
+                case Type.All:
                     return owner;
                 default:
                     return "";
@@ -444,7 +453,20 @@ namespace utPLSQL
                 });
             }
         }
-
+        private Type convertToType(string type)
+        {
+            switch (type)
+            {
+                case "USER":
+                    return Type.User;
+                case "PACKAGE":
+                    return Type.Package;
+                case "PROCEDURE":
+                    return Type.Procedure;
+                default:
+                    return Type.All;
+            }
+        }
         private void btnClose_Click(object sender, System.EventArgs e)
         {
             Close();
@@ -529,8 +551,7 @@ namespace utPLSQL
             var testResult = testResults[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
-            testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
-                testResult.Procedure, false);
+            testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, false);
         }
 
         private void menuItemCoverage_Click(object sender, EventArgs e)
@@ -538,8 +559,8 @@ namespace utPLSQL
             var testResult = testResults[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
-            testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
-                testResult.Procedure, true);
+            testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
         }
+
     }
 }
