@@ -161,10 +161,9 @@ namespace utPLSQL
                             progressBar.ForeColor = Color.DarkRed;
                         }
 
-                        if (!coverage)
+                        if (!coverage || gridResults.Rows.Count == 0)
                         {
                             txtStatus.Text = "Finished";
-
                             Running = false;
                         }
                     });
