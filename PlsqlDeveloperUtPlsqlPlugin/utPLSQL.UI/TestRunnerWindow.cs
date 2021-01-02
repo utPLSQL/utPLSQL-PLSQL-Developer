@@ -244,6 +244,10 @@ namespace utPLSQL
             return sb.ToString();
         }
 
+        /*
+         * Workaround for the progressbar animation that produces lagging
+         * https://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
+         */
         private void UpdateProgressBar(int completedTests)
         {
             int newValue = completedTests * Steps + 1;

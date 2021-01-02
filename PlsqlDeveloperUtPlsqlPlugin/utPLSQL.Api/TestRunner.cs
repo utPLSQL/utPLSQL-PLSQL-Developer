@@ -66,6 +66,8 @@ namespace utPLSQL
             var cmd = new OracleCommand(proc, consumeConnection);
             cmd.Parameters.Add("id", OracleDbType.Varchar2, ParameterDirection.Input).Value = coverageReporterId;
             cmd.Parameters.Add("lines_cursor", OracleDbType.RefCursor, ParameterDirection.Output);
+
+            // https://stackoverflow.com/questions/2226769/bad-performance-with-oracledatareader
             cmd.InitialLOBFetchSize = -1;
 
             var reader = cmd.ExecuteReader();
