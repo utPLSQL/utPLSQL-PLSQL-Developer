@@ -1,5 +1,6 @@
 ﻿using FontAwesome.Sharp;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
@@ -56,7 +57,7 @@ namespace utPLSQL
 
                 if (coverage)
                 {
-                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(convertToType(type), owner, name, procedure));
+                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
                     var dialogResult = codeCoverageReportDialog.ShowDialog();
                     if (dialogResult == DialogResult.OK)
                     {
@@ -90,7 +91,7 @@ namespace utPLSQL
 
         private void RunTests(string type, string owner, string name, string procedure)
         {
-            Task.Factory.StartNew(() => testRunner.RunTests(convertToType(type), owner, name, procedure));
+            Task.Factory.StartNew(() => testRunner.RunTests(GetPath(type, owner, name, procedure)));
             Running = true;
         }
 
@@ -98,11 +99,11 @@ namespace utPLSQL
 
         private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverageReportDialog codeCoverageReportDialog)
         {
-            var schemas = ConvertToVarcharList(codeCoverageReportDialog.GetSchemas());
-            var includes = ConvertToVarcharList(codeCoverageReportDialog.GetIncludes());
-            var excludes = ConvertToVarcharList(codeCoverageReportDialog.GetExcludes());
+            var schemas = ConvertToList(codeCoverageReportDialog.GetSchemas());
+            var includes = ConvertToList(codeCoverageReportDialog.GetIncludes());
+            var excludes = ConvertToList(codeCoverageReportDialog.GetExcludes());
 
-            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(convertToType(type), owner, name, procedure, schemas, includes, excludes));
+            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(GetPath(type, owner, name, procedure), schemas, includes, excludes));
             Running = true;
         }
 
@@ -208,7 +209,7 @@ namespace utPLSQL
             });
         }
 
-        private string ConvertToVarcharList(string listValue)
+        private List<string> ConvertToList(string listValue)
         {
             if (string.IsNullOrWhiteSpace(listValue))
             {
@@ -219,51 +220,29 @@ namespace utPLSQL
                 if (listValue.Contains(" "))
                 {
                     var parts = listValue.Split(' ');
-                    return JoinParts(parts);
+                    return new List<string>(parts);
                 }
                 else if (listValue.Contains(","))
                 {
                     var parts = listValue.Split(',');
-                    return JoinParts(parts);
+                    return new List<string>(parts);
                 }
                 else if (listValue.Contains("\n"))
                 {
                     var parts = listValue.Split('\n');
-                    return JoinParts(parts);
+                    return new List<string>(parts);
                 }
                 else
                 {
-                    return $"'{listValue}'";
+                    return new List<string>() { listValue };
                 }
             }
-        }
-
-        private static string JoinParts(string[] parts)
-        {
-            var sb = new StringBuilder();
-            var first = true;
-            foreach (var part in parts)
-            {
-                if (!string.IsNullOrEmpty(part))
-                {
-                    if (!first)
-                    {
-                        sb.Append(",");
-                    }
-
-                    sb.Append("'").Append(part).Append("'");
-
-                    first = false;
-                }
-            }
-
-            return sb.ToString();
         }
 
         /*
-         * Workaround for the progressbar animation that produces lagging
-         * https://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
-         */
+        * Workaround for the progressbar animation that produces lagging
+        * https://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
+        */
         private void UpdateProgressBar(int completedTests)
         {
             int newValue = completedTests * Steps + 1;
@@ -284,25 +263,23 @@ namespace utPLSQL
         {
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
-            var path = GetPath(convertToType(type), owner, name, procedure);
-            txtPath.Text = path;
+            var path = GetPath(type, owner, name, procedure);
+            txtPath.Text = path[0];
             this.Text = $"{path} {startTime}";
         }
 
-        private string GetPath(Type type, string owner, string name, string procedure)
+        private List<string> GetPath(string type, string owner, string name, string procedure)
         {
             switch (type)
             {
-                case Type.User:
-                    return name;
-                case Type.Package:
-                    return $"{owner}.{name}";
-                case Type.Procedure:
-                    return $"{owner}.{name}.{procedure}";
-                case Type.All:
-                    return owner;
+                case "USER":
+                    return new List<string>() { name };
+                case "PACKAGE":
+                    return new List<string>() { $"{owner}.{name}" };
+                case "PROCEDURE":
+                    return new List<string>() { $"{owner}.{name}.{procedure}" };
                 default:
-                    return "";
+                    return new List<string>() { owner };
             }
         }
 
@@ -453,20 +430,7 @@ namespace utPLSQL
                 });
             }
         }
-        private Type convertToType(string type)
-        {
-            switch (type)
-            {
-                case "USER":
-                    return Type.User;
-                case "PACKAGE":
-                    return Type.Package;
-                case "PROCEDURE":
-                    return Type.Procedure;
-                default:
-                    return Type.All;
-            }
-        }
+
         private void btnClose_Click(object sender, System.EventArgs e)
         {
             Close();

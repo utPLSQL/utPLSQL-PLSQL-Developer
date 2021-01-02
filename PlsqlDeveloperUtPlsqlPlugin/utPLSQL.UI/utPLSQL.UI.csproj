@@ -46,8 +46,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="utPLSQL.Api, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\utPLSQL.Api.1.2.1\lib\net40\utPLSQL.Api.dll</HintPath>
+    <Reference Include="utPLSQL.Api, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\utPLSQL.Api.1.3.0\lib\net40\utPLSQL.Api.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
