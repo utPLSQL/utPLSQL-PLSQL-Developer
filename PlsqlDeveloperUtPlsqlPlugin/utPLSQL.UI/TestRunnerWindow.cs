@@ -97,8 +97,7 @@ namespace utPLSQL
             Running = true;
         }
 
-        private void RunWithCoverage(string type, string owner, string name, string procedure,
-            CodeCoverageReportDialog codeCoverageReportDialog)
+        private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverageReportDialog codeCoverageReportDialog)
         {
             var schemas = ConvertToVarcharList(codeCoverageReportDialog.GetSchemas());
             var includes = ConvertToVarcharList(codeCoverageReportDialog.GetIncludes());
@@ -153,9 +152,7 @@ namespace utPLSQL
                         txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
                         txtTime.Text = @event.run.executionTime + " s";
 
-                        txtTests.Text =
-                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                            totalNumberOfTests;
+                        txtTests.Text = (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" + totalNumberOfTests;
                         txtFailures.Text = @event.run.counter.failure + "";
                         txtErrors.Text = @event.run.counter.error + "";
                         txtDisabled.Text = @event.run.counter.disabled + "";
