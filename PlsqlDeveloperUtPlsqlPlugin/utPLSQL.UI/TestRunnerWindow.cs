@@ -66,8 +66,12 @@ namespace utPLSQL
 
                         Show();
 
-                        CollectResults(true);
-                        CollectReport();
+                        CollectResults(totalNumberOfTests > 0);
+
+                        if (totalNumberOfTests > 0)
+                        {
+                            CollectReport();
+                        }
                     }
                 }
                 else
@@ -119,6 +123,7 @@ namespace utPLSQL
                         progressBar.Minimum = 0;
                         progressBar.Maximum = totalNumberOfTests * Steps;
                         progressBar.Step = Steps;
+
                         CreateTestResults(@event);
 
                         if (gridResults.Rows.Count > 0)
@@ -133,9 +138,8 @@ namespace utPLSQL
                     {
                         completedTests++;
 
-                        txtTests.Text =
-                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                            totalNumberOfTests;
+                        txtTests.Text = (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" + totalNumberOfTests;
+
                         UpdateProgressBar(completedTests);
 
                         UpdateTestResult(@event);
@@ -161,9 +165,16 @@ namespace utPLSQL
                             progressBar.ForeColor = Color.DarkRed;
                         }
 
-                        if (!coverage || gridResults.Rows.Count == 0)
+                        if (!coverage)
                         {
-                            txtStatus.Text = "Finished";
+                            if (totalNumberOfTests > 0)
+                            {
+                                txtStatus.Text = "Finished";
+                            }
+                            else
+                            {
+                                txtStatus.Text = "No tests found";
+                            }
                             Running = false;
                         }
                     });
