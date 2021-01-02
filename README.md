@@ -16,6 +16,8 @@ In the object browser on Packages or Users there is a context menu entry to run 
 
 The results are opened in a new window. If you've chosen code coverage the coverage report will be opened in the default browser. 
 
+Double click on a test result entry will open the package body.
+
 ![Result Window](screenshots/result_window.png)
 
 ## Releases
