@@ -91,7 +91,7 @@ namespace utPLSQL
 
         private void RunTests(string type, string owner, string name, string procedure)
         {
-            Task.Factory.StartNew(() => testRunner.RunTests(GetPath(type, owner, name, procedure)));
+            Task.Factory.StartNew(() => testRunner.RunTests(GetPath(type, owner, name, procedure).ToArray()));
             Running = true;
         }
 
