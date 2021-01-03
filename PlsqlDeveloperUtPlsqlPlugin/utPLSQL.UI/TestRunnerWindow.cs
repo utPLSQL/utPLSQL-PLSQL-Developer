@@ -265,7 +265,7 @@ namespace utPLSQL
             txtStart.Text = startTime;
             var path = GetPath(type, owner, name, procedure);
             txtPath.Text = path[0];
-            this.Text = $"{path} {startTime}";
+            this.Text = $"{path[0]} {startTime}";
         }
 
         private List<string> GetPath(string type, string owner, string name, string procedure)
