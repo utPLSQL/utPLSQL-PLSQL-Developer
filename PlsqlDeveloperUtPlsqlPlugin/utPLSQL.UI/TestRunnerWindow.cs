@@ -1,11 +1,11 @@
-﻿using FontAwesome.Sharp;
+﻿using Equin.ApplicationFramework;
+using FontAwesome.Sharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,7 +20,9 @@ namespace utPLSQL
 
         private readonly RealTimeTestRunner testRunner;
         private readonly object pluginIntegration;
-        private readonly BindingList<TestResult> testResults = new BindingList<TestResult>();
+
+        private readonly List<TestResult> testResults = new List<TestResult>();
+        BindingListView<TestResult> viewTestResults;
 
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
@@ -32,8 +34,8 @@ namespace utPLSQL
 
             InitializeComponent();
 
-            var bindingSource = new BindingSource { DataSource = testResults };
-            gridResults.DataSource = bindingSource;
+            viewTestResults = new BindingListView<TestResult>(testResults);
+            gridResults.DataSource = viewTestResults;
 
             gridResults.Columns[0].HeaderText = "";
             gridResults.Columns[0].MinimumWidth = 30;
@@ -95,8 +97,6 @@ namespace utPLSQL
             Running = true;
         }
 
-
-
         private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverageReportDialog codeCoverageReportDialog)
         {
             var schemas = ConvertToList(codeCoverageReportDialog.GetSchemas());
@@ -124,6 +124,8 @@ namespace utPLSQL
                         progressBar.Step = Steps;
 
                         CreateTestResults(@event);
+                        viewTestResults = new BindingListView<TestResult>(testResults);
+                        gridResults.DataSource = viewTestResults;
 
                         if (gridResults.Rows.Count > 0)
                         {
@@ -153,6 +155,7 @@ namespace utPLSQL
                         txtTime.Text = @event.run.executionTime + " s";
 
                         txtTests.Text = (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" + totalNumberOfTests;
+                        txtSuccess.Text = @event.run.counter.success + "";
                         txtFailures.Text = @event.run.counter.failure + "";
                         txtErrors.Text = @event.run.counter.error + "";
                         txtDisabled.Text = @event.run.counter.disabled + "";
@@ -336,22 +339,27 @@ namespace utPLSQL
                         if (counter.disabled > 0)
                         {
                             testResult.Icon = IconChar.Ban.ToBitmap(Color.Gray, IconSize);
+                            testResult.Status = "Disabled";
                         }
                         else if (counter.success > 0)
                         {
                             testResult.Icon = IconChar.Check.ToBitmap(Color.Green, IconSize);
+                            testResult.Status = "Success";
                         }
                         else if (counter.failure > 0)
                         {
                             testResult.Icon = IconChar.TimesCircle.ToBitmap(IconFont.Solid, IconSize, Color.Orange);
+                            testResult.Status = "Failure";
                         }
                         else if (counter.error > 0)
                         {
                             testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.Red, IconSize);
+                            testResult.Status = "Error";
                         }
                         else if (counter.warning > 0)
                         {
                             testResult.Icon = IconChar.ExclamationTriangle.ToBitmap(Color.Orange, IconSize);
+                            testResult.Status = "Warning";
                         }
 
                         if (@event.test.errorStack != null)
@@ -431,6 +439,40 @@ namespace utPLSQL
             }
         }
 
+        private void FilterTestResults()
+        {
+            if (!cbSuccess.Checked && !cbFailure.Checked && !cbError.Checked && !cbDisabled.Checked)
+            {
+                viewTestResults.RemoveFilter();
+            }
+            else
+            {
+                viewTestResults.ApplyFilter(delegate (TestResult testResult)
+                {
+                    if (testResult.Status != null)
+                    {
+                        if (!cbSuccess.Checked && testResult.Status.Equals("Success"))
+                        {
+                            return false;
+                        }
+                        if (!cbFailure.Checked && testResult.Status.Equals("Failure"))
+                        {
+                            return false;
+                        }
+                        if (!cbError.Checked && testResult.Status.Equals("Error"))
+                        {
+                            return false;
+                        }
+                        if (!cbDisabled.Checked && testResult.Status.Equals("Disabled"))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+        }
+
         private void btnClose_Click(object sender, System.EventArgs e)
         {
             Close();
@@ -458,7 +500,8 @@ namespace utPLSQL
             if (gridResults.SelectedRows.Count > 0)
             {
                 var row = gridResults.SelectedRows[0];
-                var testResult = (TestResult)row.DataBoundItem;
+                ObjectView<TestResult> dataBoundItem = (ObjectView<TestResult>)row.DataBoundItem;
+                var testResult = dataBoundItem.Object;
 
                 txtTestOwner.Text = testResult.Owner;
                 txtTestPackage.Text = testResult.Package;
@@ -526,5 +569,24 @@ namespace utPLSQL
             testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
         }
 
+        private void cbSuccess_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
+        }
+
+        private void cbFailures_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
+        }
+
+        private void cbErrors_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
+        }
+
+        private void cbDisabled_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
+        }
     }
 }

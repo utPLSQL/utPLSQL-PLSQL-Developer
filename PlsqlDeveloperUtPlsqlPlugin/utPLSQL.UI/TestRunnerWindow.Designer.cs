@@ -82,6 +82,13 @@ namespace utPLSQL
             this.lblEnd = new System.Windows.Forms.Label();
             this.txtEnd = new System.Windows.Forms.TextBox();
             this.iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
+            this.cbFailure = new System.Windows.Forms.CheckBox();
+            this.cbSuccess = new System.Windows.Forms.CheckBox();
+            this.cbError = new System.Windows.Forms.CheckBox();
+            this.cbDisabled = new System.Windows.Forms.CheckBox();
+            this.lblSuccess = new System.Windows.Forms.Label();
+            this.txtSuccess = new System.Windows.Forms.TextBox();
+            this.iconPictureBox3 = new FontAwesome.Sharp.IconPictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
             this.contextMenuResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).BeginInit();
@@ -92,6 +99,7 @@ namespace utPLSQL
             ((System.ComponentModel.ISupportInitialize)(this.gridTestFailures)).BeginInit();
             this.tabErrors.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
             // btnClose
@@ -115,7 +123,7 @@ namespace utPLSQL
             // 
             // txtTests
             // 
-            this.txtTests.Location = new System.Drawing.Point(51, 46);
+            this.txtTests.Location = new System.Drawing.Point(51, 45);
             this.txtTests.Name = "txtTests";
             this.txtTests.ReadOnly = true;
             this.txtTests.Size = new System.Drawing.Size(120, 20);
@@ -142,7 +150,7 @@ namespace utPLSQL
             // lblErrors
             // 
             this.lblErrors.AutoSize = true;
-            this.lblErrors.Location = new System.Drawing.Point(368, 49);
+            this.lblErrors.Location = new System.Drawing.Point(556, 49);
             this.lblErrors.Name = "lblErrors";
             this.lblErrors.Size = new System.Drawing.Size(34, 13);
             this.lblErrors.TabIndex = 12;
@@ -150,7 +158,7 @@ namespace utPLSQL
             // 
             // txtErrors
             // 
-            this.txtErrors.Location = new System.Drawing.Point(408, 45);
+            this.txtErrors.Location = new System.Drawing.Point(596, 45);
             this.txtErrors.Name = "txtErrors";
             this.txtErrors.ReadOnly = true;
             this.txtErrors.Size = new System.Drawing.Size(50, 20);
@@ -160,7 +168,7 @@ namespace utPLSQL
             // lblFailures
             // 
             this.lblFailures.AutoSize = true;
-            this.lblFailures.Location = new System.Drawing.Point(221, 48);
+            this.lblFailures.Location = new System.Drawing.Point(394, 49);
             this.lblFailures.Name = "lblFailures";
             this.lblFailures.Size = new System.Drawing.Size(43, 13);
             this.lblFailures.TabIndex = 14;
@@ -168,7 +176,7 @@ namespace utPLSQL
             // 
             // txtFailures
             // 
-            this.txtFailures.Location = new System.Drawing.Point(270, 45);
+            this.txtFailures.Location = new System.Drawing.Point(443, 45);
             this.txtFailures.Name = "txtFailures";
             this.txtFailures.ReadOnly = true;
             this.txtFailures.Size = new System.Drawing.Size(50, 20);
@@ -178,7 +186,7 @@ namespace utPLSQL
             // lblDisabled
             // 
             this.lblDisabled.AutoSize = true;
-            this.lblDisabled.Location = new System.Drawing.Point(504, 48);
+            this.lblDisabled.Location = new System.Drawing.Point(709, 49);
             this.lblDisabled.Name = "lblDisabled";
             this.lblDisabled.Size = new System.Drawing.Size(48, 13);
             this.lblDisabled.TabIndex = 16;
@@ -186,7 +194,7 @@ namespace utPLSQL
             // 
             // txtDisabled
             // 
-            this.txtDisabled.Location = new System.Drawing.Point(558, 45);
+            this.txtDisabled.Location = new System.Drawing.Point(763, 45);
             this.txtDisabled.Name = "txtDisabled";
             this.txtDisabled.ReadOnly = true;
             this.txtDisabled.Size = new System.Drawing.Size(50, 20);
@@ -247,12 +255,12 @@ namespace utPLSQL
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtStatus.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtStatus.Location = new System.Drawing.Point(698, 49);
+            this.txtStatus.Location = new System.Drawing.Point(16, 592);
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.ReadOnly = true;
-            this.txtStatus.Size = new System.Drawing.Size(300, 13);
-            this.txtStatus.TabIndex = 20;
-            this.txtStatus.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtStatus.Size = new System.Drawing.Size(899, 13);
+            this.txtStatus.TabIndex = 0;
+            this.txtStatus.TabStop = false;
             // 
             // progressBar
             // 
@@ -269,7 +277,7 @@ namespace utPLSQL
             this.iconPictureBox1.IconColor = System.Drawing.Color.Orange;
             this.iconPictureBox1.IconFont = FontAwesome.Sharp.IconFont.Solid;
             this.iconPictureBox1.IconSize = 20;
-            this.iconPictureBox1.Location = new System.Drawing.Point(195, 46);
+            this.iconPictureBox1.Location = new System.Drawing.Point(369, 47);
             this.iconPictureBox1.Name = "iconPictureBox1";
             this.iconPictureBox1.Size = new System.Drawing.Size(20, 20);
             this.iconPictureBox1.TabIndex = 24;
@@ -283,7 +291,7 @@ namespace utPLSQL
             this.iconPictureBox2.IconColor = System.Drawing.Color.Red;
             this.iconPictureBox2.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.iconPictureBox2.IconSize = 20;
-            this.iconPictureBox2.Location = new System.Drawing.Point(342, 47);
+            this.iconPictureBox2.Location = new System.Drawing.Point(530, 47);
             this.iconPictureBox2.Name = "iconPictureBox2";
             this.iconPictureBox2.Size = new System.Drawing.Size(20, 20);
             this.iconPictureBox2.TabIndex = 25;
@@ -597,11 +605,91 @@ namespace utPLSQL
             this.iconPictureBox4.IconColor = System.Drawing.Color.Gray;
             this.iconPictureBox4.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.iconPictureBox4.IconSize = 20;
-            this.iconPictureBox4.Location = new System.Drawing.Point(478, 47);
+            this.iconPictureBox4.Location = new System.Drawing.Point(683, 47);
             this.iconPictureBox4.Name = "iconPictureBox4";
             this.iconPictureBox4.Size = new System.Drawing.Size(20, 20);
             this.iconPictureBox4.TabIndex = 27;
             this.iconPictureBox4.TabStop = false;
+            // 
+            // cbFailures
+            // 
+            this.cbFailure.AutoSize = true;
+            this.cbFailure.Checked = true;
+            this.cbFailure.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbFailure.Location = new System.Drawing.Point(499, 48);
+            this.cbFailure.Name = "cbFailures";
+            this.cbFailure.Size = new System.Drawing.Size(15, 14);
+            this.cbFailure.TabIndex = 35;
+            this.cbFailure.UseVisualStyleBackColor = true;
+            this.cbFailure.CheckedChanged += new System.EventHandler(this.cbFailures_CheckedChanged);
+            // 
+            // cbSuccess
+            // 
+            this.cbSuccess.AutoSize = true;
+            this.cbSuccess.Checked = true;
+            this.cbSuccess.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbSuccess.Location = new System.Drawing.Point(338, 48);
+            this.cbSuccess.Name = "cbSuccess";
+            this.cbSuccess.Size = new System.Drawing.Size(15, 14);
+            this.cbSuccess.TabIndex = 36;
+            this.cbSuccess.UseVisualStyleBackColor = true;
+            this.cbSuccess.CheckedChanged += new System.EventHandler(this.cbSuccess_CheckedChanged);
+            // 
+            // cbErrors
+            // 
+            this.cbError.AutoSize = true;
+            this.cbError.Checked = true;
+            this.cbError.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbError.Location = new System.Drawing.Point(652, 48);
+            this.cbError.Name = "cbErrors";
+            this.cbError.Size = new System.Drawing.Size(15, 14);
+            this.cbError.TabIndex = 37;
+            this.cbError.UseVisualStyleBackColor = true;
+            this.cbError.CheckedChanged += new System.EventHandler(this.cbErrors_CheckedChanged);
+            // 
+            // cbDisabled
+            // 
+            this.cbDisabled.AutoSize = true;
+            this.cbDisabled.Checked = true;
+            this.cbDisabled.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbDisabled.Location = new System.Drawing.Point(819, 48);
+            this.cbDisabled.Name = "cbDisabled";
+            this.cbDisabled.Size = new System.Drawing.Size(15, 14);
+            this.cbDisabled.TabIndex = 38;
+            this.cbDisabled.UseVisualStyleBackColor = true;
+            this.cbDisabled.CheckedChanged += new System.EventHandler(this.cbDisabled_CheckedChanged);
+            // 
+            // lblSuccess
+            // 
+            this.lblSuccess.AutoSize = true;
+            this.lblSuccess.Location = new System.Drawing.Point(228, 49);
+            this.lblSuccess.Name = "lblSuccess";
+            this.lblSuccess.Size = new System.Drawing.Size(48, 13);
+            this.lblSuccess.TabIndex = 39;
+            this.lblSuccess.Text = "Success";
+            // 
+            // txtSuccess
+            // 
+            this.txtSuccess.Location = new System.Drawing.Point(282, 45);
+            this.txtSuccess.Name = "txtSuccess";
+            this.txtSuccess.ReadOnly = true;
+            this.txtSuccess.Size = new System.Drawing.Size(50, 20);
+            this.txtSuccess.TabIndex = 40;
+            this.txtSuccess.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // iconPictureBox3
+            // 
+            this.iconPictureBox3.BackColor = System.Drawing.SystemColors.Control;
+            this.iconPictureBox3.ForeColor = System.Drawing.Color.DarkGreen;
+            this.iconPictureBox3.IconChar = FontAwesome.Sharp.IconChar.Check;
+            this.iconPictureBox3.IconColor = System.Drawing.Color.DarkGreen;
+            this.iconPictureBox3.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.iconPictureBox3.IconSize = 20;
+            this.iconPictureBox3.Location = new System.Drawing.Point(202, 47);
+            this.iconPictureBox3.Name = "iconPictureBox3";
+            this.iconPictureBox3.Size = new System.Drawing.Size(20, 20);
+            this.iconPictureBox3.TabIndex = 41;
+            this.iconPictureBox3.TabStop = false;
             // 
             // TestRunnerWindow
             // 
@@ -609,6 +697,13 @@ namespace utPLSQL
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 621);
+            this.Controls.Add(this.iconPictureBox3);
+            this.Controls.Add(this.txtSuccess);
+            this.Controls.Add(this.lblSuccess);
+            this.Controls.Add(this.cbDisabled);
+            this.Controls.Add(this.cbError);
+            this.Controls.Add(this.cbSuccess);
+            this.Controls.Add(this.cbFailure);
             this.Controls.Add(this.txtEnd);
             this.Controls.Add(this.lblEnd);
             this.Controls.Add(this.txtStart);
@@ -651,6 +746,7 @@ namespace utPLSQL
             this.tabErrors.ResumeLayout(false);
             this.tabErrors.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -708,5 +804,12 @@ namespace utPLSQL
         private System.Windows.Forms.ContextMenuStrip contextMenuResults;
         private System.Windows.Forms.ToolStripMenuItem menuItemRunTests;
         private System.Windows.Forms.ToolStripMenuItem menuItemCoverage;
+        private System.Windows.Forms.CheckBox cbFailure;
+        private System.Windows.Forms.CheckBox cbSuccess;
+        private System.Windows.Forms.CheckBox cbError;
+        private System.Windows.Forms.CheckBox cbDisabled;
+        private System.Windows.Forms.Label lblSuccess;
+        private System.Windows.Forms.TextBox txtSuccess;
+        private FontAwesome.Sharp.IconPictureBox iconPictureBox3;
     }
 }

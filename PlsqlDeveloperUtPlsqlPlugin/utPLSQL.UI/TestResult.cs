@@ -13,6 +13,7 @@ namespace utPLSQL
         public decimal Time { get; set; }
         internal string Id { get; set; }
 
+        internal string Status { get; set; }
         internal DateTime Start { get; set; }
         internal DateTime End { get; set; }
 
