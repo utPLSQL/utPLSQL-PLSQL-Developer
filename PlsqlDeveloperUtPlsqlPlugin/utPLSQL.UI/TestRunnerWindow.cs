@@ -20,17 +20,24 @@ namespace utPLSQL
 
         private readonly RealTimeTestRunner testRunner;
         private readonly object pluginIntegration;
-
+        private readonly string username;
+        private readonly string password;
+        private readonly string database;
         private readonly List<TestResult> testResults = new List<TestResult>();
         BindingListView<TestResult> viewTestResults;
 
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
 
-        public TestRunnerWindow(RealTimeTestRunner testRunner, object pluginIntegration)
+        public TestRunnerWindow(object pluginIntegration, string username, string password, string database)
         {
-            this.testRunner = testRunner;
             this.pluginIntegration = pluginIntegration;
+            this.username = username;
+            this.password = password;
+            this.database = database;
+
+            this.testRunner = new RealTimeTestRunner();
+            this.testRunner.Connect(username, password, database);
 
             InitializeComponent();
 
@@ -491,6 +498,12 @@ namespace utPLSQL
                     {
                         e.Cancel = true;
                     }
+                    else
+                    {
+                        txtStatus.Text = "Aborting...";
+                        testRunner.Close();
+                        Running = false;
+                    }
                 }
             }
         }
@@ -557,7 +570,7 @@ namespace utPLSQL
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database);
             testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, false);
         }
 
@@ -565,7 +578,7 @@ namespace utPLSQL
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database);
             testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
         }
 

@@ -55,14 +55,8 @@ namespace utPLSQL
         internal static string database;
 
         private static PlsqlDeveloperUtPlsqlPlugin _plugin;
-        private static RealTimeTestRunner _testRunner;
 
         private static readonly List<TestRunnerWindow> Windows = new List<TestRunnerWindow>();
-
-        private PlsqlDeveloperUtPlsqlPlugin()
-        {
-            _testRunner = new RealTimeTestRunner();
-        }
 
         #region DLL exported API
 
@@ -206,7 +200,7 @@ namespace utPLSQL
             {
                 if (connected())
                 {
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
                 }
@@ -215,7 +209,7 @@ namespace utPLSQL
             {
                 if (connected())
                 {
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
                 }
@@ -226,7 +220,7 @@ namespace utPLSQL
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
@@ -238,7 +232,7 @@ namespace utPLSQL
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
@@ -265,8 +259,6 @@ namespace utPLSQL
         {
             try
             {
-                _testRunner.Close();
-
                 if (connected())
                 {
                     getConnectionInfo(out IntPtr ptrUsername, out IntPtr ptrPassword, out IntPtr ptrDatabase);
@@ -274,8 +266,6 @@ namespace utPLSQL
                     username = Marshal.PtrToStringAnsi(ptrUsername);
                     password = Marshal.PtrToStringAnsi(ptrPassword);
                     database = Marshal.PtrToStringAnsi(ptrDatabase);
-
-                    _testRunner.Connect(username, password, database);
                 }
             }
             catch (Exception e)
