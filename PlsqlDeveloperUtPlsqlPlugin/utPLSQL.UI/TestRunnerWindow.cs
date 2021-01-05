@@ -366,9 +366,16 @@ namespace utPLSQL
                         }
 
                         gridResults.Refresh();
-                        var rowIndex = testResults.IndexOf(testResult);
-                        gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
-                        gridResults.Rows[rowIndex].Selected = true;
+                        try
+                        {
+                            var rowIndex = testResults.IndexOf(testResult);
+                            gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
+                            gridResults.Rows[rowIndex].Selected = true;
+                        }
+                        catch
+                        {
+                            // ingore exception that could raise if results are filtered
+                        }
                     }
                 }
             }
