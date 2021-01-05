@@ -22,11 +22,13 @@ Double-click on a test result entry will open the package body. A right-click op
 
 ## Releases
 
-Binary releases are published in the [releases section](https://github.com/utPLSQL/utPLSQL-PLSQL-Developer/releases).
+Binary releases for 64bit and 32bit are published in the [releases section](https://github.com/utPLSQL/utPLSQL-PLSQL-Developer/releases).
 
 ## Installation
 
-Copy PlsqlDeveloperUtPlsqlPlugin.dll to the PlugIns directory of your PL/SQL Developer installation.
+Copy the DLL to the PlugIns directory of your PL/SQL Developer installation.
+- 64bit: PlsqlDeveloperUtPlsqlPlugin.dll
+- 32bit: PlsqlDeveloperUtPlsqlPlugin_x86.dll
 
 ## Issues
 
