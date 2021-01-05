@@ -28,6 +28,9 @@ namespace utPLSQL
     //*FUNC: 79*/ char *(*IDE_GetObjectSource)(char *ObjectType, char *ObjectOwner, char *ObjectName);
     internal delegate IntPtr IdeGetObjectSource(string objectType, string objectOwner, string objectName);
 
+    //*FUNC: 97*/ extern char *(*IDE_GetConnectAs)();
+    internal delegate IntPtr IdeGetConnectAs();
+
     //*FUNC: 150*/ void (*IDE_CreateToolButton)(int ID, int Index, char *Name, char *BitmapFile, int BitmapHandle);
     internal delegate void IdeCreateToolButton(int id, int index, string name, string bitmapFile, long bitmapHandle);
 
@@ -47,12 +50,14 @@ namespace utPLSQL
         internal static IdeCreatePopupItem createPopupItem;
         internal static IdeGetPopupObject getPopupObject;
         internal static IdeGetObjectSource getObjectSource;
+        internal static IdeGetConnectAs getConnectAs;
         internal static IdeCreateToolButton createToolButton;
 
         internal static int pluginId;
         internal static string username;
         internal static string password;
         internal static string database;
+        internal static string connectAs;
 
         private static PlsqlDeveloperUtPlsqlPlugin _plugin;
 
@@ -163,6 +168,9 @@ namespace utPLSQL
                 case 79:
                     getObjectSource = (IdeGetObjectSource)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetObjectSource));
                     break;
+                case 97:
+                    getConnectAs = (IdeGetConnectAs)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetConnectAs));
+                    break;
                 case 150:
                     createToolButton = (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateToolButton));
                     break;
@@ -200,7 +208,7 @@ namespace utPLSQL
             {
                 if (connected())
                 {
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
                 }
@@ -209,7 +217,7 @@ namespace utPLSQL
             {
                 if (connected())
                 {
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
                 }
@@ -220,7 +228,7 @@ namespace utPLSQL
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
@@ -232,7 +240,7 @@ namespace utPLSQL
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
@@ -266,6 +274,10 @@ namespace utPLSQL
                     username = Marshal.PtrToStringAnsi(ptrUsername);
                     password = Marshal.PtrToStringAnsi(ptrPassword);
                     database = Marshal.PtrToStringAnsi(ptrDatabase);
+
+                    IntPtr ptrConnectAs = getConnectAs();
+
+                    connectAs = Marshal.PtrToStringAnsi(ptrConnectAs);
                 }
             }
             catch (Exception e)

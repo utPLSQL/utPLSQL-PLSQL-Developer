@@ -23,21 +23,25 @@ namespace utPLSQL
         private readonly string username;
         private readonly string password;
         private readonly string database;
+        private readonly string connectAs;
+
         private readonly List<TestResult> testResults = new List<TestResult>();
-        BindingListView<TestResult> viewTestResults;
+        private BindingListView<TestResult> viewTestResults;
 
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
+        private int completedTests;
 
-        public TestRunnerWindow(object pluginIntegration, string username, string password, string database)
+        public TestRunnerWindow(object pluginIntegration, string username, string password, string database, string connectAs)
         {
             this.pluginIntegration = pluginIntegration;
             this.username = username;
             this.password = password;
             this.database = database;
+            this.connectAs = connectAs;
 
-            this.testRunner = new RealTimeTestRunner();
-            this.testRunner.Connect(username, password, database);
+            testRunner = new RealTimeTestRunner();
+            testRunner.Connect(username, password, database);
 
             InitializeComponent();
 
@@ -52,7 +56,7 @@ namespace utPLSQL
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        public void RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
+        public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
             ResetComponents();
 
@@ -63,6 +67,7 @@ namespace utPLSQL
             try
             {
                 testRunner.GetVersion();
+                Running = true;
 
                 if (coverage)
                 {
@@ -72,53 +77,59 @@ namespace utPLSQL
                     {
                         txtStatus.Text = "Running tests with coverage...";
 
-                        RunWithCoverage(type, owner, name, procedure, codeCoverageReportDialog);
-
                         Show();
 
-                        CollectResults(true);
+                        var schemas = ConvertToList(codeCoverageReportDialog.GetSchemas());
+                        var includes = ConvertToList(codeCoverageReportDialog.GetIncludes());
+                        var excludes = ConvertToList(codeCoverageReportDialog.GetExcludes());
 
-                        CollectReport();
+                        completedTests = 0;
+
+                        string htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
+
+                        var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
+                        using (var sw = new StreamWriter(filePath))
+                        {
+                            sw.WriteLine(htmlReport);
+                        }
+
+                        txtStatus.BeginInvoke((MethodInvoker)delegate
+                        {
+                            if (totalNumberOfTests > 0)
+                            {
+                                txtStatus.Text = "Finished";
+                            }
+                            else
+                            {
+                                txtStatus.Text = "No tests found";
+                            }
+                        });
+
+                        Running = false;
+
+                        System.Diagnostics.Process.Start(filePath);
                     }
                 }
                 else
                 {
                     txtStatus.Text = "Running tests...";
 
-                    RunTests(type, owner, name, procedure);
-
                     Show();
 
-                    CollectResults(false);
+                    completedTests = 0;
+
+                    await testRunner.RunTestsAsync(GetPath(type, owner, name, procedure), CollectResults(coverage));
                 }
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("utPLSQL is not installed", "utPLSQL not installed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void RunTests(string type, string owner, string name, string procedure)
+        private Action<@event> CollectResults(bool coverage)
         {
-            Task.Factory.StartNew(() => testRunner.RunTests(GetPath(type, owner, name, procedure).ToArray()));
-            Running = true;
-        }
-
-        private void RunWithCoverage(string type, string owner, string name, string procedure, CodeCoverageReportDialog codeCoverageReportDialog)
-        {
-            var schemas = ConvertToList(codeCoverageReportDialog.GetSchemas());
-            var includes = ConvertToList(codeCoverageReportDialog.GetIncludes());
-            var excludes = ConvertToList(codeCoverageReportDialog.GetExcludes());
-
-            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(GetPath(type, owner, name, procedure), schemas, includes, excludes));
-            Running = true;
-        }
-
-        private void CollectResults(bool coverage)
-        {
-            var completedTests = 0;
-
-            Task.Factory.StartNew(() => testRunner.ConsumeResult(@event =>
+            return @event =>
             {
                 if (@event.type.Equals("pre-run"))
                 {
@@ -186,38 +197,9 @@ namespace utPLSQL
                         }
                     });
                 }
-            }));
+            };
         }
 
-        private void CollectReport()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                var report = testRunner.GetCoverageReport();
-
-                var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
-                using (var sw = new StreamWriter(filePath))
-                {
-                    sw.WriteLine(report);
-                }
-
-                txtStatus.BeginInvoke((MethodInvoker)delegate
-                {
-                    if (totalNumberOfTests > 0)
-                    {
-                        txtStatus.Text = "Finished";
-                    }
-                    else
-                    {
-                        txtStatus.Text = "No tests found";
-                    }
-                });
-
-                Running = false;
-
-                System.Diagnostics.Process.Start(filePath);
-            });
-        }
 
         private List<string> ConvertToList(string listValue)
         {
@@ -566,20 +548,20 @@ namespace utPLSQL
             rowIndexOnRightClick = e.RowIndex;
         }
 
-        private void menuItemRunTests_Click(object sender, EventArgs e)
+        private async void menuItemRunTests_ClickAsync(object sender, EventArgs e)
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database);
-            testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, false);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs);
+            await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, false);
         }
 
-        private void menuItemCoverage_Click(object sender, EventArgs e)
+        private async void menuItemCoverage_ClickAsync(object sender, EventArgs e)
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database);
-            testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs);
+            await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
         }
 
         private void cbSuccess_CheckedChanged(object sender, EventArgs e)

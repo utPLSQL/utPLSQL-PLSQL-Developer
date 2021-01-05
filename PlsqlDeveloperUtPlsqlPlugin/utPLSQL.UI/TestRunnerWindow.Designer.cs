@@ -240,14 +240,14 @@ namespace utPLSQL
             this.menuItemRunTests.Name = "menuItemRunTests";
             this.menuItemRunTests.Size = new System.Drawing.Size(179, 22);
             this.menuItemRunTests.Text = "Run Test";
-            this.menuItemRunTests.Click += new System.EventHandler(this.menuItemRunTests_Click);
+            this.menuItemRunTests.Click += new System.EventHandler(this.menuItemRunTests_ClickAsync);
             // 
             // menuItemCoverage
             // 
             this.menuItemCoverage.Name = "menuItemCoverage";
             this.menuItemCoverage.Size = new System.Drawing.Size(179, 22);
             this.menuItemCoverage.Text = "Run Code Coverage";
-            this.menuItemCoverage.Click += new System.EventHandler(this.menuItemCoverage_Click);
+            this.menuItemCoverage.Click += new System.EventHandler(this.menuItemCoverage_ClickAsync);
             // 
             // txtStatus
             // 
