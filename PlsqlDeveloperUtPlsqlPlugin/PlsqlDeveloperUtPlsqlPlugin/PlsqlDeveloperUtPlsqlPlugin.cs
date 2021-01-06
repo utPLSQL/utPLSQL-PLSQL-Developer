@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace utPLSQL
@@ -206,7 +207,7 @@ namespace utPLSQL
         {
             if (index == PluginMenuIndexAllTests)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
                     var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
@@ -215,7 +216,7 @@ namespace utPLSQL
             }
             else if (index == PluginMenuIndexAllTestsWithCoverage)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
                     var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
@@ -224,7 +225,7 @@ namespace utPLSQL
             }
             else if (index == PluginPopupIndex)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
@@ -236,7 +237,7 @@ namespace utPLSQL
             }
             else if (index == PluginPopupIndexWithCoverage)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
@@ -261,6 +262,14 @@ namespace utPLSQL
         {
             var source = getObjectSource("PACKAGE BODY", owner, name);
             createWindow(3, Marshal.PtrToStringAnsi(source), false);
+        }
+        private static bool Sydba()
+        {
+            if (connectAs.ToLower().Equals("sysdba")) {
+                MessageBox.Show("You shouldn't run utPLSQL as SYSDBA.\n\nTest will not run.", "Connected as SYSDBA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return true;
+            }
+            return true;
         }
 
         private static void ConnectToDatabase()
