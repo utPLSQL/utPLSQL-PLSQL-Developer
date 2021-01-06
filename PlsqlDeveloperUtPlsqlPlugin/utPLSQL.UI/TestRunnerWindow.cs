@@ -67,56 +67,58 @@ namespace utPLSQL
             try
             {
                 testRunner.GetVersion();
-                Running = true;
-
-                if (coverage)
-                {
-                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
-                    var dialogResult = codeCoverageReportDialog.ShowDialog();
-                    if (dialogResult == DialogResult.OK)
-                    {
-                        txtStatus.Text = "Running tests with coverage...";
-
-                        Show();
-
-                        var schemas = ConvertToList(codeCoverageReportDialog.GetSchemas());
-                        var includes = ConvertToList(codeCoverageReportDialog.GetIncludes());
-                        var excludes = ConvertToList(codeCoverageReportDialog.GetExcludes());
-
-                        completedTests = 0;
-
-                        var htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
-
-                        var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
-                        using (var sw = new StreamWriter(filePath))
-                        {
-                            sw.WriteLine(htmlReport);
-                        }
-
-                        txtStatus.BeginInvoke((MethodInvoker)delegate
-                        {
-                            txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
-                        });
-
-                        Running = false;
-
-                        System.Diagnostics.Process.Start(filePath);
-                    }
-                }
-                else
-                {
-                    txtStatus.Text = "Running tests...";
-
-                    Show();
-
-                    completedTests = 0;
-
-                    await testRunner.RunTestsAsync(GetPath(type, owner, name, procedure), CollectResults(coverage));
-                }
             }
             catch
             {
                 MessageBox.Show("utPLSQL is not installed", "utPLSQL not installed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Running = true;
+
+            if (coverage)
+            {
+                var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
+                var dialogResult = codeCoverageReportDialog.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    Show();
+
+                    var schemas = ConvertToList(codeCoverageReportDialog.GetSchemas());
+                    var includes = ConvertToList(codeCoverageReportDialog.GetIncludes());
+                    var excludes = ConvertToList(codeCoverageReportDialog.GetExcludes());
+
+                    completedTests = 0;
+
+                    txtStatus.Text = "Running tests with coverage...";
+
+                    var htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
+
+                    var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
+                    using (var sw = new StreamWriter(filePath))
+                    {
+                        sw.WriteLine(htmlReport);
+                    }
+
+                    txtStatus.BeginInvoke((MethodInvoker)delegate
+                    {
+                        txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
+                    });
+
+                    Running = false;
+
+                    System.Diagnostics.Process.Start(filePath);
+                }
+            }
+            else
+            {
+                Show();
+
+                completedTests = 0;
+
+                txtStatus.Text = "Running tests...";
+
+                await testRunner.RunTestsAsync(GetPath(type, owner, name, procedure), CollectResults(coverage));
             }
         }
 
@@ -128,6 +130,8 @@ namespace utPLSQL
                 {
                     gridResults.BeginInvoke((MethodInvoker)delegate
                     {
+                        txtStatus.Text = "Running tests...";
+
                         totalNumberOfTests = @event.totalNumberOfTests;
 
                         progressBar.Minimum = 0;
@@ -476,7 +480,9 @@ namespace utPLSQL
                     else
                     {
                         txtStatus.Text = "Aborting...";
+
                         testRunner.Close();
+
                         Running = false;
                     }
                 }
