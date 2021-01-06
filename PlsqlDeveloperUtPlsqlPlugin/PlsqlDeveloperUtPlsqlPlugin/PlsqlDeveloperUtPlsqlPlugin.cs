@@ -43,21 +43,21 @@ namespace utPLSQL
         private const int PluginPopupIndex = 1;
         private const int PluginPopupIndexWithCoverage = 2;
 
-        internal static IdeConnected connected;
-        internal static IdeGetConnectionInfo getConnectionInfo;
+        private static IdeConnected connected;
+        private static IdeGetConnectionInfo getConnectionInfo;
 
-        internal static IdeCreateWindow createWindow;
-        internal static IdeCreatePopupItem createPopupItem;
-        internal static IdeGetPopupObject getPopupObject;
-        internal static IdeGetObjectSource getObjectSource;
-        internal static IdeGetConnectAs getConnectAs;
-        internal static IdeCreateToolButton createToolButton;
+        private static IdeCreateWindow createWindow;
+        private static IdeCreatePopupItem createPopupItem;
+        private static IdeGetPopupObject getPopupObject;
+        private static IdeGetObjectSource getObjectSource;
+        private static IdeGetConnectAs getConnectAs;
+        private static IdeCreateToolButton createToolButton;
 
-        internal static int pluginId;
-        internal static string username;
-        internal static string password;
-        internal static string database;
-        internal static string connectAs;
+        private static int pluginId;
+        private static string username;
+        private static string password;
+        private static string database;
+        private static string connectAs;
 
         private static PlsqlDeveloperUtPlsqlPlugin _plugin;
 

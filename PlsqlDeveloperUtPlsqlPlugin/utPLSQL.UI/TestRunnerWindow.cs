@@ -85,7 +85,7 @@ namespace utPLSQL
 
                         completedTests = 0;
 
-                        string htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
+                        var htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
 
                         var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
                         using (var sw = new StreamWriter(filePath))
@@ -95,14 +95,7 @@ namespace utPLSQL
 
                         txtStatus.BeginInvoke((MethodInvoker)delegate
                         {
-                            if (totalNumberOfTests > 0)
-                            {
-                                txtStatus.Text = "Finished";
-                            }
-                            else
-                            {
-                                txtStatus.Text = "No tests found";
-                            }
+                            txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
                         });
 
                         Running = false;
@@ -159,7 +152,7 @@ namespace utPLSQL
 
                         txtTests.Text = (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" + totalNumberOfTests;
 
-                        UpdateProgressBar(completedTests);
+                        UpdateProgressBar();
 
                         UpdateTestResult(@event);
                     });
@@ -185,14 +178,7 @@ namespace utPLSQL
 
                         if (!coverage)
                         {
-                            if (totalNumberOfTests > 0)
-                            {
-                                txtStatus.Text = "Finished";
-                            }
-                            else
-                            {
-                                txtStatus.Text = "No tests found";
-                            }
+                            txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
                             Running = false;
                         }
                     });
@@ -226,7 +212,7 @@ namespace utPLSQL
                 }
                 else
                 {
-                    return new List<string>() { listValue };
+                    return new List<string> { listValue };
                 }
             }
         }
@@ -235,9 +221,9 @@ namespace utPLSQL
         * Workaround for the progressbar animation that produces lagging
         * https://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
         */
-        private void UpdateProgressBar(int completedTests)
+        private void UpdateProgressBar()
         {
-            int newValue = completedTests * Steps + 1;
+            var newValue = completedTests * Steps + 1;
             if (newValue > progressBar.Maximum)
             {
                 progressBar.Value = progressBar.Maximum;
@@ -257,7 +243,7 @@ namespace utPLSQL
             txtStart.Text = startTime;
             var path = GetPath(type, owner, name, procedure);
             txtPath.Text = path[0];
-            this.Text = $"{path[0]} {startTime}";
+            Text = $"{path[0]} {startTime}";
         }
 
         private List<string> GetPath(string type, string owner, string name, string procedure)
@@ -265,13 +251,13 @@ namespace utPLSQL
             switch (type)
             {
                 case "USER":
-                    return new List<string>() { name };
+                    return new List<string> { name };
                 case "PACKAGE":
-                    return new List<string>() { $"{owner}.{name}" };
+                    return new List<string> { $"{owner}.{name}" };
                 case "PROCEDURE":
-                    return new List<string>() { $"{owner}.{name}.{procedure}" };
+                    return new List<string> { $"{owner}.{name}.{procedure}" };
                 default:
-                    return new List<string>() { owner };
+                    return new List<string> { owner };
             }
         }
 
@@ -374,7 +360,7 @@ namespace utPLSQL
                         }
                         catch
                         {
-                            // ingore exception that could raise if results are filtered
+                            // ignore exception that could raise if results are filtered
                         }
                     }
                 }
@@ -469,7 +455,7 @@ namespace utPLSQL
             }
         }
 
-        private void btnClose_Click(object sender, System.EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -502,7 +488,7 @@ namespace utPLSQL
             if (gridResults.SelectedRows.Count > 0)
             {
                 var row = gridResults.SelectedRows[0];
-                ObjectView<TestResult> dataBoundItem = (ObjectView<TestResult>)row.DataBoundItem;
+                var dataBoundItem = (ObjectView<TestResult>)row.DataBoundItem;
                 var testResult = dataBoundItem.Object;
 
                 txtTestOwner.Text = testResult.Owner;
