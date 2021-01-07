@@ -44,7 +44,10 @@ namespace utPLSQL
             testRunner.Connect(username, password, database);
 
             InitializeComponent();
+        }
 
+        private void CreateDataSourceAndConfigureGridColumns()
+        {
             viewTestResults = new BindingListView<TestResult>(testResults);
             gridResults.DataSource = viewTestResults;
 
@@ -102,6 +105,8 @@ namespace utPLSQL
 
                     txtStatus.BeginInvoke((MethodInvoker)delegate
                     {
+                        EnableFilter();
+
                         txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
                     });
 
@@ -122,6 +127,14 @@ namespace utPLSQL
             }
         }
 
+        private void EnableFilter()
+        {
+            cbSuccess.Enabled = true;
+            cbFailure.Enabled = true;
+            cbError.Enabled = true;
+            cbDisabled.Enabled = true;
+        }
+
         private Action<@event> CollectResults(bool coverage)
         {
             return @event =>
@@ -139,8 +152,8 @@ namespace utPLSQL
                         progressBar.Step = Steps;
 
                         CreateTestResults(@event);
-                        viewTestResults = new BindingListView<TestResult>(testResults);
-                        gridResults.DataSource = viewTestResults;
+
+                        CreateDataSourceAndConfigureGridColumns();
 
                         if (gridResults.Rows.Count > 0)
                         {
@@ -182,7 +195,10 @@ namespace utPLSQL
 
                         if (!coverage)
                         {
+                            EnableFilter();
+
                             txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
+
                             Running = false;
                         }
                     });
@@ -299,6 +315,11 @@ namespace utPLSQL
             progressBar.Minimum = 0;
             progressBar.Maximum = 100;
             progressBar.Value = 0;
+
+            cbSuccess.Enabled = false;
+            cbFailure.Enabled = false;
+            cbError.Enabled = false;
+            cbDisabled.Enabled = false;
         }
 
         private void UpdateTestResult(@event @event)
