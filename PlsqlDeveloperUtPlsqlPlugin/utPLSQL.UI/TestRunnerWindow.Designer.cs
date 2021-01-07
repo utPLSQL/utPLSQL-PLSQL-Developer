@@ -611,13 +611,13 @@ namespace utPLSQL
             this.iconPictureBox4.TabIndex = 27;
             this.iconPictureBox4.TabStop = false;
             // 
-            // cbFailures
+            // cbFailure
             // 
             this.cbFailure.AutoSize = true;
             this.cbFailure.Checked = true;
             this.cbFailure.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbFailure.Location = new System.Drawing.Point(499, 48);
-            this.cbFailure.Name = "cbFailures";
+            this.cbFailure.Name = "cbFailure";
             this.cbFailure.Size = new System.Drawing.Size(15, 14);
             this.cbFailure.TabIndex = 35;
             this.cbFailure.UseVisualStyleBackColor = true;
@@ -635,13 +635,13 @@ namespace utPLSQL
             this.cbSuccess.UseVisualStyleBackColor = true;
             this.cbSuccess.CheckedChanged += new System.EventHandler(this.cbSuccess_CheckedChanged);
             // 
-            // cbErrors
+            // cbError
             // 
             this.cbError.AutoSize = true;
             this.cbError.Checked = true;
             this.cbError.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbError.Location = new System.Drawing.Point(652, 48);
-            this.cbError.Name = "cbErrors";
+            this.cbError.Name = "cbError";
             this.cbError.Size = new System.Drawing.Size(15, 14);
             this.cbError.TabIndex = 37;
             this.cbError.UseVisualStyleBackColor = true;

@@ -17,8 +17,12 @@ namespace utPLSQL
 
         private const int IconSize = 24;
         private const int Steps = 1000;
+        private const string StatusSuccess = "Success";
+        private const string StatusFailure = "Failure";
+        private const string StatusError = "Error";
+        private const string StatusDisabled = "Disabled";
+        private const string StatusWarning = "Warning";
 
-        private readonly RealTimeTestRunner testRunner;
         private readonly object pluginIntegration;
         private readonly string username;
         private readonly string password;
@@ -26,7 +30,10 @@ namespace utPLSQL
         private readonly string connectAs;
 
         private readonly List<TestResult> testResults = new List<TestResult>();
+
         private BindingListView<TestResult> viewTestResults;
+
+        private RealTimeTestRunner testRunner;
 
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
@@ -39,9 +46,6 @@ namespace utPLSQL
             this.password = password;
             this.database = database;
             this.connectAs = connectAs;
-
-            testRunner = new RealTimeTestRunner();
-            testRunner.Connect(username, password, database);
 
             InitializeComponent();
         }
@@ -66,6 +70,9 @@ namespace utPLSQL
             testResults.Clear();
 
             SetWindowTitle(type, owner, name, procedure);
+
+            testRunner = new RealTimeTestRunner();
+            testRunner.Connect(username, password, database);
 
             try
             {
@@ -339,27 +346,27 @@ namespace utPLSQL
                         if (counter.disabled > 0)
                         {
                             testResult.Icon = IconChar.Ban.ToBitmap(Color.Gray, IconSize);
-                            testResult.Status = "Disabled";
+                            testResult.Status = StatusDisabled;
                         }
                         else if (counter.success > 0)
                         {
                             testResult.Icon = IconChar.Check.ToBitmap(Color.Green, IconSize);
-                            testResult.Status = "Success";
+                            testResult.Status = StatusSuccess;
                         }
                         else if (counter.failure > 0)
                         {
                             testResult.Icon = IconChar.TimesCircle.ToBitmap(IconFont.Solid, IconSize, Color.Orange);
-                            testResult.Status = "Failure";
+                            testResult.Status = StatusFailure;
                         }
                         else if (counter.error > 0)
                         {
                             testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.Red, IconSize);
-                            testResult.Status = "Error";
+                            testResult.Status = StatusError;
                         }
                         else if (counter.warning > 0)
                         {
                             testResult.Icon = IconChar.ExclamationTriangle.ToBitmap(Color.Orange, IconSize);
-                            testResult.Status = "Warning";
+                            testResult.Status = StatusWarning;
                         }
 
                         if (@event.test.errorStack != null)
@@ -458,19 +465,19 @@ namespace utPLSQL
                 {
                     if (testResult.Status != null)
                     {
-                        if (!cbSuccess.Checked && testResult.Status.Equals("Success"))
+                        if (!cbSuccess.Checked && testResult.Status.Equals(StatusSuccess))
                         {
                             return false;
                         }
-                        if (!cbFailure.Checked && testResult.Status.Equals("Failure"))
+                        if (!cbFailure.Checked && testResult.Status.Equals(StatusFailure))
                         {
                             return false;
                         }
-                        if (!cbError.Checked && testResult.Status.Equals("Error"))
+                        if (!cbError.Checked && testResult.Status.Equals(StatusError))
                         {
                             return false;
                         }
-                        if (!cbDisabled.Checked && testResult.Status.Equals("Disabled"))
+                        if (!cbDisabled.Checked && testResult.Status.Equals(StatusDisabled))
                         {
                             return false;
                         }
@@ -536,6 +543,26 @@ namespace utPLSQL
 
                 gridTestFailures.Columns[0].MinimumWidth = 480;
                 gridTestFailures.Columns[1].MinimumWidth = 480;
+
+                if (!Running)
+                {
+                    if (testResult.Status == null)
+                    {
+                        tabs.SelectedTab = tabTest;
+                    }
+                    else if (testResult.Status.Equals(StatusFailure))
+                    {
+                        tabs.SelectedTab = tabFailures;
+                    }
+                    else if (testResult.Status.Equals(StatusError))
+                    {
+                        tabs.SelectedTab = tabErrors;
+                    }
+                    else
+                    {
+                        tabs.SelectedTab = tabTest;
+                    }
+                }
             }
         }
 

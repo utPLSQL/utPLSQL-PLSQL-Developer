@@ -30,7 +30,7 @@ namespace utPLSQL
         internal Expectation(string message, string caller)
         {
             this.Message = message;
-            this.Caller = caller;
+            this.Caller = caller.Replace("s*", "\n");
         }
         public string Message { get; set; }
         public string Caller { get; set; }
