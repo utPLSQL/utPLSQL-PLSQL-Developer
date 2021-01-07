@@ -16,9 +16,19 @@ In the object browser on Packages or Users there is a context menu entry to run 
 
 The results are opened in a new window. If you've chosen code coverage the coverage report will be opened in the default browser. 
 
-Double-click on a test result entry will open the package body. A right-click opens the context menu and you can run the test function.
+### Navigating to the package body 
 
-![Result Window](screenshots/result_window.png)
+Double-click on a test result entry will open the package body. 
+
+### Runing single tests
+
+A right-click opens the context menu, and you can run the test function.
+
+### Filtering Results
+
+Once the tests are run you can filter the results by clicking on checkboxes behind the status field.  
+
+![img.png](screenshots/result_window_filter.png)
 
 ## Releases
 
