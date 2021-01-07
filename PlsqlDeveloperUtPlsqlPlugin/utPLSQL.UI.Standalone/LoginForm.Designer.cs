@@ -37,14 +37,15 @@ namespace utPLSQL.UI.Standalone
             this.lblUsername = new System.Windows.Forms.Label();
             this.lblPassword = new System.Windows.Forms.Label();
             this.lblDatabase = new System.Windows.Forms.Label();
+            this.btnCodeCoverage = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnRunTests
             // 
-            this.btnRunTests.Location = new System.Drawing.Point(184, 90);
+            this.btnRunTests.Location = new System.Drawing.Point(73, 89);
             this.btnRunTests.Name = "btnRunTests";
-            this.btnRunTests.Size = new System.Drawing.Size(75, 23);
-            this.btnRunTests.TabIndex = 0;
+            this.btnRunTests.Size = new System.Drawing.Size(80, 23);
+            this.btnRunTests.TabIndex = 4;
             this.btnRunTests.Text = "Run Tests";
             this.btnRunTests.UseVisualStyleBackColor = true;
             this.btnRunTests.Click += new System.EventHandler(this.BtnRunTests_Click);
@@ -98,11 +99,22 @@ namespace utPLSQL.UI.Standalone
             this.lblDatabase.TabIndex = 6;
             this.lblDatabase.Text = "Database";
             // 
+            // btnCodeCoverage
+            // 
+            this.btnCodeCoverage.Location = new System.Drawing.Point(159, 89);
+            this.btnCodeCoverage.Name = "btnCodeCoverage";
+            this.btnCodeCoverage.Size = new System.Drawing.Size(100, 23);
+            this.btnCodeCoverage.TabIndex = 5;
+            this.btnCodeCoverage.Text = "Code Coverage";
+            this.btnCodeCoverage.UseVisualStyleBackColor = true;
+            this.btnCodeCoverage.Click += new System.EventHandler(this.btnCodeCoverage_Click);
+            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(271, 124);
+            this.Controls.Add(this.btnCodeCoverage);
             this.Controls.Add(this.lblDatabase);
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblUsername);
@@ -128,6 +140,7 @@ namespace utPLSQL.UI.Standalone
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Label lblDatabase;
+        private System.Windows.Forms.Button btnCodeCoverage;
     }
 }
 

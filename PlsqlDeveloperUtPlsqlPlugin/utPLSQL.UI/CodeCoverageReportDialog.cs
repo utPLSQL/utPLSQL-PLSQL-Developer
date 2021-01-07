@@ -1,14 +1,15 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace utPLSQL
 {
     public partial class CodeCoverageReportDialog : Form
     {
-        public CodeCoverageReportDialog(string path)
+        public CodeCoverageReportDialog(List<string> paths)
         {
             InitializeComponent();
 
-            txtPaths.Text = path;
+            txtPaths.Text = paths[0];
         }
 
         public string GetSchemas()

@@ -16,15 +16,29 @@ In the object browser on Packages or Users there is a context menu entry to run 
 
 The results are opened in a new window. If you've chosen code coverage the coverage report will be opened in the default browser. 
 
-![Result Window](screenshots/result_window.png)
+### Navigating to the package body 
+
+Double-click on a test result entry will open the package body. 
+
+### Runing single tests
+
+A right-click opens the context menu, and you can run the test function.
+
+### Filtering Results
+
+Once the tests are run you can filter the results by clicking on checkboxes behind the status field.  
+
+![img.png](screenshots/result_window_filter.png)
 
 ## Releases
 
-Binary releases are published in the [releases section](https://github.com/utPLSQL/utPLSQL-PLSQL-Developer/releases).
+Binary releases for 64bit and 32bit are published in the [releases section](https://github.com/utPLSQL/utPLSQL-PLSQL-Developer/releases).
 
 ## Installation
 
-Copy PlsqlDeveloperUtPlsqlPlugin.dll to the PlugIns directory of your PL/SQL Developer installation.
+Copy the DLL to the PlugIns directory of your PL/SQL Developer installation.
+- 64bit: PlsqlDeveloperUtPlsqlPlugin.dll
+- 32bit: PlsqlDeveloperUtPlsqlPlugin_x86.dll
 
 ## Issues
 

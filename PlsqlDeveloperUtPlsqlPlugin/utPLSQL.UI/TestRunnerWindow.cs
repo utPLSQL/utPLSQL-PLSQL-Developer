@@ -1,10 +1,11 @@
-﻿using FontAwesome.Sharp;
+﻿using Equin.ApplicationFramework;
+using FontAwesome.Sharp;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,23 +17,43 @@ namespace utPLSQL
 
         private const int IconSize = 24;
         private const int Steps = 1000;
+        private const string StatusSuccess = "Success";
+        private const string StatusFailure = "Failure";
+        private const string StatusError = "Error";
+        private const string StatusDisabled = "Disabled";
+        private const string StatusWarning = "Warning";
 
-        private readonly RealTimeTestRunner testRunner;
         private readonly object pluginIntegration;
-        private readonly BindingList<TestResult> testResults = new BindingList<TestResult>();
+        private readonly string username;
+        private readonly string password;
+        private readonly string database;
+        private readonly string connectAs;
+
+        private readonly List<TestResult> testResults = new List<TestResult>();
+
+        private BindingListView<TestResult> viewTestResults;
+
+        private RealTimeTestRunner testRunner;
 
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
+        private int completedTests;
 
-        public TestRunnerWindow(RealTimeTestRunner testRunner, object pluginIntegration)
+        public TestRunnerWindow(object pluginIntegration, string username, string password, string database, string connectAs)
         {
-            this.testRunner = testRunner;
             this.pluginIntegration = pluginIntegration;
+            this.username = username;
+            this.password = password;
+            this.database = database;
+            this.connectAs = connectAs;
 
             InitializeComponent();
+        }
 
-            var bindingSource = new BindingSource { DataSource = testResults };
-            gridResults.DataSource = bindingSource;
+        private void CreateDataSourceAndConfigureGridColumns()
+        {
+            viewTestResults = new BindingListView<TestResult>(testResults);
+            gridResults.DataSource = viewTestResults;
 
             gridResults.Columns[0].HeaderText = "";
             gridResults.Columns[0].MinimumWidth = 30;
@@ -42,7 +63,7 @@ namespace utPLSQL
             gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        public void RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
+        public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
             ResetComponents();
 
@@ -50,76 +71,96 @@ namespace utPLSQL
 
             SetWindowTitle(type, owner, name, procedure);
 
+            testRunner = new RealTimeTestRunner();
+            testRunner.Connect(username, password, database);
+
             try
             {
                 testRunner.GetVersion();
-
-                if (coverage)
-                {
-                    var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
-                    var dialogResult = codeCoverageReportDialog.ShowDialog();
-                    if (dialogResult == DialogResult.OK)
-                    {
-                        txtStatus.Text = "Running tests with coverage...";
-
-                        RunWithCoverage(type, owner, name, procedure, codeCoverageReportDialog);
-
-                        Show();
-
-                        CollectResults(true);
-                        CollectReport();
-                    }
-                }
-                else
-                {
-                    txtStatus.Text = "Running tests...";
-
-                    RunTests(type, owner, name, procedure);
-
-                    Show();
-
-                    CollectResults(false);
-                }
             }
-            catch (Exception e)
+            catch
             {
                 MessageBox.Show("utPLSQL is not installed", "utPLSQL not installed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Running = true;
+
+            if (coverage)
+            {
+                var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
+                var dialogResult = codeCoverageReportDialog.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    Show();
+
+                    var schemas = ConvertToList(codeCoverageReportDialog.GetSchemas());
+                    var includes = ConvertToList(codeCoverageReportDialog.GetIncludes());
+                    var excludes = ConvertToList(codeCoverageReportDialog.GetExcludes());
+
+                    completedTests = 0;
+
+                    txtStatus.Text = "Running tests with coverage...";
+
+                    var htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
+
+                    var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
+                    using (var sw = new StreamWriter(filePath))
+                    {
+                        sw.WriteLine(htmlReport);
+                    }
+
+                    txtStatus.BeginInvoke((MethodInvoker)delegate
+                    {
+                        EnableFilter();
+
+                        txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
+                    });
+
+                    Running = false;
+
+                    System.Diagnostics.Process.Start(filePath);
+                }
+            }
+            else
+            {
+                Show();
+
+                completedTests = 0;
+
+                txtStatus.Text = "Running tests...";
+
+                await testRunner.RunTestsAsync(GetPath(type, owner, name, procedure), CollectResults(coverage));
             }
         }
 
-        private void RunTests(string type, string owner, string name, string procedure)
+        private void EnableFilter()
         {
-            Task.Factory.StartNew(() => testRunner.RunTests(type, owner, name, procedure));
-            Running = true;
+            cbSuccess.Enabled = true;
+            cbFailure.Enabled = true;
+            cbError.Enabled = true;
+            cbDisabled.Enabled = true;
         }
 
-        private void RunWithCoverage(string type, string owner, string name, string procedure,
-            CodeCoverageReportDialog codeCoverageReportDialog)
+        private Action<@event> CollectResults(bool coverage)
         {
-            var schemas = ConvertToVarcharList(codeCoverageReportDialog.GetSchemas());
-            var includes = ConvertToVarcharList(codeCoverageReportDialog.GetIncludes());
-            var excludes = ConvertToVarcharList(codeCoverageReportDialog.GetExcludes());
-
-            Task.Factory.StartNew(() => testRunner.RunTestsWithCoverage(type, owner, name, procedure, schemas, includes, excludes));
-            Running = true;
-        }
-
-        private void CollectResults(bool coverage)
-        {
-            var completedTests = 0;
-
-            Task.Factory.StartNew(() => testRunner.ConsumeResult(@event =>
+            return @event =>
             {
                 if (@event.type.Equals("pre-run"))
                 {
                     gridResults.BeginInvoke((MethodInvoker)delegate
                     {
+                        txtStatus.Text = "Running tests...";
+
                         totalNumberOfTests = @event.totalNumberOfTests;
 
                         progressBar.Minimum = 0;
                         progressBar.Maximum = totalNumberOfTests * Steps;
                         progressBar.Step = Steps;
+
                         CreateTestResults(@event);
+
+                        CreateDataSourceAndConfigureGridColumns();
 
                         if (gridResults.Rows.Count > 0)
                         {
@@ -133,10 +174,9 @@ namespace utPLSQL
                     {
                         completedTests++;
 
-                        txtTests.Text =
-                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                            totalNumberOfTests;
-                        UpdateProgressBar(completedTests);
+                        txtTests.Text = (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" + totalNumberOfTests;
+
+                        UpdateProgressBar();
 
                         UpdateTestResult(@event);
                     });
@@ -149,9 +189,8 @@ namespace utPLSQL
                         txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
                         txtTime.Text = @event.run.executionTime + " s";
 
-                        txtTests.Text =
-                            (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" +
-                            totalNumberOfTests;
+                        txtTests.Text = (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" + totalNumberOfTests;
+                        txtSuccess.Text = @event.run.counter.success + "";
                         txtFailures.Text = @event.run.counter.failure + "";
                         txtErrors.Text = @event.run.counter.error + "";
                         txtDisabled.Text = @event.run.counter.disabled + "";
@@ -163,36 +202,19 @@ namespace utPLSQL
 
                         if (!coverage)
                         {
-                            txtStatus.Text = "Finished";
+                            EnableFilter();
+
+                            txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
 
                             Running = false;
                         }
                     });
                 }
-            }));
+            };
         }
 
-        private void CollectReport()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                var report = testRunner.GetCoverageReport();
 
-                var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
-                using (var sw = new StreamWriter(filePath))
-                {
-                    sw.WriteLine(report);
-                }
-
-                txtStatus.BeginInvoke((MethodInvoker)delegate { txtStatus.Text = "Finished"; });
-
-                Running = false;
-
-                System.Diagnostics.Process.Start(filePath);
-            });
-        }
-
-        private string ConvertToVarcharList(string listValue)
+        private List<string> ConvertToList(string listValue)
         {
             if (string.IsNullOrWhiteSpace(listValue))
             {
@@ -203,50 +225,32 @@ namespace utPLSQL
                 if (listValue.Contains(" "))
                 {
                     var parts = listValue.Split(' ');
-                    return JoinParts(parts);
+                    return new List<string>(parts);
                 }
                 else if (listValue.Contains(","))
                 {
                     var parts = listValue.Split(',');
-                    return JoinParts(parts);
+                    return new List<string>(parts);
                 }
                 else if (listValue.Contains("\n"))
                 {
                     var parts = listValue.Split('\n');
-                    return JoinParts(parts);
+                    return new List<string>(parts);
                 }
                 else
                 {
-                    return $"'{listValue}'";
+                    return new List<string> { listValue };
                 }
             }
         }
 
-        private static string JoinParts(string[] parts)
+        /*
+        * Workaround for the progressbar animation that produces lagging
+        * https://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
+        */
+        private void UpdateProgressBar()
         {
-            var sb = new StringBuilder();
-            var first = true;
-            foreach (var part in parts)
-            {
-                if (!string.IsNullOrEmpty(part))
-                {
-                    if (!first)
-                    {
-                        sb.Append(",");
-                    }
-
-                    sb.Append("'").Append(part).Append("'");
-
-                    first = false;
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        private void UpdateProgressBar(int completedTests)
-        {
-            int newValue = completedTests * Steps + 1;
+            var newValue = completedTests * Steps + 1;
             if (newValue > progressBar.Maximum)
             {
                 progressBar.Value = progressBar.Maximum;
@@ -265,24 +269,22 @@ namespace utPLSQL
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
             var path = GetPath(type, owner, name, procedure);
-            txtPath.Text = path;
-            this.Text = $"{path} {startTime}";
+            txtPath.Text = path[0];
+            Text = $"{path[0]} {startTime}";
         }
 
-        private string GetPath(string type, string owner, string name, string procedure)
+        private List<string> GetPath(string type, string owner, string name, string procedure)
         {
             switch (type)
             {
-                case RealTimeTestRunner.User:
-                    return name;
-                case RealTimeTestRunner.Package:
-                    return $"{owner}.{name}";
-                case RealTimeTestRunner.Procedure:
-                    return $"{owner}.{name}.{procedure}";
-                case RealTimeTestRunner.All:
-                    return owner;
+                case "USER":
+                    return new List<string> { name };
+                case "PACKAGE":
+                    return new List<string> { $"{owner}.{name}" };
+                case "PROCEDURE":
+                    return new List<string> { $"{owner}.{name}.{procedure}" };
                 default:
-                    return "";
+                    return new List<string> { owner };
             }
         }
 
@@ -320,6 +322,11 @@ namespace utPLSQL
             progressBar.Minimum = 0;
             progressBar.Maximum = 100;
             progressBar.Value = 0;
+
+            cbSuccess.Enabled = false;
+            cbFailure.Enabled = false;
+            cbError.Enabled = false;
+            cbDisabled.Enabled = false;
         }
 
         private void UpdateTestResult(@event @event)
@@ -339,22 +346,27 @@ namespace utPLSQL
                         if (counter.disabled > 0)
                         {
                             testResult.Icon = IconChar.Ban.ToBitmap(Color.Gray, IconSize);
+                            testResult.Status = StatusDisabled;
                         }
                         else if (counter.success > 0)
                         {
                             testResult.Icon = IconChar.Check.ToBitmap(Color.Green, IconSize);
+                            testResult.Status = StatusSuccess;
                         }
                         else if (counter.failure > 0)
                         {
                             testResult.Icon = IconChar.TimesCircle.ToBitmap(IconFont.Solid, IconSize, Color.Orange);
+                            testResult.Status = StatusFailure;
                         }
                         else if (counter.error > 0)
                         {
                             testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.Red, IconSize);
+                            testResult.Status = StatusError;
                         }
                         else if (counter.warning > 0)
                         {
                             testResult.Icon = IconChar.ExclamationTriangle.ToBitmap(Color.Orange, IconSize);
+                            testResult.Status = StatusWarning;
                         }
 
                         if (@event.test.errorStack != null)
@@ -372,9 +384,16 @@ namespace utPLSQL
                         }
 
                         gridResults.Refresh();
-                        var rowIndex = testResults.IndexOf(testResult);
-                        gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
-                        gridResults.Rows[rowIndex].Selected = true;
+                        try
+                        {
+                            var rowIndex = testResults.IndexOf(testResult);
+                            gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
+                            gridResults.Rows[rowIndex].Selected = true;
+                        }
+                        catch
+                        {
+                            // ignore exception that could raise if results are filtered
+                        }
                     }
                 }
             }
@@ -434,7 +453,41 @@ namespace utPLSQL
             }
         }
 
-        private void btnClose_Click(object sender, System.EventArgs e)
+        private void FilterTestResults()
+        {
+            if (!cbSuccess.Checked && !cbFailure.Checked && !cbError.Checked && !cbDisabled.Checked)
+            {
+                viewTestResults.RemoveFilter();
+            }
+            else
+            {
+                viewTestResults.ApplyFilter(delegate (TestResult testResult)
+                {
+                    if (testResult.Status != null)
+                    {
+                        if (!cbSuccess.Checked && testResult.Status.Equals(StatusSuccess))
+                        {
+                            return false;
+                        }
+                        if (!cbFailure.Checked && testResult.Status.Equals(StatusFailure))
+                        {
+                            return false;
+                        }
+                        if (!cbError.Checked && testResult.Status.Equals(StatusError))
+                        {
+                            return false;
+                        }
+                        if (!cbDisabled.Checked && testResult.Status.Equals(StatusDisabled))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -452,6 +505,14 @@ namespace utPLSQL
                     {
                         e.Cancel = true;
                     }
+                    else
+                    {
+                        txtStatus.Text = "Aborting...";
+
+                        testRunner.Close();
+
+                        Running = false;
+                    }
                 }
             }
         }
@@ -461,7 +522,8 @@ namespace utPLSQL
             if (gridResults.SelectedRows.Count > 0)
             {
                 var row = gridResults.SelectedRows[0];
-                var testResult = (TestResult)row.DataBoundItem;
+                var dataBoundItem = (ObjectView<TestResult>)row.DataBoundItem;
+                var testResult = dataBoundItem.Object;
 
                 txtTestOwner.Text = testResult.Owner;
                 txtTestPackage.Text = testResult.Package;
@@ -481,6 +543,26 @@ namespace utPLSQL
 
                 gridTestFailures.Columns[0].MinimumWidth = 480;
                 gridTestFailures.Columns[1].MinimumWidth = 480;
+
+                if (!Running)
+                {
+                    if (testResult.Status == null)
+                    {
+                        tabs.SelectedTab = tabTest;
+                    }
+                    else if (testResult.Status.Equals(StatusFailure))
+                    {
+                        tabs.SelectedTab = tabFailures;
+                    }
+                    else if (testResult.Status.Equals(StatusError))
+                    {
+                        tabs.SelectedTab = tabErrors;
+                    }
+                    else
+                    {
+                        tabs.SelectedTab = tabTest;
+                    }
+                }
             }
         }
 
@@ -513,22 +595,40 @@ namespace utPLSQL
             rowIndexOnRightClick = e.RowIndex;
         }
 
-        private void menuItemRunTests_Click(object sender, EventArgs e)
+        private async void menuItemRunTests_ClickAsync(object sender, EventArgs e)
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
-            testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
-                testResult.Procedure, false);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs);
+            await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, false);
         }
 
-        private void menuItemCoverage_Click(object sender, EventArgs e)
+        private async void menuItemCoverage_ClickAsync(object sender, EventArgs e)
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(testRunner, pluginIntegration);
-            testResultWindow.RunTestsAsync(RealTimeTestRunner.Procedure, testResult.Owner, testResult.Package,
-                testResult.Procedure, true);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs);
+            await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
+        }
+
+        private void cbSuccess_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
+        }
+
+        private void cbFailures_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
+        }
+
+        private void cbErrors_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
+        }
+
+        private void cbDisabled_CheckedChanged(object sender, EventArgs e)
+        {
+            FilterTestResults();
         }
     }
 }

@@ -13,6 +13,7 @@ namespace utPLSQL
         public decimal Time { get; set; }
         internal string Id { get; set; }
 
+        internal string Status { get; set; }
         internal DateTime Start { get; set; }
         internal DateTime End { get; set; }
 
@@ -29,7 +30,7 @@ namespace utPLSQL
         internal Expectation(string message, string caller)
         {
             this.Message = message;
-            this.Caller = caller;
+            this.Caller = caller.Replace("s*", "\n");
         }
         public string Message { get; set; }
         public string Caller { get; set; }

@@ -31,9 +31,10 @@ namespace utPLSQL
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutDialog));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.lblLink = new System.Windows.Forms.LinkLabel();
             this.button1 = new System.Windows.Forms.Button();
+            this.lblVersion = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -47,29 +48,29 @@ namespace utPLSQL
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // label1
+            // lblTitle
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(78, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(191, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "utPLSQL Plugin for PL/SQL Developer";
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Location = new System.Drawing.Point(78, 12);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(191, 13);
+            this.lblTitle.TabIndex = 1;
+            this.lblTitle.Text = "utPLSQL Plugin for PL/SQL Developer";
             // 
-            // linkLabel1
+            // lblLink
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(78, 40);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(91, 13);
-            this.linkLabel1.TabIndex = 2;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Visit us on GitHub";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
+            this.lblLink.AutoSize = true;
+            this.lblLink.Location = new System.Drawing.Point(78, 68);
+            this.lblLink.Name = "lblLink";
+            this.lblLink.Size = new System.Drawing.Size(91, 13);
+            this.lblLink.TabIndex = 2;
+            this.lblLink.TabStop = true;
+            this.lblLink.Text = "Visit us on GitHub";
+            this.lblLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(215, 78);
+            this.button1.Location = new System.Drawing.Point(198, 94);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
@@ -77,14 +78,24 @@ namespace utPLSQL
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // lblVersion
+            // 
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Location = new System.Drawing.Point(78, 40);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(35, 13);
+            this.lblVersion.TabIndex = 4;
+            this.lblVersion.Text = "label1";
+            // 
             // AboutDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(302, 113);
+            this.ClientSize = new System.Drawing.Size(285, 129);
+            this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblLink);
+            this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -102,8 +113,9 @@ namespace utPLSQL
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.LinkLabel lblLink;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lblVersion;
     }
 }

@@ -7,6 +7,10 @@ namespace utPLSQL
         public AboutDialog()
         {
             InitializeComponent();
+
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            lblVersion.Text = $"Version {fileVersionInfo.FileVersion}";
         }
 
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace utPLSQL
@@ -28,6 +29,9 @@ namespace utPLSQL
     //*FUNC: 79*/ char *(*IDE_GetObjectSource)(char *ObjectType, char *ObjectOwner, char *ObjectName);
     internal delegate IntPtr IdeGetObjectSource(string objectType, string objectOwner, string objectName);
 
+    //*FUNC: 97*/ extern char *(*IDE_GetConnectAs)();
+    internal delegate IntPtr IdeGetConnectAs();
+
     //*FUNC: 150*/ void (*IDE_CreateToolButton)(int ID, int Index, char *Name, char *BitmapFile, int BitmapHandle);
     internal delegate void IdeCreateToolButton(int id, int index, string name, string bitmapFile, long bitmapHandle);
 
@@ -40,29 +44,25 @@ namespace utPLSQL
         private const int PluginPopupIndex = 1;
         private const int PluginPopupIndexWithCoverage = 2;
 
-        internal static IdeConnected connected;
-        internal static IdeGetConnectionInfo getConnectionInfo;
+        private static IdeConnected connected;
+        private static IdeGetConnectionInfo getConnectionInfo;
 
-        internal static IdeCreateWindow createWindow;
-        internal static IdeCreatePopupItem createPopupItem;
-        internal static IdeGetPopupObject getPopupObject;
-        internal static IdeGetObjectSource getObjectSource;
-        internal static IdeCreateToolButton createToolButton;
+        private static IdeCreateWindow createWindow;
+        private static IdeCreatePopupItem createPopupItem;
+        private static IdeGetPopupObject getPopupObject;
+        private static IdeGetObjectSource getObjectSource;
+        private static IdeGetConnectAs getConnectAs;
+        private static IdeCreateToolButton createToolButton;
 
-        internal static int pluginId;
-        internal static string username;
-        internal static string password;
-        internal static string database;
+        private static int pluginId;
+        private static string username;
+        private static string password;
+        private static string database;
+        private static string connectAs;
 
         private static PlsqlDeveloperUtPlsqlPlugin _plugin;
-        private static RealTimeTestRunner _testRunner;
 
         private static readonly List<TestRunnerWindow> Windows = new List<TestRunnerWindow>();
-
-        private PlsqlDeveloperUtPlsqlPlugin()
-        {
-            _testRunner = new RealTimeTestRunner();
-        }
 
         #region DLL exported API
 
@@ -169,6 +169,9 @@ namespace utPLSQL
                 case 79:
                     getObjectSource = (IdeGetObjectSource)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetObjectSource));
                     break;
+                case 97:
+                    getConnectAs = (IdeGetConnectAs)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeGetConnectAs));
+                    break;
                 case 150:
                     createToolButton = (IdeCreateToolButton)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeCreateToolButton));
                     break;
@@ -204,29 +207,29 @@ namespace utPLSQL
         {
             if (index == PluginMenuIndexAllTests)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
                 }
             }
             else if (index == PluginMenuIndexAllTestsWithCoverage)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
                 }
             }
             else if (index == PluginPopupIndex)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
@@ -234,11 +237,11 @@ namespace utPLSQL
             }
             else if (index == PluginPopupIndexWithCoverage)
             {
-                if (connected())
+                if (connected() && !Sydba())
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_testRunner, _plugin);
+                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
                     testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
                         Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
@@ -260,13 +263,19 @@ namespace utPLSQL
             var source = getObjectSource("PACKAGE BODY", owner, name);
             createWindow(3, Marshal.PtrToStringAnsi(source), false);
         }
+        private static bool Sydba()
+        {
+            if (connectAs.ToLower().Equals("sysdba")) {
+                MessageBox.Show("You shouldn't run utPLSQL as SYSDBA.\n\nTest will not run.", "Connected as SYSDBA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return true;
+            }
+            return false;
+        }
 
         private static void ConnectToDatabase()
         {
             try
             {
-                _testRunner.Close();
-
                 if (connected())
                 {
                     getConnectionInfo(out IntPtr ptrUsername, out IntPtr ptrPassword, out IntPtr ptrDatabase);
@@ -275,7 +284,9 @@ namespace utPLSQL
                     password = Marshal.PtrToStringAnsi(ptrPassword);
                     database = Marshal.PtrToStringAnsi(ptrDatabase);
 
-                    _testRunner.Connect(username, password, database);
+                    IntPtr ptrConnectAs = getConnectAs();
+
+                    connectAs = Marshal.PtrToStringAnsi(ptrConnectAs);
                 }
             }
             catch (Exception e)
