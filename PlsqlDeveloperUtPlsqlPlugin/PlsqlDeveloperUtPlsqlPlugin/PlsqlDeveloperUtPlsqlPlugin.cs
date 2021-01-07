@@ -269,7 +269,7 @@ namespace utPLSQL
                 MessageBox.Show("You shouldn't run utPLSQL as SYSDBA.\n\nTest will not run.", "Connected as SYSDBA", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return true;
             }
-            return true;
+            return false;
         }
 
         private static void ConnectToDatabase()
