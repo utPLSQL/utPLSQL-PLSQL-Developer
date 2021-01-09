@@ -207,7 +207,7 @@ namespace utPLSQL
         {
             if (index == PluginMenuIndexAllTests)
             {
-                if (connected() && !Sydba())
+                if (isConnected() && !isSydba())
                 {
                     var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
@@ -216,7 +216,7 @@ namespace utPLSQL
             }
             else if (index == PluginMenuIndexAllTestsWithCoverage)
             {
-                if (connected() && !Sydba())
+                if (isConnected() && !isSydba())
                 {
                     var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
                     Windows.Add(testResultWindow);
@@ -225,7 +225,7 @@ namespace utPLSQL
             }
             else if (index == PluginPopupIndex)
             {
-                if (connected() && !Sydba())
+                if (isConnected() && !isSydba())
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
@@ -237,7 +237,7 @@ namespace utPLSQL
             }
             else if (index == PluginPopupIndexWithCoverage)
             {
-                if (connected() && !Sydba())
+                if (isConnected() && !isSydba())
                 {
                     getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
@@ -263,7 +263,7 @@ namespace utPLSQL
             var source = getObjectSource("PACKAGE BODY", owner, name);
             createWindow(3, Marshal.PtrToStringAnsi(source), false);
         }
-        private static bool Sydba()
+        private static bool isSydba()
         {
             if (connectAs.ToLower().Equals("sysdba")) {
                 MessageBox.Show("You shouldn't run utPLSQL as SYSDBA.\n\nTest will not run.", "Connected as SYSDBA", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -272,7 +272,17 @@ namespace utPLSQL
             return false;
         }
 
-        private static void ConnectToDatabase()
+        private static bool isConnected()
+        {
+            if (!connected())
+            {
+                MessageBox.Show("Please connect before running tests!", "No connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+
+       private static void ConnectToDatabase()
         {
             try
             {
