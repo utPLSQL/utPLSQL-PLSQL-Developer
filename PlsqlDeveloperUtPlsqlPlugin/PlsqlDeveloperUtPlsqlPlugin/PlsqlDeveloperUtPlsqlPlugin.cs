@@ -205,47 +205,54 @@ namespace utPLSQL
         [DllExport("OnMenuClick", CallingConvention = CallingConvention.Cdecl)]
         public static void OnMenuClick(int index)
         {
-            if (index == PluginMenuIndexAllTests)
+            try
             {
-                if (isConnected() && !isSydba())
+                if (index == PluginMenuIndexAllTests)
                 {
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
+                    if (isConnected() && !isSydba())
+                    {
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
+                    }
                 }
-            }
-            else if (index == PluginMenuIndexAllTestsWithCoverage)
-            {
-                if (isConnected() && !isSydba())
+                else if (index == PluginMenuIndexAllTestsWithCoverage)
                 {
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
+                    if (isConnected() && !isSydba())
+                    {
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
+                    }
                 }
-            }
-            else if (index == PluginPopupIndex)
-            {
-                if (isConnected() && !isSydba())
+                else if (index == PluginPopupIndex)
                 {
-                    getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
+                    if (isConnected() && !isSydba())
+                    {
+                        getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
-                        Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
+                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
+                    }
+                }
+                else if (index == PluginPopupIndexWithCoverage)
+                {
+                    if (isConnected() && !isSydba())
+                    {
+                        getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
+
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
+                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
+                    }
                 }
             }
-            else if (index == PluginPopupIndexWithCoverage)
+            catch (Exception e)
             {
-                if (isConnected() && !isSydba())
-                {
-                    getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
-
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
-                        Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
-                }
+                MessageBox.Show($"{e.Message}\n\n{e.StackTrace}", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -265,7 +272,8 @@ namespace utPLSQL
         }
         private static bool isSydba()
         {
-            if (connectAs.ToLower().Equals("sysdba")) {
+            if (connectAs.ToLower().Equals("sysdba"))
+            {
                 MessageBox.Show("You shouldn't run utPLSQL as SYSDBA.\n\nTest will not run.", "Connected as SYSDBA", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return true;
             }
@@ -282,7 +290,7 @@ namespace utPLSQL
             return true;
         }
 
-       private static void ConnectToDatabase()
+        private static void ConnectToDatabase()
         {
             try
             {
