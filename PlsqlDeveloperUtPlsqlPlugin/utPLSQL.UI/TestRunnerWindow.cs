@@ -28,6 +28,7 @@ namespace utPLSQL
         private readonly string password;
         private readonly string database;
         private readonly string connectAs;
+        private readonly string oracleHome;
 
         private readonly List<TestResult> testResults = new List<TestResult>();
 
@@ -39,13 +40,14 @@ namespace utPLSQL
         private int rowIndexOnRightClick;
         private int completedTests;
 
-        public TestRunnerWindow(object pluginIntegration, string username, string password, string database, string connectAs)
+        public TestRunnerWindow(object pluginIntegration, string username, string password, string database, string connectAs, string oracleHome)
         {
             this.pluginIntegration = pluginIntegration;
             this.username = username;
             this.password = password;
             this.database = database;
             this.connectAs = connectAs;
+            this.oracleHome = oracleHome;
 
             InitializeComponent();
         }
@@ -72,8 +74,20 @@ namespace utPLSQL
             SetWindowTitle(type, owner, name, procedure);
 
             testRunner = new RealTimeTestRunner();
-            testRunner.Connect(username, password, database);
 
+            try
+            {
+                if (oracleHome != null)
+                {
+                    Environment.SetEnvironmentVariable("ORACLE_HOME", oracleHome);
+                }
+                testRunner.Connect(username, password, database);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Connect failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             try
             {
                 testRunner.GetVersion();
@@ -599,7 +613,7 @@ namespace utPLSQL
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
             await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, false);
         }
 
@@ -607,7 +621,7 @@ namespace utPLSQL
         {
             var testResult = testResults[rowIndexOnRightClick];
 
-            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs);
+            var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
             await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
         }
 
