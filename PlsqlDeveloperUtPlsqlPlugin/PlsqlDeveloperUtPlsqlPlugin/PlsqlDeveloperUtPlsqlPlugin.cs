@@ -10,6 +10,9 @@ using System.Windows.Forms;
 
 namespace utPLSQL
 {
+    //*FUNC: 4*/ extern char *(*SYS_OracleHome)();
+    internal delegate IntPtr SysOracleHome();
+
     //*FUNC: 11*/ BOOL (*IDE_Connected)();
     internal delegate bool IdeConnected();
 
@@ -23,8 +26,7 @@ namespace utPLSQL
     internal delegate void IdeCreatePopupItem(int id, int index, string name, string objectType);
 
     //*FUNC: 74*/ int (*IDE_GetPopupObject)(char **ObjectType, char **ObjectOwner, char **ObjectName, char **SubObject);
-    internal delegate int IdeGetPopupObject(out IntPtr objectType, out IntPtr objectOwner, out IntPtr objectName,
-        out IntPtr subObject);
+    internal delegate int IdeGetPopupObject(out IntPtr objectType, out IntPtr objectOwner, out IntPtr objectName, out IntPtr subObject);
 
     //*FUNC: 79*/ char *(*IDE_GetObjectSource)(char *ObjectType, char *ObjectOwner, char *ObjectName);
     internal delegate IntPtr IdeGetObjectSource(string objectType, string objectOwner, string objectName);
@@ -44,6 +46,8 @@ namespace utPLSQL
         private const int PluginPopupIndex = 1;
         private const int PluginPopupIndexWithCoverage = 2;
 
+        private static SysOracleHome sysOracleHome;
+
         private static IdeConnected connected;
         private static IdeGetConnectionInfo getConnectionInfo;
 
@@ -59,9 +63,9 @@ namespace utPLSQL
         private static string password;
         private static string database;
         private static string connectAs;
+        private static string oracleHome;
 
         private static PlsqlDeveloperUtPlsqlPlugin _plugin;
-
         private static readonly List<TestRunnerWindow> Windows = new List<TestRunnerWindow>();
 
         #region DLL exported API
@@ -83,7 +87,7 @@ namespace utPLSQL
         {
             try
             {
-                ConnectToDatabase();
+                getDatabaseInformation();
 
                 // Separate streams are needed!
                 var assembly = Assembly.GetExecutingAssembly();
@@ -150,6 +154,9 @@ namespace utPLSQL
         {
             switch (index)
             {
+                case 4:
+                    sysOracleHome = (SysOracleHome)Marshal.GetDelegateForFunctionPointer(function, typeof(SysOracleHome));
+                    break;
                 case 11:
                     connected = (IdeConnected)Marshal.GetDelegateForFunctionPointer(function, typeof(IdeConnected));
                     break;
@@ -181,7 +188,7 @@ namespace utPLSQL
         [DllExport("OnConnectionChange", CallingConvention = CallingConvention.Cdecl)]
         public static void OnConnectionChange()
         {
-            ConnectToDatabase();
+            getDatabaseInformation();
         }
 
         [DllExport("CreateMenuItem", CallingConvention = CallingConvention.Cdecl)]
@@ -205,47 +212,54 @@ namespace utPLSQL
         [DllExport("OnMenuClick", CallingConvention = CallingConvention.Cdecl)]
         public static void OnMenuClick(int index)
         {
-            if (index == PluginMenuIndexAllTests)
+            try
             {
-                if (connected() && !Sydba())
+                if (index == PluginMenuIndexAllTests)
                 {
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
+                    if (isConnected() && !isSydba())
+                    {
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
+                    }
                 }
-            }
-            else if (index == PluginMenuIndexAllTestsWithCoverage)
-            {
-                if (connected() && !Sydba())
+                else if (index == PluginMenuIndexAllTestsWithCoverage)
                 {
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
+                    if (isConnected() && !isSydba())
+                    {
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
+                    }
                 }
-            }
-            else if (index == PluginPopupIndex)
-            {
-                if (connected() && !Sydba())
+                else if (index == PluginPopupIndex)
                 {
-                    getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
+                    if (isConnected() && !isSydba())
+                    {
+                        getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
 
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
-                        Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
+                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
+                    }
+                }
+                else if (index == PluginPopupIndexWithCoverage)
+                {
+                    if (isConnected() && !isSydba())
+                    {
+                        getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
+
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
+                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
+                    }
                 }
             }
-            else if (index == PluginPopupIndexWithCoverage)
+            catch (Exception e)
             {
-                if (connected() && !Sydba())
-                {
-                    getPopupObject(out IntPtr type, out IntPtr owner, out IntPtr name, out IntPtr subType);
-
-                    var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs);
-                    Windows.Add(testResultWindow);
-                    testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
-                        Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
-                }
+                MessageBox.Show($"{e.Message}\n\n{e.StackTrace}", "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -263,16 +277,27 @@ namespace utPLSQL
             var source = getObjectSource("PACKAGE BODY", owner, name);
             createWindow(3, Marshal.PtrToStringAnsi(source), false);
         }
-        private static bool Sydba()
+        private static bool isSydba()
         {
-            if (connectAs.ToLower().Equals("sysdba")) {
+            if (connectAs.ToLower().Equals("sysdba"))
+            {
                 MessageBox.Show("You shouldn't run utPLSQL as SYSDBA.\n\nTest will not run.", "Connected as SYSDBA", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return true;
             }
             return false;
         }
 
-        private static void ConnectToDatabase()
+        private static bool isConnected()
+        {
+            if (!connected())
+            {
+                MessageBox.Show("Please connect before running tests!", "No connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+
+        private static void getDatabaseInformation()
         {
             try
             {
@@ -287,6 +312,10 @@ namespace utPLSQL
                     IntPtr ptrConnectAs = getConnectAs();
 
                     connectAs = Marshal.PtrToStringAnsi(ptrConnectAs);
+
+                    IntPtr ptrOracleHome = sysOracleHome();
+
+                    oracleHome = Marshal.PtrToStringAnsi(ptrOracleHome);
                 }
             }
             catch (Exception e)
