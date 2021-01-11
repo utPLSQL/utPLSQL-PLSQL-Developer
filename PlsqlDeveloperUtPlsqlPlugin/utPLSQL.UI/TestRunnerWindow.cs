@@ -550,7 +550,7 @@ namespace utPLSQL
                 txtTestEnd.Text = testResult.End.ToString(CultureInfo.CurrentCulture);
                 txtTestTime.Text = $"{testResult.Time} s";
 
-                txtErrorMessage.Text = testResult.Error;
+                txtErrorMessage.Text = testResult.Error == null ? "" : testResult.Error.Replace("\n", "\r\n");
 
                 var bindingSource = new BindingSource { DataSource = testResult.failedExpectations };
                 gridTestFailures.DataSource = bindingSource;
