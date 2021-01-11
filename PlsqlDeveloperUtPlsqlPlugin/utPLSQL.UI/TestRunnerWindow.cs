@@ -77,7 +77,7 @@ namespace utPLSQL
 
             try
             {
-                if (oracleHome != null)
+                if (oracleHome != null && Environment.GetEnvironmentVariable("ORACLE_HOME") == null)
                 {
                     Environment.SetEnvironmentVariable("ORACLE_HOME", oracleHome);
                 }
