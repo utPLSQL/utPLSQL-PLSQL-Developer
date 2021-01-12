@@ -91,6 +91,8 @@ namespace utPLSQL
             this.lblTestOwner = new System.Windows.Forms.Label();
             this.tabFailures = new System.Windows.Forms.TabPage();
             this.gridTestFailures = new System.Windows.Forms.DataGridView();
+            this.messageDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.callerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabErrors = new System.Windows.Forms.TabPage();
             this.txtErrorMessage = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -109,8 +111,6 @@ namespace utPLSQL
             this.iconPictureBox3 = new FontAwesome.Sharp.IconPictureBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.btnRunWithCoverage = new System.Windows.Forms.Button();
-            this.messageDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.callerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.iconDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.packageDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.procedureDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -701,6 +701,20 @@ namespace utPLSQL
             this.gridTestFailures.TabIndex = 0;
             this.gridTestFailures.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridTestFailures_CellDoubleClick);
             // 
+            // messageDataGridViewTextBoxColumn
+            // 
+            this.messageDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.messageDataGridViewTextBoxColumn.DataPropertyName = "Message";
+            this.messageDataGridViewTextBoxColumn.HeaderText = "Message";
+            this.messageDataGridViewTextBoxColumn.Name = "messageDataGridViewTextBoxColumn";
+            // 
+            // callerDataGridViewTextBoxColumn
+            // 
+            this.callerDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.callerDataGridViewTextBoxColumn.DataPropertyName = "Caller";
+            this.callerDataGridViewTextBoxColumn.HeaderText = "Caller";
+            this.callerDataGridViewTextBoxColumn.Name = "callerDataGridViewTextBoxColumn";
+            // 
             // tabErrors
             // 
             this.tabErrors.BackColor = System.Drawing.SystemColors.Control;
@@ -893,25 +907,11 @@ namespace utPLSQL
             this.btnRunWithCoverage.UseVisualStyleBackColor = true;
             this.btnRunWithCoverage.Click += new System.EventHandler(this.button1_Click);
             // 
-            // messageDataGridViewTextBoxColumn
-            // 
-            this.messageDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.messageDataGridViewTextBoxColumn.DataPropertyName = "Message";
-            this.messageDataGridViewTextBoxColumn.HeaderText = "Message";
-            this.messageDataGridViewTextBoxColumn.Name = "messageDataGridViewTextBoxColumn";
-            // 
-            // callerDataGridViewTextBoxColumn
-            // 
-            this.callerDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.callerDataGridViewTextBoxColumn.DataPropertyName = "Caller";
-            this.callerDataGridViewTextBoxColumn.HeaderText = "Caller";
-            this.callerDataGridViewTextBoxColumn.Name = "callerDataGridViewTextBoxColumn";
-            // 
             // iconDataGridViewImageColumn
             // 
             this.iconDataGridViewImageColumn.DataPropertyName = "Icon";
             this.iconDataGridViewImageColumn.FillWeight = 0.2504606F;
-            this.iconDataGridViewImageColumn.HeaderText = "Status";
+            this.iconDataGridViewImageColumn.HeaderText = "";
             this.iconDataGridViewImageColumn.Name = "iconDataGridViewImageColumn";
             this.iconDataGridViewImageColumn.ReadOnly = true;
             this.iconDataGridViewImageColumn.Width = 35;
@@ -923,7 +923,7 @@ namespace utPLSQL
             this.packageDataGridViewTextBoxColumn.HeaderText = "Package";
             this.packageDataGridViewTextBoxColumn.Name = "packageDataGridViewTextBoxColumn";
             this.packageDataGridViewTextBoxColumn.ReadOnly = true;
-            this.packageDataGridViewTextBoxColumn.Width = 235;
+            this.packageDataGridViewTextBoxColumn.Width = 300;
             // 
             // procedureDataGridViewTextBoxColumn
             // 
@@ -932,7 +932,7 @@ namespace utPLSQL
             this.procedureDataGridViewTextBoxColumn.HeaderText = "Procedure";
             this.procedureDataGridViewTextBoxColumn.Name = "procedureDataGridViewTextBoxColumn";
             this.procedureDataGridViewTextBoxColumn.ReadOnly = true;
-            this.procedureDataGridViewTextBoxColumn.Width = 600;
+            this.procedureDataGridViewTextBoxColumn.Width = 535;
             // 
             // timeDataGridViewTextBoxColumn
             // 

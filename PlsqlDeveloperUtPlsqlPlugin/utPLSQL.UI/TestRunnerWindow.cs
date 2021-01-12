@@ -268,7 +268,7 @@ namespace utPLSQL
             }
         }
 
-        private void SetWindowTitle(List<string> path)
+        private void SetWindowTitle(IReadOnlyList<string> path)
         {
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
@@ -276,7 +276,7 @@ namespace utPLSQL
             Text = $"{path[0]} {startTime}";
         }
 
-        private List<string> GetPath(string type, string owner, string name, string procedure)
+        private static List<string> GetPath(string type, string owner, string name, string procedure)
         {
             switch (type)
             {
@@ -394,21 +394,19 @@ namespace utPLSQL
 
                 dataTableTestResult.AcceptChanges();
 
-                int i = 0;
+                var rowIndex = 0;
                 foreach (DataGridViewRow gridRow in gridResults.Rows)
                 {
-                    if (gridRow.DataBoundItem is DataRowView)
+                    if (gridRow.DataBoundItem is DataRowView rowTestResult)
                     {
-                        var rowTestResult = (DataRowView)gridRow.DataBoundItem;
-
                         if (rowTestResult["Id"].ToString().Equals(@event.test.id))
                         {
-                            gridResults.FirstDisplayedScrollingRowIndex = i;
-                            gridResults.Rows[i].Selected = true;
+                            gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
+                            gridResults.Rows[rowIndex].Selected = true;
 
                             break;
                         }
-                        i++;
+                        rowIndex++;
                     }
                 }
             }
@@ -539,10 +537,8 @@ namespace utPLSQL
             {
                 var row = gridResults.SelectedRows[0];
 
-                if (row.DataBoundItem is DataRowView)
+                if (row.DataBoundItem is DataRowView rowTestResult)
                 {
-                    var rowTestResult = (DataRowView)row.DataBoundItem;
-
                     txtTestOwner.Text = "" + rowTestResult.Row["Owner"];
                     txtTestPackage.Text = "" + rowTestResult.Row["Package"];
                     txtTestProcuedure.Text = "" + rowTestResult.Row["Procedure"];
@@ -600,7 +596,7 @@ namespace utPLSQL
             var rowTestResult = dataTableTestResult.Rows[e.RowIndex];
 
             var methodInfo = pluginIntegration.GetType().GetMethod("OpenPackageBody");
-            methodInfo.Invoke(pluginIntegration, new object[] { rowTestResult["Owner"], rowTestResult["Package"] });
+            methodInfo.Invoke(pluginIntegration, new[] { rowTestResult["Owner"], rowTestResult["Package"] });
         }
 
         private void gridResults_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
