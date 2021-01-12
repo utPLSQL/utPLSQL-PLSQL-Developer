@@ -67,11 +67,7 @@ namespace utPLSQL
 
         public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
-            ResetComponents();
-
-            testResults.Clear();
-
-            SetWindowTitle(type, owner, name, procedure);
+            var path = GetPath(type, owner, name, procedure);
 
             testRunner = new RealTimeTestRunner();
 
@@ -98,11 +94,22 @@ namespace utPLSQL
                 return;
             }
 
+            await RunTestsAsync(path, coverage);
+        }
+
+        private async Task RunTestsAsync(List<string> path, bool coverage)
+        {
+            ResetComponents();
+
+            testResults.Clear();
+
+            SetWindowTitle(path);
+
             Running = true;
 
             if (coverage)
             {
-                var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
+                var codeCoverageReportDialog = new CodeCoverageReportDialog(path);
                 var dialogResult = codeCoverageReportDialog.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
@@ -116,7 +123,7 @@ namespace utPLSQL
 
                     txtStatus.Text = "Running tests with coverage...";
 
-                    var htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
+                    var htmlReport = await testRunner.RunTestsWithCoverageAsync(path, CollectResults(coverage), schemas, includes, excludes);
 
                     var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
                     using (var sw = new StreamWriter(filePath))
@@ -144,7 +151,7 @@ namespace utPLSQL
 
                 txtStatus.Text = "Running tests...";
 
-                await testRunner.RunTestsAsync(GetPath(type, owner, name, procedure), CollectResults(coverage));
+                await testRunner.RunTestsAsync(path, CollectResults(coverage));
             }
         }
 
@@ -278,11 +285,10 @@ namespace utPLSQL
             }
         }
 
-        private void SetWindowTitle(string type, string owner, string name, string procedure)
+        private void SetWindowTitle(List<string> path)
         {
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
-            var path = GetPath(type, owner, name, procedure);
             txtPath.Text = path[0];
             Text = $"{path[0]} {startTime}";
         }
@@ -643,6 +649,16 @@ namespace utPLSQL
         private void cbDisabled_CheckedChanged(object sender, EventArgs e)
         {
             FilterTestResults();
+        }
+
+        private async void btnRun_Click(object sender, EventArgs e)
+        {
+            await RunTestsAsync(new List<string> { txtPath.Text }, false);
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            await RunTestsAsync(new List<string> { txtPath.Text }, true);
         }
     }
 }

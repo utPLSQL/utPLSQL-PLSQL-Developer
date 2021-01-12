@@ -89,6 +89,8 @@ namespace utPLSQL
             this.lblSuccess = new System.Windows.Forms.Label();
             this.txtSuccess = new System.Windows.Forms.TextBox();
             this.iconPictureBox3 = new FontAwesome.Sharp.IconPictureBox();
+            this.btnRun = new System.Windows.Forms.Button();
+            this.btnRunWithCoverage = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridResults)).BeginInit();
             this.contextMenuResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPictureBox1)).BeginInit();
@@ -104,11 +106,11 @@ namespace utPLSQL
             // 
             // btnClose
             // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClose.Location = new System.Drawing.Point(921, 588);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(919, 694);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(75, 21);
-            this.btnClose.TabIndex = 4;
+            this.btnClose.Size = new System.Drawing.Size(75, 23);
+            this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
@@ -128,6 +130,7 @@ namespace utPLSQL
             this.txtTests.ReadOnly = true;
             this.txtTests.Size = new System.Drawing.Size(120, 20);
             this.txtTests.TabIndex = 7;
+            this.txtTests.TabStop = false;
             // 
             // lblTime
             // 
@@ -145,6 +148,7 @@ namespace utPLSQL
             this.txtTime.ReadOnly = true;
             this.txtTime.Size = new System.Drawing.Size(120, 20);
             this.txtTime.TabIndex = 9;
+            this.txtTime.TabStop = false;
             this.txtTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblErrors
@@ -163,6 +167,7 @@ namespace utPLSQL
             this.txtErrors.ReadOnly = true;
             this.txtErrors.Size = new System.Drawing.Size(50, 20);
             this.txtErrors.TabIndex = 13;
+            this.txtErrors.TabStop = false;
             this.txtErrors.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblFailures
@@ -181,6 +186,7 @@ namespace utPLSQL
             this.txtFailures.ReadOnly = true;
             this.txtFailures.Size = new System.Drawing.Size(50, 20);
             this.txtFailures.TabIndex = 15;
+            this.txtFailures.TabStop = false;
             this.txtFailures.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblDisabled
@@ -199,6 +205,7 @@ namespace utPLSQL
             this.txtDisabled.ReadOnly = true;
             this.txtDisabled.Size = new System.Drawing.Size(50, 20);
             this.txtDisabled.TabIndex = 17;
+            this.txtDisabled.TabStop = false;
             this.txtDisabled.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // gridResults
@@ -220,7 +227,7 @@ namespace utPLSQL
             this.gridResults.RowHeadersVisible = false;
             this.gridResults.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridResults.ShowEditingIcon = false;
-            this.gridResults.Size = new System.Drawing.Size(986, 216);
+            this.gridResults.Size = new System.Drawing.Size(986, 324);
             this.gridResults.TabIndex = 18;
             this.gridResults.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.gridResults_CellContextMenuStripNeeded);
             this.gridResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridResults_CellDoubleClick);
@@ -251,16 +258,14 @@ namespace utPLSQL
             // 
             // txtStatus
             // 
-            this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtStatus.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtStatus.Location = new System.Drawing.Point(16, 592);
+            this.txtStatus.Location = new System.Drawing.Point(16, 703);
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.ReadOnly = true;
-            this.txtStatus.Size = new System.Drawing.Size(899, 13);
-            this.txtStatus.TabIndex = 0;
-            this.txtStatus.TabStop = false;
+            this.txtStatus.Size = new System.Drawing.Size(699, 13);
+            this.txtStatus.TabIndex = 7;
             // 
             // progressBar
             // 
@@ -304,7 +309,7 @@ namespace utPLSQL
             this.tabs.Controls.Add(this.tabTest);
             this.tabs.Controls.Add(this.tabFailures);
             this.tabs.Controls.Add(this.tabErrors);
-            this.tabs.Location = new System.Drawing.Point(12, 357);
+            this.tabs.Location = new System.Drawing.Point(12, 465);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
             this.tabs.Size = new System.Drawing.Size(986, 225);
@@ -346,6 +351,7 @@ namespace utPLSQL
             this.txtTestSuitePath.ReadOnly = true;
             this.txtTestSuitePath.Size = new System.Drawing.Size(900, 20);
             this.txtTestSuitePath.TabIndex = 40;
+            this.txtTestSuitePath.TabStop = false;
             // 
             // lblTestSuitePath
             // 
@@ -371,6 +377,7 @@ namespace utPLSQL
             this.txtTestTime.ReadOnly = true;
             this.txtTestTime.Size = new System.Drawing.Size(120, 20);
             this.txtTestTime.TabIndex = 37;
+            this.txtTestTime.TabStop = false;
             // 
             // lblTestTime
             // 
@@ -397,6 +404,7 @@ namespace utPLSQL
             this.txtTestEnd.ReadOnly = true;
             this.txtTestEnd.Size = new System.Drawing.Size(120, 20);
             this.txtTestEnd.TabIndex = 34;
+            this.txtTestEnd.TabStop = false;
             // 
             // txtTestStart
             // 
@@ -405,6 +413,7 @@ namespace utPLSQL
             this.txtTestStart.ReadOnly = true;
             this.txtTestStart.Size = new System.Drawing.Size(120, 20);
             this.txtTestStart.TabIndex = 33;
+            this.txtTestStart.TabStop = false;
             // 
             // lblTestStart
             // 
@@ -422,6 +431,7 @@ namespace utPLSQL
             this.txtTestName.ReadOnly = true;
             this.txtTestName.Size = new System.Drawing.Size(900, 20);
             this.txtTestName.TabIndex = 31;
+            this.txtTestName.TabStop = false;
             // 
             // lblTestName
             // 
@@ -439,6 +449,7 @@ namespace utPLSQL
             this.txtTestDescription.ReadOnly = true;
             this.txtTestDescription.Size = new System.Drawing.Size(900, 20);
             this.txtTestDescription.TabIndex = 29;
+            this.txtTestDescription.TabStop = false;
             // 
             // lblTestDescription
             // 
@@ -456,6 +467,7 @@ namespace utPLSQL
             this.txtTestProcuedure.ReadOnly = true;
             this.txtTestProcuedure.Size = new System.Drawing.Size(900, 20);
             this.txtTestProcuedure.TabIndex = 5;
+            this.txtTestProcuedure.TabStop = false;
             // 
             // lblTestProcedure
             // 
@@ -473,6 +485,7 @@ namespace utPLSQL
             this.txtTestPackage.ReadOnly = true;
             this.txtTestPackage.Size = new System.Drawing.Size(900, 20);
             this.txtTestPackage.TabIndex = 3;
+            this.txtTestPackage.TabStop = false;
             // 
             // lblTestPackage
             // 
@@ -490,6 +503,7 @@ namespace utPLSQL
             this.txtTestOwner.ReadOnly = true;
             this.txtTestOwner.Size = new System.Drawing.Size(900, 20);
             this.txtTestOwner.TabIndex = 1;
+            this.txtTestOwner.TabStop = false;
             // 
             // lblTestOwner
             // 
@@ -562,6 +576,7 @@ namespace utPLSQL
             this.txtPath.ReadOnly = true;
             this.txtPath.Size = new System.Drawing.Size(466, 20);
             this.txtPath.TabIndex = 30;
+            this.txtPath.TabStop = false;
             // 
             // lblStart
             // 
@@ -579,6 +594,7 @@ namespace utPLSQL
             this.txtStart.ReadOnly = true;
             this.txtStart.Size = new System.Drawing.Size(120, 20);
             this.txtStart.TabIndex = 32;
+            this.txtStart.TabStop = false;
             // 
             // lblEnd
             // 
@@ -596,6 +612,7 @@ namespace utPLSQL
             this.txtEnd.ReadOnly = true;
             this.txtEnd.Size = new System.Drawing.Size(120, 20);
             this.txtEnd.TabIndex = 34;
+            this.txtEnd.TabStop = false;
             // 
             // iconPictureBox4
             // 
@@ -675,6 +692,7 @@ namespace utPLSQL
             this.txtSuccess.ReadOnly = true;
             this.txtSuccess.Size = new System.Drawing.Size(50, 20);
             this.txtSuccess.TabIndex = 40;
+            this.txtSuccess.TabStop = false;
             this.txtSuccess.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // iconPictureBox3
@@ -691,12 +709,36 @@ namespace utPLSQL
             this.iconPictureBox3.TabIndex = 41;
             this.iconPictureBox3.TabStop = false;
             // 
+            // btnRun
+            // 
+            this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRun.Location = new System.Drawing.Point(722, 694);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(75, 23);
+            this.btnRun.TabIndex = 1;
+            this.btnRun.Text = "Run";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            // 
+            // btnRunWithCoverage
+            // 
+            this.btnRunWithCoverage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRunWithCoverage.Location = new System.Drawing.Point(803, 694);
+            this.btnRunWithCoverage.Name = "btnRunWithCoverage";
+            this.btnRunWithCoverage.Size = new System.Drawing.Size(110, 23);
+            this.btnRunWithCoverage.TabIndex = 2;
+            this.btnRunWithCoverage.Text = "Run with Coverage";
+            this.btnRunWithCoverage.UseVisualStyleBackColor = true;
+            this.btnRunWithCoverage.Click += new System.EventHandler(this.button1_Click);
+            // 
             // TestRunnerWindow
             // 
             this.AcceptButton = this.btnClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 621);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.btnRunWithCoverage);
+            this.Controls.Add(this.btnRun);
             this.Controls.Add(this.iconPictureBox3);
             this.Controls.Add(this.txtSuccess);
             this.Controls.Add(this.lblSuccess);
@@ -729,7 +771,7 @@ namespace utPLSQL
             this.Controls.Add(this.lblTests);
             this.Controls.Add(this.btnClose);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1024, 598);
+            this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.Name = "TestRunnerWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "utPLSQL TestRunner";
@@ -811,5 +853,7 @@ namespace utPLSQL
         private System.Windows.Forms.Label lblSuccess;
         private System.Windows.Forms.TextBox txtSuccess;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox3;
+        private System.Windows.Forms.Button btnRun;
+        private System.Windows.Forms.Button btnRunWithCoverage;
     }
 }
