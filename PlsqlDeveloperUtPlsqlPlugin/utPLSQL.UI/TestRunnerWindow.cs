@@ -50,7 +50,7 @@ namespace utPLSQL
 
             InitializeComponent();
 
-            dataViewTestResults = new DataView(dataTableTestResult);
+            dataViewTestResults = new DataView(dataTableTestResults);
         }
 
         public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
@@ -159,7 +159,7 @@ namespace utPLSQL
             {
                 if (@event.type.Equals("pre-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    dataGridViewTestResults.BeginInvoke((MethodInvoker)delegate
                     {
                         txtStatus.Text = "Running tests...";
 
@@ -172,12 +172,12 @@ namespace utPLSQL
                         CreateTestResults(@event);
 
 
-                        dataTableTestResult.AcceptChanges();
+                        dataTableTestResults.AcceptChanges();
                     });
                 }
                 else if (@event.type.Equals("post-test"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    dataGridViewTestResults.BeginInvoke((MethodInvoker)delegate
                     {
                         completedTests++;
 
@@ -190,7 +190,7 @@ namespace utPLSQL
                 }
                 else if (@event.type.Equals("post-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    dataGridViewTestResults.BeginInvoke((MethodInvoker)delegate
                     {
                         txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
                         txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
@@ -336,7 +336,7 @@ namespace utPLSQL
         {
             if (@event.test != null)
             {
-                var rows = dataTableTestResult.Select($"Id = '{ @event.test.id}'");
+                var rows = dataTableTestResults.Select($"Id = '{ @event.test.id}'");
                 var testResult = rows[0];
 
                 testResult.BeginEdit();
@@ -382,30 +382,30 @@ namespace utPLSQL
                 {
                     foreach (var expectation in @event.test.failedExpectations)
                     {
-                        var rowExpectation = dataTableExpectation.NewRow();
+                        var rowExpectation = dataTableExpectations.NewRow();
                         rowExpectation["TestResultId"] = @event.test.id;
                         rowExpectation["Message"] = expectation.message;
                         rowExpectation["Caller"] = expectation.caller;
 
-                        dataTableExpectation.Rows.Add(rowExpectation);
+                        dataTableExpectations.Rows.Add(rowExpectation);
 
-                        dataTableExpectation.AcceptChanges();
+                        dataTableExpectations.AcceptChanges();
                     }
                 }
 
                 testResult.EndEdit();
 
-                dataTableTestResult.AcceptChanges();
+                dataTableTestResults.AcceptChanges();
 
                 var rowIndex = 0;
-                foreach (DataGridViewRow gridRow in gridResults.Rows)
+                foreach (DataGridViewRow gridRow in dataGridViewTestResults.Rows)
                 {
                     if (gridRow.DataBoundItem is DataRowView rowTestResult)
                     {
                         if (rowTestResult["Id"].ToString().Equals(@event.test.id))
                         {
-                            gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
-                            gridResults.Rows[rowIndex].Selected = true;
+                            dataGridViewTestResults.FirstDisplayedScrollingRowIndex = rowIndex;
+                            dataGridViewTestResults.Rows[rowIndex].Selected = true;
 
                             break;
                         }
@@ -456,7 +456,7 @@ namespace utPLSQL
         {
             if (test != null)
             {
-                var rowTestResult = dataTableTestResult.NewRow();
+                var rowTestResult = dataTableTestResults.NewRow();
                 rowTestResult["Id"] = test.id;
                 rowTestResult["Owner"] = test.ownerName;
                 rowTestResult["Package"] = test.objectName;
@@ -465,7 +465,7 @@ namespace utPLSQL
                 rowTestResult["Description"] = test.description;
                 rowTestResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.None.ToBitmap(Color.Black, IconSize), typeof(byte[]));
 
-                dataTableTestResult.Rows.Add(rowTestResult);
+                dataTableTestResults.Rows.Add(rowTestResult);
             }
         }
 
@@ -499,7 +499,7 @@ namespace utPLSQL
                 dataViewTestResults.RowFilter = filter;
             }
 
-            gridResults.DataSource = dataViewTestResults;
+            dataGridViewTestResults.DataSource = dataViewTestResults;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -534,9 +534,9 @@ namespace utPLSQL
 
         private void gridResults_SelectionChanged(object sender, EventArgs e)
         {
-            if (gridResults.SelectedRows.Count > 0)
+            if (dataGridViewTestResults.SelectedRows.Count > 0)
             {
-                var row = gridResults.SelectedRows[0];
+                var row = dataGridViewTestResults.SelectedRows[0];
 
                 if (row.DataBoundItem is DataRowView rowTestResult)
                 {
@@ -594,7 +594,7 @@ namespace utPLSQL
 
         private void invokeOpenPackageBody(DataGridViewCellEventArgs e)
         {
-            var rowTestResult = dataTableTestResult.Rows[e.RowIndex];
+            var rowTestResult = dataTableTestResults.Rows[e.RowIndex];
 
             var methodInfo = pluginIntegration.GetType().GetMethod("OpenPackageBody");
             methodInfo.Invoke(pluginIntegration, new[] { rowTestResult["Owner"], rowTestResult["Package"] });
@@ -607,7 +607,7 @@ namespace utPLSQL
 
         private async void menuItemRunTests_ClickAsync(object sender, EventArgs e)
         {
-            var rowTestResult = dataTableTestResult.Rows[rowIndexOnRightClick];
+            var rowTestResult = dataTableTestResults.Rows[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
             await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), false);
@@ -615,7 +615,7 @@ namespace utPLSQL
 
         private async void menuItemCoverage_ClickAsync(object sender, EventArgs e)
         {
-            var rowTestResult = dataTableTestResult.Rows[rowIndexOnRightClick];
+            var rowTestResult = dataTableTestResults.Rows[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
             await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), true);
