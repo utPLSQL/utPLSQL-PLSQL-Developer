@@ -914,6 +914,7 @@ namespace utPLSQL
             this.iconDataGridViewImageColumn.HeaderText = "";
             this.iconDataGridViewImageColumn.Name = "iconDataGridViewImageColumn";
             this.iconDataGridViewImageColumn.ReadOnly = true;
+            this.iconDataGridViewImageColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.iconDataGridViewImageColumn.Width = 35;
             // 
             // packageDataGridViewTextBoxColumn
