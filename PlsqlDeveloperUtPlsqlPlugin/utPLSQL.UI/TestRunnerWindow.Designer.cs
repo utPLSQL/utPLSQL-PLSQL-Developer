@@ -695,6 +695,7 @@ namespace utPLSQL
             this.gridTestFailures.Location = new System.Drawing.Point(6, 6);
             this.gridTestFailures.MultiSelect = false;
             this.gridTestFailures.Name = "gridTestFailures";
+            this.gridTestFailures.ReadOnly = true;
             this.gridTestFailures.RowHeadersVisible = false;
             this.gridTestFailures.ShowEditingIcon = false;
             this.gridTestFailures.Size = new System.Drawing.Size(966, 188);
@@ -707,6 +708,7 @@ namespace utPLSQL
             this.messageDataGridViewTextBoxColumn.DataPropertyName = "Message";
             this.messageDataGridViewTextBoxColumn.HeaderText = "Message";
             this.messageDataGridViewTextBoxColumn.Name = "messageDataGridViewTextBoxColumn";
+            this.messageDataGridViewTextBoxColumn.ReadOnly = true;
             // 
             // callerDataGridViewTextBoxColumn
             // 
@@ -714,6 +716,7 @@ namespace utPLSQL
             this.callerDataGridViewTextBoxColumn.DataPropertyName = "Caller";
             this.callerDataGridViewTextBoxColumn.HeaderText = "Caller";
             this.callerDataGridViewTextBoxColumn.Name = "callerDataGridViewTextBoxColumn";
+            this.callerDataGridViewTextBoxColumn.ReadOnly = true;
             // 
             // tabErrors
             // 
