@@ -30,6 +30,7 @@ namespace utPLSQL
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestRunnerWindow));
             this.btnClose = new System.Windows.Forms.Button();
             this.lblTests = new System.Windows.Forms.Label();
@@ -941,6 +942,10 @@ namespace utPLSQL
             // timeDataGridViewTextBoxColumn
             // 
             this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N3";
+            dataGridViewCellStyle1.NullValue = null;
+            this.timeDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
             this.timeDataGridViewTextBoxColumn.FillWeight = 203.0457F;
             this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
             this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
