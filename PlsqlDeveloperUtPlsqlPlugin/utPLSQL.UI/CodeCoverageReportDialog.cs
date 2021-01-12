@@ -5,7 +5,7 @@ namespace utPLSQL
 {
     public partial class CodeCoverageReportDialog : Form
     {
-        public CodeCoverageReportDialog(List<string> paths)
+        public CodeCoverageReportDialog(IReadOnlyList<string> paths)
         {
             InitializeComponent();
 

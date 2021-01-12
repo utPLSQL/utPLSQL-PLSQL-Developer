@@ -1,8 +1,7 @@
-﻿using Equin.ApplicationFramework;
-using FontAwesome.Sharp;
+﻿using FontAwesome.Sharp;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -30,15 +29,15 @@ namespace utPLSQL
         private readonly string connectAs;
         private readonly string oracleHome;
 
-        private readonly List<TestResult> testResults = new List<TestResult>();
-
-        private BindingListView<TestResult> viewTestResults;
-
         private RealTimeTestRunner testRunner;
 
         private int totalNumberOfTests;
         private int rowIndexOnRightClick;
         private int completedTests;
+
+        private ImageConverter imageConverter = new ImageConverter();
+
+        private DataView dataViewTestResults;
 
         public TestRunnerWindow(object pluginIntegration, string username, string password, string database, string connectAs, string oracleHome)
         {
@@ -50,28 +49,13 @@ namespace utPLSQL
             this.oracleHome = oracleHome;
 
             InitializeComponent();
-        }
 
-        private void CreateDataSourceAndConfigureGridColumns()
-        {
-            viewTestResults = new BindingListView<TestResult>(testResults);
-            gridResults.DataSource = viewTestResults;
-
-            gridResults.Columns[0].HeaderText = "";
-            gridResults.Columns[0].MinimumWidth = 30;
-            gridResults.Columns[1].MinimumWidth = 235;
-            gridResults.Columns[2].MinimumWidth = 600;
-            gridResults.Columns[3].MinimumWidth = 100;
-            gridResults.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataViewTestResults = new DataView(dataTableTestResults);
         }
 
         public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
         {
-            ResetComponents();
-
-            testResults.Clear();
-
-            SetWindowTitle(type, owner, name, procedure);
+            var path = GetPath(type, owner, name, procedure);
 
             testRunner = new RealTimeTestRunner();
 
@@ -98,11 +82,24 @@ namespace utPLSQL
                 return;
             }
 
+            await RunTestsAsync(path, coverage);
+        }
+
+        private async Task RunTestsAsync(List<string> path, bool coverage)
+        {
+            ResetComponents();
+
+            dataSet.Clear();
+
+            SetWindowTitle(path);
+
             Running = true;
+
+            EnableFilter();
 
             if (coverage)
             {
-                var codeCoverageReportDialog = new CodeCoverageReportDialog(GetPath(type, owner, name, procedure));
+                var codeCoverageReportDialog = new CodeCoverageReportDialog(path);
                 var dialogResult = codeCoverageReportDialog.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
@@ -116,7 +113,7 @@ namespace utPLSQL
 
                     txtStatus.Text = "Running tests with coverage...";
 
-                    var htmlReport = await testRunner.RunTestsWithCoverageAsync(GetPath(type, owner, name, procedure), CollectResults(coverage), schemas, includes, excludes);
+                    var htmlReport = await testRunner.RunTestsWithCoverageAsync(path, CollectResults(coverage), schemas, includes, excludes);
 
                     var filePath = $"{Path.GetTempPath()}\\utPLSQL_Coverage_Report_{Guid.NewGuid()}.html";
                     using (var sw = new StreamWriter(filePath))
@@ -144,7 +141,7 @@ namespace utPLSQL
 
                 txtStatus.Text = "Running tests...";
 
-                await testRunner.RunTestsAsync(GetPath(type, owner, name, procedure), CollectResults(coverage));
+                await testRunner.RunTestsAsync(path, CollectResults(coverage));
             }
         }
 
@@ -162,7 +159,7 @@ namespace utPLSQL
             {
                 if (@event.type.Equals("pre-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    dataGridViewTestResults.BeginInvoke((MethodInvoker)delegate
                     {
                         txtStatus.Text = "Running tests...";
 
@@ -174,17 +171,13 @@ namespace utPLSQL
 
                         CreateTestResults(@event);
 
-                        CreateDataSourceAndConfigureGridColumns();
 
-                        if (gridResults.Rows.Count > 0)
-                        {
-                            gridResults.Rows[0].Selected = false;
-                        }
+                        dataTableTestResults.AcceptChanges();
                     });
                 }
                 else if (@event.type.Equals("post-test"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    dataGridViewTestResults.BeginInvoke((MethodInvoker)delegate
                     {
                         completedTests++;
 
@@ -197,7 +190,7 @@ namespace utPLSQL
                 }
                 else if (@event.type.Equals("post-run"))
                 {
-                    gridResults.BeginInvoke((MethodInvoker)delegate
+                    dataGridViewTestResults.BeginInvoke((MethodInvoker)delegate
                     {
                         txtStart.Text = @event.run.startTime.ToString(CultureInfo.CurrentCulture);
                         txtEnd.Text = @event.run.endTime.ToString(CultureInfo.CurrentCulture);
@@ -278,16 +271,15 @@ namespace utPLSQL
             }
         }
 
-        private void SetWindowTitle(string type, string owner, string name, string procedure)
+        private void SetWindowTitle(IReadOnlyList<string> path)
         {
             var startTime = DateTime.Now.ToString(CultureInfo.CurrentCulture);
             txtStart.Text = startTime;
-            var path = GetPath(type, owner, name, procedure);
             txtPath.Text = path[0];
             Text = $"{path[0]} {startTime}";
         }
 
-        private List<string> GetPath(string type, string owner, string name, string procedure)
+        private static List<string> GetPath(string type, string owner, string name, string procedure)
         {
             switch (type)
             {
@@ -329,9 +321,6 @@ namespace utPLSQL
 
             txtErrorMessage.Text = "";
 
-            var bindingSource = new BindingSource { DataSource = new BindingList<Expectation>() };
-            gridTestFailures.DataSource = bindingSource;
-
             progressBar.ForeColor = Color.Green;
             progressBar.Minimum = 0;
             progressBar.Maximum = 100;
@@ -347,67 +336,80 @@ namespace utPLSQL
         {
             if (@event.test != null)
             {
-                foreach (var testResult in testResults)
+                var rows = dataTableTestResults.Select($"Id = '{ @event.test.id}'");
+                var testResult = rows[0];
+
+                testResult.BeginEdit();
+
+                testResult["Start"] = @event.test.startTime;
+                testResult["End"] = @event.test.endTime;
+
+                testResult["Time"] = @event.test.executionTime;
+
+                var counter = @event.test.counter;
+                if (counter.disabled > 0)
                 {
-                    if (testResult.Id.Equals(@event.test.id))
+                    testResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.Ban.ToBitmap(Color.Gray, IconSize), typeof(byte[]));
+                    testResult["Status"] = StatusDisabled;
+                }
+                else if (counter.success > 0)
+                {
+                    testResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.Check.ToBitmap(Color.Green, IconSize), typeof(byte[]));
+                    testResult["Status"] = StatusSuccess;
+                }
+                else if (counter.failure > 0)
+                {
+                    testResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.TimesCircle.ToBitmap(IconFont.Solid, IconSize, Color.Orange), typeof(byte[]));
+                    testResult["Status"] = StatusFailure;
+                }
+                else if (counter.error > 0)
+                {
+                    testResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.ExclamationCircle.ToBitmap(Color.Red, IconSize), typeof(byte[]));
+                    testResult["Status"] = StatusError;
+                }
+                else if (counter.warning > 0)
+                {
+                    testResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.ExclamationTriangle.ToBitmap(Color.Orange, IconSize), typeof(byte[]));
+                    testResult["Status"] = StatusWarning;
+                }
+
+                if (@event.test.errorStack != null)
+                {
+                    testResult["Error"] = @event.test.errorStack;
+                }
+
+                if (@event.test.failedExpectations != null)
+                {
+                    foreach (var expectation in @event.test.failedExpectations)
                     {
-                        testResult.Start = @event.test.startTime;
-                        testResult.End = @event.test.endTime;
+                        var rowExpectation = dataTableExpectations.NewRow();
+                        rowExpectation["TestResultId"] = @event.test.id;
+                        rowExpectation["Message"] = expectation.message;
+                        rowExpectation["Caller"] = expectation.caller;
 
-                        testResult.Time = @event.test.executionTime;
+                        dataTableExpectations.Rows.Add(rowExpectation);
 
-                        var counter = @event.test.counter;
-                        if (counter.disabled > 0)
-                        {
-                            testResult.Icon = IconChar.Ban.ToBitmap(Color.Gray, IconSize);
-                            testResult.Status = StatusDisabled;
-                        }
-                        else if (counter.success > 0)
-                        {
-                            testResult.Icon = IconChar.Check.ToBitmap(Color.Green, IconSize);
-                            testResult.Status = StatusSuccess;
-                        }
-                        else if (counter.failure > 0)
-                        {
-                            testResult.Icon = IconChar.TimesCircle.ToBitmap(IconFont.Solid, IconSize, Color.Orange);
-                            testResult.Status = StatusFailure;
-                        }
-                        else if (counter.error > 0)
-                        {
-                            testResult.Icon = IconChar.ExclamationCircle.ToBitmap(Color.Red, IconSize);
-                            testResult.Status = StatusError;
-                        }
-                        else if (counter.warning > 0)
-                        {
-                            testResult.Icon = IconChar.ExclamationTriangle.ToBitmap(Color.Orange, IconSize);
-                            testResult.Status = StatusWarning;
-                        }
+                        dataTableExpectations.AcceptChanges();
+                    }
+                }
 
-                        if (@event.test.errorStack != null)
-                        {
-                            testResult.Error = @event.test.errorStack;
-                        }
+                testResult.EndEdit();
 
-                        if (@event.test.failedExpectations != null)
-                        {
-                            foreach (var expectation in @event.test.failedExpectations)
-                            {
-                                testResult.failedExpectations.Add(new Expectation(expectation.message,
-                                    expectation.caller));
-                            }
-                        }
+                dataTableTestResults.AcceptChanges();
 
-                        gridResults.Refresh();
-                        try
+                var rowIndex = 0;
+                foreach (DataGridViewRow gridRow in dataGridViewTestResults.Rows)
+                {
+                    if (gridRow.DataBoundItem is DataRowView rowTestResult)
+                    {
+                        if (rowTestResult["Id"].ToString().Equals(@event.test.id))
                         {
-                            var rowIndex = testResults.IndexOf(testResult);
-                            gridResults.FirstDisplayedScrollingRowIndex = rowIndex;
-                            gridResults.Rows[rowIndex].Selected = true;
+                            dataGridViewTestResults.FirstDisplayedScrollingRowIndex = rowIndex;
+                            dataGridViewTestResults.Rows[rowIndex].Selected = true;
+
+                            break;
                         }
-                        catch
-                        {
-                            // ignore exception that could raise if results are filtered
-                        }
+                        rowIndex++;
                     }
                 }
             }
@@ -454,51 +456,50 @@ namespace utPLSQL
         {
             if (test != null)
             {
-                testResults.Add(new TestResult
-                {
-                    Id = test.id,
-                    Owner = test.ownerName,
-                    Package = test.objectName,
-                    Procedure = test.procedureName,
-                    Name = test.name,
-                    Description = test.description,
-                    Icon = IconChar.None.ToBitmap(Color.Black, IconSize)
-                });
+                var rowTestResult = dataTableTestResults.NewRow();
+                rowTestResult["Id"] = test.id;
+                rowTestResult["Owner"] = test.ownerName;
+                rowTestResult["Package"] = test.objectName;
+                rowTestResult["Procedure"] = test.procedureName;
+                rowTestResult["Name"] = test.name;
+                rowTestResult["Description"] = test.description;
+                rowTestResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.None.ToBitmap(Color.Black, IconSize), typeof(byte[]));
+
+                dataTableTestResults.Rows.Add(rowTestResult);
             }
         }
 
         private void FilterTestResults()
         {
-            if (!cbSuccess.Checked && !cbFailure.Checked && !cbError.Checked && !cbDisabled.Checked)
+            if (cbSuccess.Checked && cbFailure.Checked && cbError.Checked && cbDisabled.Checked)
             {
-                viewTestResults.RemoveFilter();
+                dataViewTestResults.RowFilter = null;
             }
             else
             {
-                viewTestResults.ApplyFilter(delegate (TestResult testResult)
+                var filter = "Status is null";
+
+                if (cbSuccess.Checked)
                 {
-                    if (testResult.Status != null)
-                    {
-                        if (!cbSuccess.Checked && testResult.Status.Equals(StatusSuccess))
-                        {
-                            return false;
-                        }
-                        if (!cbFailure.Checked && testResult.Status.Equals(StatusFailure))
-                        {
-                            return false;
-                        }
-                        if (!cbError.Checked && testResult.Status.Equals(StatusError))
-                        {
-                            return false;
-                        }
-                        if (!cbDisabled.Checked && testResult.Status.Equals(StatusDisabled))
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                });
+                    filter += $" or Status = '{StatusSuccess}'";
+                }
+                if (cbFailure.Checked)
+                {
+                    filter += $" or Status = '{StatusFailure}'";
+                }
+                if (cbError.Checked)
+                {
+                    filter += $" or Status = '{StatusError}'";
+                }
+                if (cbDisabled.Checked)
+                {
+                    filter += $" or Status = '{StatusDisabled}'";
+                }
+
+                dataViewTestResults.RowFilter = filter;
             }
+
+            dataGridViewTestResults.DataSource = dataViewTestResults;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -533,48 +534,43 @@ namespace utPLSQL
 
         private void gridResults_SelectionChanged(object sender, EventArgs e)
         {
-            if (gridResults.SelectedRows.Count > 0)
+            if (dataGridViewTestResults.SelectedRows.Count > 0)
             {
-                var row = gridResults.SelectedRows[0];
-                var dataBoundItem = (ObjectView<TestResult>)row.DataBoundItem;
-                var testResult = dataBoundItem.Object;
+                var row = dataGridViewTestResults.SelectedRows[0];
 
-                txtTestOwner.Text = testResult.Owner;
-                txtTestPackage.Text = testResult.Package;
-                txtTestProcuedure.Text = testResult.Procedure;
-                txtTestName.Text = testResult.Name;
-                txtTestDescription.Text = testResult.Description;
-                txtTestSuitePath.Text = testResult.Id;
-
-                txtTestStart.Text = testResult.Start.ToString(CultureInfo.CurrentCulture);
-                txtTestEnd.Text = testResult.End.ToString(CultureInfo.CurrentCulture);
-                txtTestTime.Text = $"{testResult.Time} s";
-
-                txtErrorMessage.Text = testResult.Error;
-
-                var bindingSource = new BindingSource { DataSource = testResult.failedExpectations };
-                gridTestFailures.DataSource = bindingSource;
-
-                gridTestFailures.Columns[0].MinimumWidth = 480;
-                gridTestFailures.Columns[1].MinimumWidth = 480;
-
-                if (!Running)
+                if (row.DataBoundItem is DataRowView rowTestResult)
                 {
-                    if (testResult.Status == null)
+                    txtTestOwner.Text = "" + rowTestResult.Row["Owner"];
+                    txtTestPackage.Text = "" + rowTestResult.Row["Package"];
+                    txtTestProcuedure.Text = "" + rowTestResult.Row["Procedure"];
+                    txtTestName.Text = "" + rowTestResult.Row["Name"];
+                    txtTestDescription.Text = "" + rowTestResult.Row["Description"];
+                    txtTestSuitePath.Text = "" + rowTestResult.Row["Id"];
+
+                    txtTestStart.Text = rowTestResult.Row["Start"].ToString().ToString(CultureInfo.CurrentCulture);
+                    txtTestEnd.Text = rowTestResult.Row["End"].ToString().ToString(CultureInfo.CurrentCulture);
+                    txtTestTime.Text = $"{rowTestResult.Row["Time"]} s";
+
+                    txtErrorMessage.Text = rowTestResult.Row["Error"] == null ? "" : rowTestResult.Row["Error"].ToString().Replace("\n", "\r\n");
+
+                    if (!Running)
                     {
-                        tabs.SelectedTab = tabTest;
-                    }
-                    else if (testResult.Status.Equals(StatusFailure))
-                    {
-                        tabs.SelectedTab = tabFailures;
-                    }
-                    else if (testResult.Status.Equals(StatusError))
-                    {
-                        tabs.SelectedTab = tabErrors;
-                    }
-                    else
-                    {
-                        tabs.SelectedTab = tabTest;
+                        if (rowTestResult.Row["Status"] == null)
+                        {
+                            tabs.SelectedTab = tabTest;
+                        }
+                        else if (rowTestResult.Row["Status"].ToString().Equals(StatusFailure))
+                        {
+                            tabs.SelectedTab = tabFailures;
+                        }
+                        else if (rowTestResult.Row["Status"].ToString().Equals(StatusError))
+                        {
+                            tabs.SelectedTab = tabErrors;
+                        }
+                        else
+                        {
+                            tabs.SelectedTab = tabTest;
+                        }
                     }
                 }
             }
@@ -598,10 +594,10 @@ namespace utPLSQL
 
         private void invokeOpenPackageBody(DataGridViewCellEventArgs e)
         {
-            var testResult = testResults[e.RowIndex];
+            var rowTestResult = dataTableTestResults.Rows[e.RowIndex];
 
             var methodInfo = pluginIntegration.GetType().GetMethod("OpenPackageBody");
-            methodInfo.Invoke(pluginIntegration, new object[] { testResult.Owner, testResult.Package });
+            methodInfo.Invoke(pluginIntegration, new[] { rowTestResult["Owner"], rowTestResult["Package"] });
         }
 
         private void gridResults_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
@@ -611,18 +607,18 @@ namespace utPLSQL
 
         private async void menuItemRunTests_ClickAsync(object sender, EventArgs e)
         {
-            var testResult = testResults[rowIndexOnRightClick];
+            var rowTestResult = dataTableTestResults.Rows[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
-            await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, false);
+            await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), false);
         }
 
         private async void menuItemCoverage_ClickAsync(object sender, EventArgs e)
         {
-            var testResult = testResults[rowIndexOnRightClick];
+            var rowTestResult = dataTableTestResults.Rows[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
-            await testResultWindow.RunTestsAsync("PROCEDURE", testResult.Owner, testResult.Package, testResult.Procedure, true);
+            await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), true);
         }
 
         private void cbSuccess_CheckedChanged(object sender, EventArgs e)
@@ -643,6 +639,16 @@ namespace utPLSQL
         private void cbDisabled_CheckedChanged(object sender, EventArgs e)
         {
             FilterTestResults();
+        }
+
+        private async void btnRun_Click(object sender, EventArgs e)
+        {
+            await RunTestsAsync(new List<string> { txtPath.Text }, false);
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            await RunTestsAsync(new List<string> { txtPath.Text }, true);
         }
     }
 }

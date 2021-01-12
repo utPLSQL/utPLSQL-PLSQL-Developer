@@ -64,7 +64,6 @@
       <DependentUpon>CodeCoverageReportDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestResult.cs" />
     <Compile Include="TestRunnerWindow.cs">
       <SubType>Form</SubType>
     </Compile>
