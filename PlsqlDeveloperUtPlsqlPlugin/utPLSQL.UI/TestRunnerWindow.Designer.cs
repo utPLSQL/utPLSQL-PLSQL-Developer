@@ -138,7 +138,7 @@ namespace utPLSQL
             this.btnClose.Location = new System.Drawing.Point(919, 694);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
-            this.btnClose.TabIndex = 0;
+            this.btnClose.TabIndex = 4;
             this.btnClose.Text = "Close";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
@@ -264,6 +264,7 @@ namespace utPLSQL
             this.gridResults.ShowEditingIcon = false;
             this.gridResults.Size = new System.Drawing.Size(986, 324);
             this.gridResults.TabIndex = 18;
+            this.gridResults.TabStop = false;
             this.gridResults.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.gridResults_CellContextMenuStripNeeded);
             this.gridResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridResults_CellDoubleClick);
             this.gridResults.SelectionChanged += new System.EventHandler(this.gridResults_SelectionChanged);
@@ -422,6 +423,7 @@ namespace utPLSQL
             this.txtStatus.ReadOnly = true;
             this.txtStatus.Size = new System.Drawing.Size(699, 13);
             this.txtStatus.TabIndex = 7;
+            this.txtStatus.TabStop = false;
             // 
             // progressBar
             // 
@@ -470,6 +472,7 @@ namespace utPLSQL
             this.tabs.SelectedIndex = 0;
             this.tabs.Size = new System.Drawing.Size(986, 225);
             this.tabs.TabIndex = 28;
+            this.tabs.TabStop = false;
             // 
             // tabTest
             // 
@@ -816,7 +819,7 @@ namespace utPLSQL
             this.cbFailure.Location = new System.Drawing.Point(499, 48);
             this.cbFailure.Name = "cbFailure";
             this.cbFailure.Size = new System.Drawing.Size(15, 14);
-            this.cbFailure.TabIndex = 35;
+            this.cbFailure.TabIndex = 1;
             this.cbFailure.UseVisualStyleBackColor = true;
             this.cbFailure.CheckedChanged += new System.EventHandler(this.cbFailures_CheckedChanged);
             // 
@@ -828,7 +831,7 @@ namespace utPLSQL
             this.cbSuccess.Location = new System.Drawing.Point(338, 48);
             this.cbSuccess.Name = "cbSuccess";
             this.cbSuccess.Size = new System.Drawing.Size(15, 14);
-            this.cbSuccess.TabIndex = 36;
+            this.cbSuccess.TabIndex = 0;
             this.cbSuccess.UseVisualStyleBackColor = true;
             this.cbSuccess.CheckedChanged += new System.EventHandler(this.cbSuccess_CheckedChanged);
             // 
@@ -840,7 +843,7 @@ namespace utPLSQL
             this.cbError.Location = new System.Drawing.Point(652, 48);
             this.cbError.Name = "cbError";
             this.cbError.Size = new System.Drawing.Size(15, 14);
-            this.cbError.TabIndex = 37;
+            this.cbError.TabIndex = 2;
             this.cbError.UseVisualStyleBackColor = true;
             this.cbError.CheckedChanged += new System.EventHandler(this.cbErrors_CheckedChanged);
             // 
@@ -852,7 +855,7 @@ namespace utPLSQL
             this.cbDisabled.Location = new System.Drawing.Point(819, 48);
             this.cbDisabled.Name = "cbDisabled";
             this.cbDisabled.Size = new System.Drawing.Size(15, 14);
-            this.cbDisabled.TabIndex = 38;
+            this.cbDisabled.TabIndex = 3;
             this.cbDisabled.UseVisualStyleBackColor = true;
             this.cbDisabled.CheckedChanged += new System.EventHandler(this.cbDisabled_CheckedChanged);
             // 
@@ -862,7 +865,7 @@ namespace utPLSQL
             this.lblSuccess.Location = new System.Drawing.Point(228, 49);
             this.lblSuccess.Name = "lblSuccess";
             this.lblSuccess.Size = new System.Drawing.Size(48, 13);
-            this.lblSuccess.TabIndex = 39;
+            this.lblSuccess.TabIndex = 3;
             this.lblSuccess.Text = "Success";
             // 
             // txtSuccess
@@ -895,7 +898,7 @@ namespace utPLSQL
             this.btnRun.Location = new System.Drawing.Point(722, 694);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
-            this.btnRun.TabIndex = 1;
+            this.btnRun.TabIndex = 5;
             this.btnRun.Text = "Run";
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
@@ -906,7 +909,7 @@ namespace utPLSQL
             this.btnRunWithCoverage.Location = new System.Drawing.Point(803, 694);
             this.btnRunWithCoverage.Name = "btnRunWithCoverage";
             this.btnRunWithCoverage.Size = new System.Drawing.Size(110, 23);
-            this.btnRunWithCoverage.TabIndex = 2;
+            this.btnRunWithCoverage.TabIndex = 6;
             this.btnRunWithCoverage.Text = "Run with Coverage";
             this.btnRunWithCoverage.UseVisualStyleBackColor = true;
             this.btnRunWithCoverage.Click += new System.EventHandler(this.button1_Click);
@@ -937,7 +940,7 @@ namespace utPLSQL
             this.procedureDataGridViewTextBoxColumn.HeaderText = "Procedure";
             this.procedureDataGridViewTextBoxColumn.Name = "procedureDataGridViewTextBoxColumn";
             this.procedureDataGridViewTextBoxColumn.ReadOnly = true;
-            this.procedureDataGridViewTextBoxColumn.Width = 535;
+            this.procedureDataGridViewTextBoxColumn.Width = 530;
             // 
             // timeDataGridViewTextBoxColumn
             // 
