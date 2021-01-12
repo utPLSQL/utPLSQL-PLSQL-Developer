@@ -170,6 +170,9 @@ namespace utPLSQL
                         progressBar.Step = Steps;
 
                         CreateTestResults(@event);
+
+
+                        dataTableTestResult.AcceptChanges();
                     });
                 }
                 else if (@event.type.Equals("post-test"))
@@ -463,8 +466,6 @@ namespace utPLSQL
                 rowTestResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.None.ToBitmap(Color.Black, IconSize), typeof(byte[]));
 
                 dataTableTestResult.Rows.Add(rowTestResult);
-
-                dataTableTestResult.AcceptChanges();
             }
         }
 
