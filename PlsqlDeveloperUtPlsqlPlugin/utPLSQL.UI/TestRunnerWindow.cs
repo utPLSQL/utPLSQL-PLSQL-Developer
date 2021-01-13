@@ -333,11 +333,21 @@ namespace utPLSQL
                 {
                     testResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.TimesCircle.ToBitmap(IconFont.Solid, IconSize, Color.Orange), typeof(byte[]));
                     testResult["Status"] = StatusFailure;
+
+                    colorProgressBar.BeginInvoke((MethodInvoker)delegate
+                    {
+                        colorProgressBar.BarColor = Color.DarkRed;
+                    });
                 }
                 else if (counter.error > 0)
                 {
                     testResult["Icon"] = (byte[])imageConverter.ConvertTo(IconChar.ExclamationCircle.ToBitmap(Color.Red, IconSize), typeof(byte[]));
                     testResult["Status"] = StatusError;
+
+                    colorProgressBar.BeginInvoke((MethodInvoker)delegate
+                    {
+                        colorProgressBar.BarColor = Color.DarkRed;
+                    });
                 }
                 else if (counter.warning > 0)
                 {
@@ -535,7 +545,14 @@ namespace utPLSQL
 
                     txtErrorMessage.Text = rowTestResult.Row["Error"] == null ? "" : rowTestResult.Row["Error"].ToString().Replace("\n", "\r\n");
 
+                    txtFailureMessage.Text = "";
+
                     dataViewExpectations.RowFilter = $"TestResultId = '{rowTestResult.Row["Id"]}'";
+
+                    if (dataViewExpectations.Count > 0)
+                    {
+                        dataGridViewExpectations.Rows[0].Selected = true;
+                    }
 
                     if (!Running)
                     {
@@ -645,10 +662,9 @@ namespace utPLSQL
 
                 if (row.DataBoundItem is DataRowView rowExpectation)
                 {
-                    txtFailureMessage.Text = rowExpectation.Row["Message"].ToString() + "\r\n\r\n" + rowExpectation.Row["Caller"].ToString();
+                    txtFailureMessage.Text = $"{rowExpectation.Row["Message"].ToString().Replace("\n", "\r\n")}\r\n\r\n{rowExpectation.Row["Caller"].ToString().Replace("\n", "\r\n")}";
                 }
             }
-
         }
     }
 }
