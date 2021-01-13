@@ -10,7 +10,7 @@ The plugin adds a Button to the Tools ribbon to execute all tests of the current
 
 In the object browser on Packages, Package Bodys, Procedures or Users there is a context menu entry to run the tests or code coverage of either the package, the procedure or the user. You can also run tests from an program window. 
 
-![Context Menu](screenshots/context_menu.png)
+![Context Menu](screenshots/context_menu1.png)
 
 ## Viewing Results
 
