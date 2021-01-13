@@ -287,6 +287,8 @@ namespace utPLSQL
                     return new List<string> { name };
                 case "PACKAGE":
                     return new List<string> { $"{owner}.{name}" };
+                case "PACKAGE BODY":
+                    return new List<string> { $"{owner}.{name}" };
                 case "PROCEDURE":
                     return new List<string> { $"{owner}.{name}.{procedure}" };
                 default:
