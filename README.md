@@ -8,7 +8,7 @@ The plugin adds a Button to the Tools ribbon to execute all tests of the current
 
 ![Tools Ribbon](screenshots/tools_ribbon.png)
 
-In the object browser on Packages or Users there is a context menu entry to run the tests or code coverage of either the packages or the users.
+In the object browser on Packages, Package Bodys, Procedures or Users there is a context menu entry to run the tests or code coverage of either the package, the procedure or the user. You can also run tests from an program window. 
 
 ![Context Menu](screenshots/context_menu.png)
 
@@ -20,7 +20,11 @@ The results are opened in a new window. If you've chosen code coverage the cover
 
 Double-click on a test result entry will open the package body. 
 
-### Runing single tests
+### Running  tests
+
+There are two buttons to run the tests again either with or without coverage.
+
+### Running single tests
 
 A right-click opens the context menu, and you can run the test function.
 
@@ -28,7 +32,7 @@ A right-click opens the context menu, and you can run the test function.
 
 Once the tests are run you can filter the results by clicking on checkboxes behind the status field.  
 
-![img.png](screenshots/result_window_filter.png)
+![Result Window](screenshots/result_window.png)
 
 ## Releases
 

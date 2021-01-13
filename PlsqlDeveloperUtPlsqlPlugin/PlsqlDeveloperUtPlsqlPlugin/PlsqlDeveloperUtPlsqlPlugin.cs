@@ -136,6 +136,9 @@ namespace utPLSQL
 
             createPopupItem(pluginId, PluginPopupIndex, "Run utPLSQL Test", "PACKAGE BODY");
             createPopupItem(pluginId, PluginPopupIndexWithCoverage, "Run Code Coverage", "PACKAGE BODY");
+
+            createPopupItem(pluginId, PluginPopupIndex, "Run utPLSQL Test", "PROCEDURE");
+            createPopupItem(pluginId, PluginPopupIndexWithCoverage, "Run Code Coverage", "PROCEDURE");
         }
 
         [DllExport("CanClose", CallingConvention = CallingConvention.Cdecl)]

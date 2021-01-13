@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Ui", "utPLSQL.Ui\ut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "utPLSQL.Ui.Standalone", "utPLSQL.Ui.Standalone\utPLSQL.Ui.Standalone.csproj", "{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorProgressBar", "ColorProgressBar\ColorProgressBar.csproj", "{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|x64.Build.0 = Release|Any CPU
 		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|x86.ActiveCfg = Release|Any CPU
 		{5D3EA63E-AAFE-47DB-9D48-4BA9C205ADBE}.Release|x86.Build.0 = Release|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Debug|x64.Build.0 = Debug|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Debug|x86.Build.0 = Debug|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Release|x64.ActiveCfg = Release|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Release|x64.Build.0 = Release|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Release|x86.ActiveCfg = Release|Any CPU
+		{739E6F07-E688-4D16-8FDF-7472E7F0FEA0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

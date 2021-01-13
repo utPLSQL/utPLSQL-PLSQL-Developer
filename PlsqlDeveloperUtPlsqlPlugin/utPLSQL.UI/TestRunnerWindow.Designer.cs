@@ -70,7 +70,6 @@ namespace utPLSQL
             this.dataColumnExpectationMessage = new System.Data.DataColumn();
             this.dataColumnExpectationCaller = new System.Data.DataColumn();
             this.txtStatus = new System.Windows.Forms.TextBox();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
             this.iconPictureBox2 = new FontAwesome.Sharp.IconPictureBox();
             this.tabs = new System.Windows.Forms.TabControl();
@@ -116,6 +115,7 @@ namespace utPLSQL
             this.iconPictureBox3 = new FontAwesome.Sharp.IconPictureBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.btnRunWithCoverage = new System.Windows.Forms.Button();
+            this.colorProgressBar = new ColorProgressBar.ColorProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTestResults)).BeginInit();
             this.contextMenuResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataSet)).BeginInit();
@@ -464,13 +464,6 @@ namespace utPLSQL
             this.txtStatus.Size = new System.Drawing.Size(699, 13);
             this.txtStatus.TabIndex = 7;
             this.txtStatus.TabStop = false;
-            // 
-            // progressBar
-            // 
-            this.progressBar.Location = new System.Drawing.Point(12, 85);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(986, 23);
-            this.progressBar.TabIndex = 21;
             // 
             // iconPictureBox1
             // 
@@ -954,12 +947,26 @@ namespace utPLSQL
             this.btnRunWithCoverage.UseVisualStyleBackColor = true;
             this.btnRunWithCoverage.Click += new System.EventHandler(this.button1_Click);
             // 
+            // colorProgressBar
+            // 
+            this.colorProgressBar.BarColor = System.Drawing.Color.Green;
+            this.colorProgressBar.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.colorProgressBar.Location = new System.Drawing.Point(12, 86);
+            this.colorProgressBar.Maximum = 100;
+            this.colorProgressBar.Minimum = 0;
+            this.colorProgressBar.Name = "colorProgressBar";
+            this.colorProgressBar.Size = new System.Drawing.Size(986, 23);
+            this.colorProgressBar.Step = 10;
+            this.colorProgressBar.TabIndex = 43;
+            this.colorProgressBar.Value = 0;
+            // 
             // TestRunnerWindow
             // 
             this.AcceptButton = this.btnClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
+            this.Controls.Add(this.colorProgressBar);
             this.Controls.Add(this.btnRunWithCoverage);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.iconPictureBox3);
@@ -979,7 +986,6 @@ namespace utPLSQL
             this.Controls.Add(this.iconPictureBox4);
             this.Controls.Add(this.iconPictureBox2);
             this.Controls.Add(this.iconPictureBox1);
-            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.dataGridViewTestResults);
             this.Controls.Add(this.txtDisabled);
@@ -1034,7 +1040,6 @@ namespace utPLSQL
         private System.Windows.Forms.TextBox txtDisabled;
         private System.Windows.Forms.DataGridView dataGridViewTestResults;
         private System.Windows.Forms.TextBox txtStatus;
-        private System.Windows.Forms.ProgressBar progressBar;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox1;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox2;
         private System.Windows.Forms.TabControl tabs;
@@ -1105,5 +1110,6 @@ namespace utPLSQL
         private System.Windows.Forms.DataGridViewTextBoxColumn packageDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn procedureDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn timeDataGridViewTextBoxColumn;
+        private ColorProgressBar.ColorProgressBar colorProgressBar;
     }
 }
