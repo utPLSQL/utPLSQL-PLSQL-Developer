@@ -44,10 +44,6 @@ namespace utPLSQL
             this.lblDisabled = new System.Windows.Forms.Label();
             this.txtDisabled = new System.Windows.Forms.TextBox();
             this.dataGridViewTestResults = new System.Windows.Forms.DataGridView();
-            this.iconDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.packageDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.procedureDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuResults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemRunTests = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemCoverage = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,9 +90,8 @@ namespace utPLSQL
             this.txtTestOwner = new System.Windows.Forms.TextBox();
             this.lblTestOwner = new System.Windows.Forms.Label();
             this.tabFailures = new System.Windows.Forms.TabPage();
+            this.txtFailureMessage = new System.Windows.Forms.TextBox();
             this.dataGridViewExpectations = new System.Windows.Forms.DataGridView();
-            this.messageDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.callerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabErrors = new System.Windows.Forms.TabPage();
             this.txtErrorMessage = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -116,6 +111,12 @@ namespace utPLSQL
             this.btnRun = new System.Windows.Forms.Button();
             this.btnRunWithCoverage = new System.Windows.Forms.Button();
             this.colorProgressBar = new ColorProgressBar.ColorProgressBar();
+            this.timeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.procedureDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.packageDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.iconDataGridViewImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataColumnExpectationLine = new System.Data.DataColumn();
+            this.Line = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTestResults)).BeginInit();
             this.contextMenuResults.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataSet)).BeginInit();
@@ -269,46 +270,6 @@ namespace utPLSQL
             this.dataGridViewTestResults.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridResults_CellDoubleClick);
             this.dataGridViewTestResults.SelectionChanged += new System.EventHandler(this.gridResults_SelectionChanged);
             // 
-            // iconDataGridViewImageColumn
-            // 
-            this.iconDataGridViewImageColumn.DataPropertyName = "Icon";
-            this.iconDataGridViewImageColumn.FillWeight = 0.2504606F;
-            this.iconDataGridViewImageColumn.HeaderText = "";
-            this.iconDataGridViewImageColumn.Name = "iconDataGridViewImageColumn";
-            this.iconDataGridViewImageColumn.ReadOnly = true;
-            this.iconDataGridViewImageColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.iconDataGridViewImageColumn.Width = 35;
-            // 
-            // packageDataGridViewTextBoxColumn
-            // 
-            this.packageDataGridViewTextBoxColumn.DataPropertyName = "Package";
-            this.packageDataGridViewTextBoxColumn.FillWeight = 14.3167F;
-            this.packageDataGridViewTextBoxColumn.HeaderText = "Package";
-            this.packageDataGridViewTextBoxColumn.Name = "packageDataGridViewTextBoxColumn";
-            this.packageDataGridViewTextBoxColumn.ReadOnly = true;
-            this.packageDataGridViewTextBoxColumn.Width = 300;
-            // 
-            // procedureDataGridViewTextBoxColumn
-            // 
-            this.procedureDataGridViewTextBoxColumn.DataPropertyName = "Procedure";
-            this.procedureDataGridViewTextBoxColumn.FillWeight = 182.3871F;
-            this.procedureDataGridViewTextBoxColumn.HeaderText = "Procedure";
-            this.procedureDataGridViewTextBoxColumn.Name = "procedureDataGridViewTextBoxColumn";
-            this.procedureDataGridViewTextBoxColumn.ReadOnly = true;
-            this.procedureDataGridViewTextBoxColumn.Width = 530;
-            // 
-            // timeDataGridViewTextBoxColumn
-            // 
-            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "N3";
-            dataGridViewCellStyle1.NullValue = null;
-            this.timeDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
-            this.timeDataGridViewTextBoxColumn.FillWeight = 203.0457F;
-            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
-            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
-            this.timeDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
             // contextMenuResults
             // 
             this.contextMenuResults.ImageScalingSize = new System.Drawing.Size(36, 36);
@@ -431,7 +392,8 @@ namespace utPLSQL
             this.dataTableExpectations.Columns.AddRange(new System.Data.DataColumn[] {
             this.dataColumnExpectationTestResultId,
             this.dataColumnExpectationMessage,
-            this.dataColumnExpectationCaller});
+            this.dataColumnExpectationCaller,
+            this.dataColumnExpectationLine});
             this.dataTableExpectations.Constraints.AddRange(new System.Data.Constraint[] {
             new System.Data.ForeignKeyConstraint("FkTestResult", "TestResults", new string[] {
                         "Id"}, new string[] {
@@ -709,6 +671,7 @@ namespace utPLSQL
             // tabFailures
             // 
             this.tabFailures.BackColor = System.Drawing.SystemColors.Control;
+            this.tabFailures.Controls.Add(this.txtFailureMessage);
             this.tabFailures.Controls.Add(this.dataGridViewExpectations);
             this.tabFailures.Location = new System.Drawing.Point(4, 22);
             this.tabFailures.Name = "tabFailures";
@@ -717,16 +680,24 @@ namespace utPLSQL
             this.tabFailures.TabIndex = 0;
             this.tabFailures.Text = "Failures";
             // 
+            // txtFailureMessage
+            // 
+            this.txtFailureMessage.Location = new System.Drawing.Point(131, 6);
+            this.txtFailureMessage.Multiline = true;
+            this.txtFailureMessage.Name = "txtFailureMessage";
+            this.txtFailureMessage.ReadOnly = true;
+            this.txtFailureMessage.Size = new System.Drawing.Size(841, 187);
+            this.txtFailureMessage.TabIndex = 1;
+            this.txtFailureMessage.TabStop = false;
+            // 
             // dataGridViewExpectations
             // 
             this.dataGridViewExpectations.AllowUserToAddRows = false;
             this.dataGridViewExpectations.AllowUserToDeleteRows = false;
             this.dataGridViewExpectations.AutoGenerateColumns = false;
-            this.dataGridViewExpectations.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewExpectations.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewExpectations.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.messageDataGridViewTextBoxColumn,
-            this.callerDataGridViewTextBoxColumn});
+            this.Line});
             this.dataGridViewExpectations.DataMember = "Expectations";
             this.dataGridViewExpectations.DataSource = this.dataSet;
             this.dataGridViewExpectations.Location = new System.Drawing.Point(6, 6);
@@ -734,26 +705,12 @@ namespace utPLSQL
             this.dataGridViewExpectations.Name = "dataGridViewExpectations";
             this.dataGridViewExpectations.ReadOnly = true;
             this.dataGridViewExpectations.RowHeadersVisible = false;
+            this.dataGridViewExpectations.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewExpectations.ShowEditingIcon = false;
-            this.dataGridViewExpectations.Size = new System.Drawing.Size(966, 188);
+            this.dataGridViewExpectations.Size = new System.Drawing.Size(119, 187);
             this.dataGridViewExpectations.TabIndex = 0;
             this.dataGridViewExpectations.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridTestFailures_CellDoubleClick);
-            // 
-            // messageDataGridViewTextBoxColumn
-            // 
-            this.messageDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.messageDataGridViewTextBoxColumn.DataPropertyName = "Message";
-            this.messageDataGridViewTextBoxColumn.HeaderText = "Message";
-            this.messageDataGridViewTextBoxColumn.Name = "messageDataGridViewTextBoxColumn";
-            this.messageDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // callerDataGridViewTextBoxColumn
-            // 
-            this.callerDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.callerDataGridViewTextBoxColumn.DataPropertyName = "Caller";
-            this.callerDataGridViewTextBoxColumn.HeaderText = "Caller";
-            this.callerDataGridViewTextBoxColumn.Name = "callerDataGridViewTextBoxColumn";
-            this.callerDataGridViewTextBoxColumn.ReadOnly = true;
+            this.dataGridViewExpectations.SelectionChanged += new System.EventHandler(this.dataGridViewExpectations_SelectionChanged);
             // 
             // tabErrors
             // 
@@ -960,6 +917,59 @@ namespace utPLSQL
             this.colorProgressBar.TabIndex = 43;
             this.colorProgressBar.Value = 0;
             // 
+            // timeDataGridViewTextBoxColumn
+            // 
+            this.timeDataGridViewTextBoxColumn.DataPropertyName = "Time";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "N3";
+            dataGridViewCellStyle1.NullValue = null;
+            this.timeDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            this.timeDataGridViewTextBoxColumn.FillWeight = 203.0457F;
+            this.timeDataGridViewTextBoxColumn.HeaderText = "Time";
+            this.timeDataGridViewTextBoxColumn.Name = "timeDataGridViewTextBoxColumn";
+            this.timeDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // procedureDataGridViewTextBoxColumn
+            // 
+            this.procedureDataGridViewTextBoxColumn.DataPropertyName = "Procedure";
+            this.procedureDataGridViewTextBoxColumn.FillWeight = 182.3871F;
+            this.procedureDataGridViewTextBoxColumn.HeaderText = "Procedure";
+            this.procedureDataGridViewTextBoxColumn.Name = "procedureDataGridViewTextBoxColumn";
+            this.procedureDataGridViewTextBoxColumn.ReadOnly = true;
+            this.procedureDataGridViewTextBoxColumn.Width = 530;
+            // 
+            // packageDataGridViewTextBoxColumn
+            // 
+            this.packageDataGridViewTextBoxColumn.DataPropertyName = "Package";
+            this.packageDataGridViewTextBoxColumn.FillWeight = 14.3167F;
+            this.packageDataGridViewTextBoxColumn.HeaderText = "Package";
+            this.packageDataGridViewTextBoxColumn.Name = "packageDataGridViewTextBoxColumn";
+            this.packageDataGridViewTextBoxColumn.ReadOnly = true;
+            this.packageDataGridViewTextBoxColumn.Width = 300;
+            // 
+            // iconDataGridViewImageColumn
+            // 
+            this.iconDataGridViewImageColumn.DataPropertyName = "Icon";
+            this.iconDataGridViewImageColumn.FillWeight = 0.2504606F;
+            this.iconDataGridViewImageColumn.HeaderText = "";
+            this.iconDataGridViewImageColumn.Name = "iconDataGridViewImageColumn";
+            this.iconDataGridViewImageColumn.ReadOnly = true;
+            this.iconDataGridViewImageColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.iconDataGridViewImageColumn.Width = 35;
+            // 
+            // dataColumnExpectationLine
+            // 
+            this.dataColumnExpectationLine.Caption = "Line";
+            this.dataColumnExpectationLine.ColumnName = "Line";
+            // 
+            // Line
+            // 
+            this.Line.DataPropertyName = "Line";
+            this.Line.FillWeight = 101.5228F;
+            this.Line.HeaderText = "Line";
+            this.Line.Name = "Line";
+            this.Line.ReadOnly = true;
+            // 
             // TestRunnerWindow
             // 
             this.AcceptButton = this.btnClose;
@@ -1016,6 +1026,7 @@ namespace utPLSQL
             this.tabTest.ResumeLayout(false);
             this.tabTest.PerformLayout();
             this.tabFailures.ResumeLayout(false);
+            this.tabFailures.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewExpectations)).EndInit();
             this.tabErrors.ResumeLayout(false);
             this.tabErrors.PerformLayout();
@@ -1104,12 +1115,13 @@ namespace utPLSQL
         private System.Data.DataColumn dataColumnExpectationTestResultId;
         private System.Data.DataColumn dataColumnExpectationMessage;
         private System.Data.DataColumn dataColumnExpectationCaller;
-        private System.Windows.Forms.DataGridViewTextBoxColumn messageDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn callerDataGridViewTextBoxColumn;
+        private ColorProgressBar.ColorProgressBar colorProgressBar;
+        private System.Windows.Forms.TextBox txtFailureMessage;
         private System.Windows.Forms.DataGridViewImageColumn iconDataGridViewImageColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn packageDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn procedureDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn timeDataGridViewTextBoxColumn;
-        private ColorProgressBar.ColorProgressBar colorProgressBar;
+        private System.Data.DataColumn dataColumnExpectationLine;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Line;
     }
 }

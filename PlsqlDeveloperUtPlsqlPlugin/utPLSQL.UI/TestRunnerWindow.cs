@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,6 +13,8 @@ namespace utPLSQL
 {
     public partial class TestRunnerWindow : Form
     {
+        Regex regexLine = new Regex("(.*line )([0-9]+)( .*)", RegexOptions.IgnoreCase);
+
         public bool Running { get; private set; }
 
         private const int IconSize = 24;
@@ -37,6 +40,7 @@ namespace utPLSQL
         private ImageConverter imageConverter = new ImageConverter();
 
         private DataView dataViewTestResults;
+        private DataView dataViewExpectations;
 
         public TestRunnerWindow(object pluginIntegration, string username, string password, string database, string connectAs, string oracleHome)
         {
@@ -50,6 +54,12 @@ namespace utPLSQL
             InitializeComponent();
 
             dataViewTestResults = new DataView(dataTableTestResults);
+            dataGridViewTestResults.DataMember = null;
+            dataGridViewTestResults.DataSource = dataViewTestResults;
+
+            dataViewExpectations = new DataView(dataTableExpectations);
+            dataGridViewExpectations.DataMember = null;
+            dataGridViewExpectations.DataSource = dataViewExpectations;
         }
 
         public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
@@ -94,8 +104,6 @@ namespace utPLSQL
 
             Running = true;
 
-            EnableFilter();
-
             if (coverage)
             {
                 var codeCoverageReportDialog = new CodeCoverageReportDialog(path);
@@ -122,8 +130,6 @@ namespace utPLSQL
 
                     txtStatus.BeginInvoke((MethodInvoker)delegate
                     {
-                        EnableFilter();
-
                         txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
                     });
 
@@ -142,14 +148,6 @@ namespace utPLSQL
 
                 await testRunner.RunTestsAsync(path, CollectResults(coverage));
             }
-        }
-
-        private void EnableFilter()
-        {
-            cbSuccess.Enabled = true;
-            cbFailure.Enabled = true;
-            cbError.Enabled = true;
-            cbDisabled.Enabled = true;
         }
 
         private Action<@event> CollectResults(bool coverage)
@@ -208,8 +206,6 @@ namespace utPLSQL
 
                         if (!coverage)
                         {
-                            EnableFilter();
-
                             txtStatus.Text = totalNumberOfTests > 0 ? "Finished" : "No tests found";
 
                             Running = false;
@@ -306,11 +302,6 @@ namespace utPLSQL
             colorProgressBar.Minimum = 0;
             colorProgressBar.Maximum = 100;
             colorProgressBar.Value = 0;
-
-            cbSuccess.Enabled = false;
-            cbFailure.Enabled = false;
-            cbError.Enabled = false;
-            cbDisabled.Enabled = false;
         }
 
         private void UpdateTestResult(@event @event)
@@ -367,6 +358,7 @@ namespace utPLSQL
                         rowExpectation["TestResultId"] = @event.test.id;
                         rowExpectation["Message"] = expectation.message;
                         rowExpectation["Caller"] = expectation.caller;
+                        rowExpectation["Line"] = ExtractLine(expectation.caller);
 
                         dataTableExpectations.Rows.Add(rowExpectation);
 
@@ -394,6 +386,17 @@ namespace utPLSQL
                     }
                 }
             }
+        }
+
+        private string ExtractLine(string caller)
+        {
+            var m = regexLine.Match(caller);
+            if (m.Success)
+            {
+                var g = m.Groups[2];
+                return g.Value;
+            }
+            return caller;
         }
 
         private void CreateTestResults(@event @event)
@@ -479,8 +482,6 @@ namespace utPLSQL
 
                 dataViewTestResults.RowFilter = filter;
             }
-
-            dataGridViewTestResults.DataSource = dataViewTestResults;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -533,6 +534,8 @@ namespace utPLSQL
                     txtTestTime.Text = $"{rowTestResult.Row["Time"]} s";
 
                     txtErrorMessage.Text = rowTestResult.Row["Error"] == null ? "" : rowTestResult.Row["Error"].ToString().Replace("\n", "\r\n");
+
+                    dataViewExpectations.RowFilter = $"TestResultId = '{rowTestResult.Row["Id"]}'";
 
                     if (!Running)
                     {
@@ -630,6 +633,22 @@ namespace utPLSQL
         private async void button1_Click(object sender, EventArgs e)
         {
             await RunTestsAsync(new List<string> { txtPath.Text }, true);
+        }
+
+        private void dataGridViewExpectations_SelectionChanged(object sender, EventArgs e)
+        {
+            txtFailureMessage.Text = "";
+
+            if (dataGridViewExpectations.SelectedRows.Count > 0)
+            {
+                var row = dataGridViewExpectations.SelectedRows[0];
+
+                if (row.DataBoundItem is DataRowView rowExpectation)
+                {
+                    txtFailureMessage.Text = rowExpectation.Row["Message"].ToString() + "\r\n\r\n" + rowExpectation.Row["Caller"].ToString();
+                }
+            }
+
         }
     }
 }
