@@ -15,7 +15,6 @@ namespace utPLSQL
         public bool Running { get; private set; }
 
         private const int IconSize = 24;
-        private const int Steps = 1000;
         private const string StatusSuccess = "Success";
         private const string StatusFailure = "Failure";
         private const string StatusError = "Error";
@@ -165,9 +164,9 @@ namespace utPLSQL
 
                         totalNumberOfTests = @event.totalNumberOfTests;
 
-                        progressBar.Minimum = 0;
-                        progressBar.Maximum = totalNumberOfTests * Steps;
-                        progressBar.Step = Steps;
+                        colorProgressBar.Minimum = 0;
+                        colorProgressBar.Maximum = totalNumberOfTests;
+                        colorProgressBar.Step = 1;
 
                         CreateTestResults(@event);
 
@@ -183,7 +182,7 @@ namespace utPLSQL
 
                         txtTests.Text = (completedTests > totalNumberOfTests ? totalNumberOfTests : completedTests) + "/" + totalNumberOfTests;
 
-                        UpdateProgressBar();
+                        colorProgressBar.PerformStep();
 
                         UpdateTestResult(@event);
                     });
@@ -204,7 +203,7 @@ namespace utPLSQL
 
                         if (@event.run.counter.failure > 0 || @event.run.counter.error > 0)
                         {
-                            progressBar.ForeColor = Color.DarkRed;
+                            colorProgressBar.BarColor = Color.DarkRed;
                         }
 
                         if (!coverage)
@@ -248,26 +247,6 @@ namespace utPLSQL
                 {
                     return new List<string> { listValue };
                 }
-            }
-        }
-
-        /*
-        * Workaround for the progressbar animation that produces lagging
-        * https://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
-        */
-        private void UpdateProgressBar()
-        {
-            var newValue = completedTests * Steps + 1;
-            if (newValue > progressBar.Maximum)
-            {
-                progressBar.Value = progressBar.Maximum;
-                progressBar.Value--;
-                progressBar.Value++;
-            }
-            else
-            {
-                progressBar.Value = newValue;
-                progressBar.Value--;
             }
         }
 
@@ -323,10 +302,10 @@ namespace utPLSQL
 
             txtErrorMessage.Text = "";
 
-            progressBar.ForeColor = Color.Green;
-            progressBar.Minimum = 0;
-            progressBar.Maximum = 100;
-            progressBar.Value = 0;
+            colorProgressBar.BarColor = Color.Green;
+            colorProgressBar.Minimum = 0;
+            colorProgressBar.Maximum = 100;
+            colorProgressBar.Value = 0;
 
             cbSuccess.Enabled = false;
             cbFailure.Enabled = false;
