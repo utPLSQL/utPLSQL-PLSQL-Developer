@@ -2,11 +2,11 @@
 
 The utPLSQL Plugin integrates [utPLSQL](https://utplsql.org) with [Allround Automations PL/SQL Developer](https://www.allroundautomations.com/products/pl-sql-developer/).
 
-## Running Tests and Code Coverage
+## Running Tests
 
 The plugin adds a Button to the Tools ribbon to execute all tests of the current user or run code coverage.
 
-![Tools Ribbon](screenshots/tools_ribbon.png)
+![Tools Ribbon](screenshots/tools_ribbon_full.png)
 
 In the object browser on Packages, Package Bodys, Procedures or Users there is a context menu entry to run the tests or code coverage of either the package, the procedure or the user. You can also run tests from an program window. 
 
@@ -14,7 +14,7 @@ In the object browser on Packages, Package Bodys, Procedures or Users there is a
 
 ## Viewing Results
 
-The results are opened in a new window. If you've chosen code coverage the coverage report will be opened in the default browser. 
+The results are opened in a new window. Each test run will open a separate window. 
 
 ### Navigating to the package body 
 
@@ -28,11 +28,23 @@ There are two buttons to run the tests again either with or without coverage.
 
 A right-click opens the context menu, and you can run the test function.
 
-### Filtering Results
+### Filtering and Sorting Results
 
-Once the tests are run you can filter the results by clicking on checkboxes behind the status field.  
+You can filter the results by clicking on checkboxes behind the status field. A click on the header cell sorts the results first ascending and with a second click descending.  
 
 ![Result Window](screenshots/result_window.png)
+
+## Code Coverage
+
+If you select Run Code Coverage from the menu or the context menu a dialog is displayed. In this dialog you can configure the schemas to check for coverage and include or exclude specific objects.
+
+![Code Coverage Diaog](screenshots/code_coverage_dialog.png)
+
+### Report
+
+After running the tests the HTML code coverage report will be opened in the default browser.
+
+![Code Coverage Reports](screenshots/code_coverage_report.png)
 
 ## Releases
 
