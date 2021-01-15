@@ -16,22 +16,16 @@ namespace ColorProgressBar
         private int _Maximum = 100;
         private int _Step = 10;
 
-        private Color _BarColor = Color.FromArgb(255, 128, 128);
+        private Color _BarColor = Color.Green;
         private Color _BorderColor = Color.Black;
-
-        public enum FillStyles
-        {
-            Solid,
-            Dashed
-        }
 
         public ColorProgressBar()
         {
-            base.Size = new Size(150, 15);
+            base.Size = new Size(200, 20);
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw | ControlStyles.DoubleBuffer, true);
         }
 
-        [Description("ColorProgressBar color")]
+        [Description("Progress bar color")]
         [Category("ColorProgressBar")]
         public Color BarColor
         {
@@ -46,7 +40,7 @@ namespace ColorProgressBar
             }
         }
 
-        [Description("The current value for the ColorProgressBar, in the range specified by the Minimum and Maximum properties.")]
+        [Description("The current value for the progres bar. Must be between Minimum and Maximum.")]
         [Category("ColorProgressBar")]
         [RefreshProperties(RefreshProperties.All)]
         public int Value
@@ -59,14 +53,12 @@ namespace ColorProgressBar
             {
                 if (value < _Minimum)
                 {
-                    throw new ArgumentException("'" + value + "' is not a valid value for 'Value'.\n" +
-                        "'Value' must be between 'Minimum' and 'Maximum'.");
+                    throw new ArgumentException($"'{value}' is not a valid 'Value'.\n'Value' must be between 'Minimum' and 'Maximum'.");
                 }
 
                 if (value > _Maximum)
                 {
-                    throw new ArgumentException("'" + value + "' is not a valid value for 'Value'.\n" +
-                        "'Value' must be between 'Minimum' and 'Maximum'.");
+                    throw new ArgumentException($"'{value}' is not a valid 'Value'.\n'Value' must be between 'Minimum' and 'Maximum'.");
                 }
 
                 _Value = value;
@@ -74,7 +66,7 @@ namespace ColorProgressBar
             }
         }
 
-        [Description("The lower bound of the range this ColorProgressbar is working with.")]
+        [Description("The lower bound of the range.")]
         [Category("ColorProgressBar")]
         [RefreshProperties(RefreshProperties.All)]
         public int Minimum
@@ -96,7 +88,7 @@ namespace ColorProgressBar
             }
         }
 
-        [Description("The uppper bound of the range this ColorProgressbar is working with.")]
+        [Description("The uppper bound of the range.")]
         [Category("ColorProgressBar")]
         [RefreshProperties(RefreshProperties.All)]
         public int Maximum
@@ -118,7 +110,7 @@ namespace ColorProgressBar
             }
         }
 
-        [Description("The amount to jump the current value of the control by when the Step() method is called.")]
+        [Description("The value to move the progess bar when the Step() method is called.")]
         [Category("ColorProgressBar")]
         public int Step
         {
@@ -133,7 +125,7 @@ namespace ColorProgressBar
             }
         }
 
-        [Description("The border color of ColorProgressBar")]
+        [Description("The border color")]
         [Category("ColorProgressBar")]
         public Color BorderColor
         {
@@ -149,7 +141,7 @@ namespace ColorProgressBar
         }
 
         ///
-        /// <summary>Call the PerformStep() method to increase the value displayed by the amount set in the Step property</summary>
+        /// <summary>Call the PerformStep() method to increase the value displayed by the value set in the Step property</summary>
         ///
         public void PerformStep()
         {
@@ -162,7 +154,7 @@ namespace ColorProgressBar
         }
 
         ///
-        /// <summary>Call the PerformStepBack() method to decrease the value displayed by the amount set in the Step property</summary>
+        /// <summary>Call the PerformStepBack() method to decrease the value displayed by the value set in the Step property</summary>
         ///
         public void PerformStepBack()
         {
@@ -175,7 +167,7 @@ namespace ColorProgressBar
         }
 
         ///
-        /// <summary>Call the Increment() method to increase the value displayed by an integer you specify</summary>
+        /// <summary>Call the Increment() method to increase the value displayed by the passed value</summary>
         /// 
         public void Increment(int value)
         {
@@ -188,7 +180,7 @@ namespace ColorProgressBar
         }
 
         //
-        // <summary>Call the Decrement() method to decrease the value displayed by an integer you specify</summary>
+        // <summary>Call the Decrement() method to decrease the value displayed by the passed value</summary>
         // 
         public void Decrement(int value)
         {
@@ -236,8 +228,7 @@ namespace ColorProgressBar
 
         protected void DrawBorder(Graphics g)
         {
-            Rectangle borderRect = new Rectangle(0, 0,
-                ClientRectangle.Width - 1, ClientRectangle.Height - 1);
+            Rectangle borderRect = new Rectangle(0, 0, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
             g.DrawRectangle(new Pen(_BorderColor, 1), borderRect);
         }
     }
