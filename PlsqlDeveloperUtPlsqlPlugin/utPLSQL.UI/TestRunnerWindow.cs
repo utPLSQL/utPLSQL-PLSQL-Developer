@@ -74,6 +74,8 @@ namespace utPLSQL
                 {
                     Environment.SetEnvironmentVariable("ORACLE_HOME", oracleHome);
                 }
+                Running = true;
+
                 testRunner.Connect(username, password, database);
             }
             catch (Exception e)
@@ -101,8 +103,6 @@ namespace utPLSQL
             dataSet.Clear();
 
             SetWindowTitle(path);
-
-            Running = true;
 
             if (coverage)
             {
