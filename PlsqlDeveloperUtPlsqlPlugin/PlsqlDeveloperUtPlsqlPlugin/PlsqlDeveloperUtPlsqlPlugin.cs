@@ -43,6 +43,7 @@ namespace utPLSQL
 
         private const int PluginMenuIndexAllTests = 3;
         private const int PluginMenuIndexAllTestsWithCoverage = 4;
+        private const int PluginMenuIndexPath = 5;
         private const int PluginPopupIndex = 1;
         private const int PluginPopupIndexWithCoverage = 2;
 
@@ -104,6 +105,14 @@ namespace utPLSQL
                     if (stream != null)
                     {
                         createToolButton(pluginId, PluginMenuIndexAllTestsWithCoverage, "utPLSQL", "utPLSQL_coverage.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
+                    }
+                }
+
+                using (var stream = assembly.GetManifestResourceStream("utPLSQL.utPLSQL.bmp"))
+                {
+                    if (stream != null)
+                    {
+                        createToolButton(pluginId, PluginMenuIndexPath, "utPLSQL", "utPLSQL.bmp", new Bitmap(stream).GetHbitmap().ToInt64());
                     }
                 }
 
@@ -210,6 +219,8 @@ namespace utPLSQL
                     return "LARGEITEM=Run all tests of current user";
                 case PluginMenuIndexAllTestsWithCoverage:
                     return "LARGEITEM=Run code coverage for current user";
+                case PluginMenuIndexPath:
+                    return "LARGEITEM=Run tests for specific path";
                 default:
                     return "";
             }
@@ -226,7 +237,7 @@ namespace utPLSQL
                     {
                         var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
                         Windows.Add(testResultWindow);
-                        testResultWindow.RunTestsAsync("_ALL", username, null, null, false);
+                        testResultWindow.RunTestsAsync("_ALL", username, null, null, false, false);
                     }
                 }
                 else if (index == PluginMenuIndexAllTestsWithCoverage)
@@ -235,7 +246,16 @@ namespace utPLSQL
                     {
                         var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
                         Windows.Add(testResultWindow);
-                        testResultWindow.RunTestsAsync("_ALL", username, null, null, true);
+                        testResultWindow.RunTestsAsync("_ALL", username, null, null, true, false);
+                    }
+                }
+                else if (index == PluginMenuIndexPath)
+                {
+                    if (isConnected() && !isSydba())
+                    {
+                        var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
+                        Windows.Add(testResultWindow);
+                        testResultWindow.RunTestsAsync(null, null, null, null, false, true);
                     }
                 }
                 else if (index == PluginPopupIndex)
@@ -247,7 +267,7 @@ namespace utPLSQL
                         var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
                         Windows.Add(testResultWindow);
                         testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
-                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false);
+                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), false, false);
                     }
                 }
                 else if (index == PluginPopupIndexWithCoverage)
@@ -259,7 +279,7 @@ namespace utPLSQL
                         var testResultWindow = new TestRunnerWindow(_plugin, username, password, database, connectAs, oracleHome);
                         Windows.Add(testResultWindow);
                         testResultWindow.RunTestsAsync(Marshal.PtrToStringAnsi(type), Marshal.PtrToStringAnsi(owner),
-                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true);
+                            Marshal.PtrToStringAnsi(name), Marshal.PtrToStringAnsi(subType), true, false);
                     }
                 }
             }
