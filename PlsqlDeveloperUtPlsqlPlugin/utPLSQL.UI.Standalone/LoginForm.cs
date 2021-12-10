@@ -13,13 +13,13 @@ namespace utPLSQL.UI.Standalone
         private void BtnRunTests_Click(object sender, EventArgs e)
         {
             var testRunnerWindow = new TestRunnerWindow(null, txtUsername.Text, txtPassword.Text, txtDatabase.Text, null, null);
-            testRunnerWindow.RunTestsAsync("USER", null, txtUsername.Text, null, false);
+            testRunnerWindow.RunTestsAsync("USER", null, txtUsername.Text, null, false, false);
         }
 
         private void btnCodeCoverage_Click(object sender, EventArgs e)
         {
             var testRunnerWindow = new TestRunnerWindow(null, txtUsername.Text, txtPassword.Text, txtDatabase.Text, null, null);
-            testRunnerWindow.RunTestsAsync("USER", null, txtUsername.Text, null, true);
+            testRunnerWindow.RunTestsAsync("USER", null, txtUsername.Text, null, true, false);
         }
     }
 }

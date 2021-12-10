@@ -62,9 +62,9 @@ namespace utPLSQL
             dataGridViewExpectations.DataSource = dataViewExpectations;
         }
 
-        public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage)
+        public async Task RunTestsAsync(string type, string owner, string name, string procedure, bool coverage, bool showOnly)
         {
-            var path = GetPath(type, owner, name, procedure);
+            var path = showOnly ? null : GetPath(type, owner, name, procedure);
 
             testRunner = new RealTimeTestRunner();
 
@@ -74,6 +74,8 @@ namespace utPLSQL
                 {
                     Environment.SetEnvironmentVariable("ORACLE_HOME", oracleHome);
                 }
+                Running = true;
+
                 testRunner.Connect(username, password, database);
             }
             catch (Exception e)
@@ -91,7 +93,16 @@ namespace utPLSQL
                 return;
             }
 
-            await RunTestsAsync(path, coverage);
+            if (showOnly)
+            {
+                txtPath.ReadOnly = false;
+                txtPath.Focus();
+                Show();
+            }
+            else
+            {
+                await RunTestsAsync(path, coverage);
+            }
         }
 
         private async Task RunTestsAsync(List<string> path, bool coverage)
@@ -101,8 +112,6 @@ namespace utPLSQL
             dataSet.Clear();
 
             SetWindowTitle(path);
-
-            Running = true;
 
             if (coverage)
             {
@@ -611,7 +620,7 @@ namespace utPLSQL
             var rowTestResult = dataTableTestResults.Rows[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
-            await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), false);
+            await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), false, false);
         }
 
         private async void menuItemCoverage_ClickAsync(object sender, EventArgs e)
@@ -619,7 +628,7 @@ namespace utPLSQL
             var rowTestResult = dataTableTestResults.Rows[rowIndexOnRightClick];
 
             var testResultWindow = new TestRunnerWindow(pluginIntegration, username, password, database, connectAs, oracleHome);
-            await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), true);
+            await testResultWindow.RunTestsAsync("PROCEDURE", rowTestResult["Owner"].ToString(), rowTestResult["Package"].ToString(), rowTestResult["Procedure"].ToString(), true, false);
         }
 
         private void cbSuccess_CheckedChanged(object sender, EventArgs e)
