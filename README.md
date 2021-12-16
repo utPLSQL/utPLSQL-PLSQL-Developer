@@ -4,7 +4,7 @@ The utPLSQL Plugin integrates [utPLSQL](https://utplsql.org) with [Allround Auto
 
 ## Running Tests
 
-The plugin adds a Button to the Tools ribbon to execute all tests of the current user or run code coverage.
+The plugin adds three buttons to the tools ribbon to 1) execute all tests of the current user, 2) run code coverage or 3) run tests for a specific path. If you choose 3) the run window will open and you can enter the path manually.
 
 ![Tools Ribbon](screenshots/tools_ribbon_full.png)
 
