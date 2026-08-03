@@ -6,11 +6,11 @@ The utPLSQL Plugin integrates [utPLSQL](https://utplsql.org) with [Allround Auto
 
 The plugin adds three buttons to the tools ribbon to 1) execute all tests of the current user, 2) run code coverage or 3) run tests for a specific path. If you choose 3) the run window will open and you can enter the path manually.
 
-![Tools Ribbon](screenshots/tools_ribbon_full.png)
+![Tools Ribbon](https://raw.githubusercontent.com/utPLSQL/utPLSQL-PLSQL-Developer/develop/screenshots/tools_ribbon_full.png)
 
 In the object browser on Packages, Package Bodys, Procedures or Users there is a context menu entry to run the tests or code coverage of either the package, the procedure or the user. You can also run tests from an program window. 
 
-![Context Menu](screenshots/context_menu.png)
+![Context Menu](https://raw.githubusercontent.com/utPLSQL/utPLSQL-PLSQL-Developer/develop/screenshots/context_menu.png)
 
 ## Viewing Results
 
@@ -32,19 +32,19 @@ A right-click opens the context menu, and you can run the test function.
 
 You can filter the results by clicking on checkboxes behind the status field. A click on the header cell sorts the results first ascending and with a second click descending.  
 
-![Result Window](screenshots/result_window.png)
+![Result Window](https://raw.githubusercontent.com/utPLSQL/utPLSQL-PLSQL-Developer/develop/screenshots/result_window.png)
 
 ## Code Coverage
 
 If you select Run Code Coverage from the menu or the context menu a dialog is displayed. In this dialog you can configure the schemas to check for coverage and include or exclude specific objects.
 
-![Code Coverage Diaog](screenshots/code_coverage_dialog.png)
+![Code Coverage Diaog](https://raw.githubusercontent.com/utPLSQL/utPLSQL-PLSQL-Developer/develop/screenshots/code_coverage_dialog.png)
 
 ### Report
 
 After running the tests the HTML code coverage report will be opened in the default browser.
 
-![Code Coverage Reports](screenshots/code_coverage_report.png)
+![Code Coverage Reports](https://raw.githubusercontent.com/utPLSQL/utPLSQL-PLSQL-Developer/develop/screenshots/code_coverage_report.png)
 
 ## Releases
 
